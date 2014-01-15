@@ -1,6 +1,7 @@
 (ns buddy.crypto.signing
   (:require [buddy.crypto.core :refer :all]
             [buddy.core :as core]
+            [clojure.string :refer [split]]
             [taoensso.nippy :as nippy]))
 
 (defn- make-signature

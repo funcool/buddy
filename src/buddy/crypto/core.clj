@@ -1,5 +1,7 @@
 (ns buddy.crypto.core
   (:import (org.apache.commons.codec.binary Base64 Hex)
+           (javax.crypto Mac)
+           (javax.crypto.spec SecretKeySpec)
            (java.security MessageDigest)))
 
 (defn str->bytes

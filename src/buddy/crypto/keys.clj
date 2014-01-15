@@ -1,11 +1,11 @@
-(ns buddy.cryoto.keys
-  (:import javax.crypto.Key))
+(ns buddy.crypto.keys
+  (:import java.security.Key))
 
 (def make-secret-key
   "Generates a Key instance from given raw string key."
   [^String skey]
   (let [rawkey (.getBytes skey "UTF-8")]
-    (proxy [Key Object]
+    (proxy [Key] []
       (getFormat [] nil)
       (getEncoded [] rawkey)
       (toString [] skey))))
