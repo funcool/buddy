@@ -53,14 +53,15 @@
 
 (defn hmac-sha256
   "Returns a salted hmac-sha256."
-  [value secret & {:keys [salt] :or {salt ""}}]
-  (let [md  (-> (MessageDigest/getInstance "SHA-256")
-                (.update (str->bytes secret))
-                (.update (str->bytes salt)))
-        mac (-> (Mac/getInstance "HmacSHA256")
-                (.init (SecretKeySpec. (.digest md) "HmacSHA256"))
-                (.doFinal (str->bytes value)))]
-    (bytes->hex mac)))
+  [value secret & [{:keys [salt] :or {salt ""}}]]
+  (let [md  (doto (MessageDigest/getInstance "SHA-256")
+              (.update (str->bytes secret))
+              (.update (str->bytes salt)))
+        mac (doto (Mac/getInstance "HmacSHA256")
+              (.init (SecretKeySpec. (.digest md) "HmacSHA256")))]
+    (->
+      (.doFinal mac (str->bytes value))
+      (bytes->hex))))
 
 (defn timestamp
   "Get current timestamp."
