@@ -12,9 +12,8 @@
     (format "%s%s%s" signature sep stamp)))
 
 (defn sign
-  "Given a string and optionally a key,
+  "Given a string and secret key,
   return a signed and prefixed string."
-  ([s, opts] (sign s core/*secret-key opts))
   ([s, pkey & [{:keys [sep salt]
                 :or {sep ":" salt "clj"}
                 :as opts}]]
@@ -22,11 +21,12 @@
          signature (make-signature s pkey {:salt salt
                                            :sep sep
                                            :stamp stamp})]
-     (format "%s%s%s" s sep signature)))
+     (format "%s%s%s" s sep signature))))
 
 (defn unsign
-  "Unsign string using a private key globally defined."
-  ([s opts] (unsign s core/*secret-key opts))
+  "Given a signed string and private key with string
+  was preoviously signed and return unsigned value
+  if the signature is valed else nil."
   ([s pkey & [{:keys [sep salt max-age]
                :or {sep ":" salt "clj" max-age nil}}]]
    (let [[value sig stamp] (split s (re-pattern sep))]
