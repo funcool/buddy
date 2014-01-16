@@ -2,12 +2,14 @@
   (:require [buddy.crypto.hashers.protocols :as proto]
             [buddy.crypto.hashers.pbkdf2 :as pbkdf2]))
 
-(defn hasher
+(defn make-hasher
   "Given a keyword, return a new instance
   of hasher."
-  [hashkw]
-  (cond
-    (= hashkw :pbkdf2-sha1) (pbkdf2/->Pbkdf2 20000)))
+  ([] (make-hasher :pbkdf2-sha1))
+  ([hashkw]
+   (cond
+     (= hashkw :pbkdf2-sha1) (pbkdf2/->Pbkdf2 20000)
+     (= hashkw :pbkdf2) (make-hasher :pbkdf2-sha1))))
 
 (defn verify
   "Public interface of IHasher protocol."

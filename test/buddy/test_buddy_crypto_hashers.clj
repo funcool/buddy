@@ -8,7 +8,7 @@
 (deftest pbkdf2-tests
   (testing "Test high level api for encrypt/verify"
     (let [plain-password      "my-test-password"
-          hasher              (hs/hasher :pbkdf2-sha1)
+          hasher              (hs/make-hasher :pbkdf2-sha1)
           encrypted-password  (hs/make-hash hasher plain-password)]
       (is (hs/verify hasher plain-password encrypted-password))))
 
