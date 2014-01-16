@@ -1,8 +1,10 @@
 (ns buddy.crypto.core
+  "Basic crypto primitives that used for more high
+  level abstractions."
   (:import (org.apache.commons.codec.binary Base64 Hex)
            (javax.crypto Mac)
            (javax.crypto.spec SecretKeySpec)
-           (java.security MessageDigest)))
+           (java.security MessageDigest SecureRandom)))
 
 (defn str->bytes
   "Convert string to java bytes array"
@@ -23,6 +25,12 @@
   encoded string."
   [#^bytes data]
   (Hex/encodeHexString data))
+
+(defn hex->bytes
+  "Convert hexadecimal encoded string
+  to bytes array."
+  [^String data]
+  (Hex/decodeHex (.toCharArray data)))
 
 (defn bytes->base64
   "Encode a bytes array to base64."
@@ -62,6 +70,30 @@
     (->
       (.doFinal mac (str->bytes value))
       (bytes->hex))))
+
+(defn random-bytes
+  "Generate a byte array of random bytes using
+  secure random generator."
+  [s]
+  (let [data  (byte-array s)
+        sr    (SecureRandom/getInstance "SHA1PRNG")]
+    (.nextBytes sr data)
+    data))
+
+(defn random-salt
+  "Generates a random salt using a secure
+  random number generator."
+  ([] (random-salt 8))
+  ([s]
+   (let [rbytes (random-bytes (int (/ s 2)))]
+     (bytes->hex rbytes))))
+
+(defn bytes?
+  "Test if a first parameter is a byte
+  array or not."
+  [x]
+  (= (Class/forName "[B")
+    (.getClass x)))
 
 (defn timestamp
   "Get current timestamp."
