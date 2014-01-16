@@ -1,6 +1,7 @@
 (ns buddy.crypto.hashers
   (:require [buddy.crypto.hashers.protocols :as proto]
-            [buddy.crypto.hashers.pbkdf2 :as pbkdf2]))
+            [buddy.crypto.hashers.pbkdf2 :as pbkdf2]
+            [buddy.crypto.hashers.sha256 :as sha256]))
 
 (defn make-hasher
   "Given a keyword, return a new instance
@@ -9,7 +10,8 @@
   ([hashkw]
    (cond
      (= hashkw :pbkdf2-sha1) (pbkdf2/->Pbkdf2 20000)
-     (= hashkw :pbkdf2) (make-hasher :pbkdf2-sha1))))
+     (= hashkw :pbkdf2) (make-hasher :pbkdf2-sha1)
+     (= hashkw :sha256) (sha256/->Sha256))))
 
 (defn verify
   "Public interface of IHasher protocol."
