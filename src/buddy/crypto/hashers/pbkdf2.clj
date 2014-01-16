@@ -24,8 +24,7 @@
   {:pre [(or (nil? salt) (bytes? salt))]}
 
   (let [bsalt         (if (nil? salt) (random-bytes 12) salt)
-        password      (make-pbkdf2 pw bsalt iterations)
-        ssalt         (bytes->hex bsalt)]
+        password      (make-pbkdf2 pw bsalt iterations)]
     (format "pbkdf2_sha1$%s$%s$%s" (bytes->hex bsalt) iterations password)))
 
 (defn check-password
