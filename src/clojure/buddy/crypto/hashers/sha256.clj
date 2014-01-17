@@ -4,14 +4,15 @@
             [clojure.string :refer [split]])
   (:import (java.security MessageDigest)))
 
-(defn- make-sha256
-  [password salt]
-  {:pre [(or (nil? salt) (bytes? salt))]}
-  (let [ba-passwd (str->bytes password)
-        md        (doto (MessageDigest/getInstance "SHA-256")
-                    (.update salt)
-                    (.update ba-passwd))]
-    (bytes->hex (.digest md))))
+(defn make-sha256
+  ([password] (make-sha256 password (byte-array 0)))
+  ([password salt]
+   {:pre [(or (nil? salt) (bytes? salt))]}
+   (let [ba-passwd (str->bytes password)
+         md        (doto (MessageDigest/getInstance "SHA-256")
+                     (.update salt)
+                     (.update ba-passwd))]
+     (bytes->hex (.digest md)))))
 
 (defn make-password
   "Encrypts a raw string password using
