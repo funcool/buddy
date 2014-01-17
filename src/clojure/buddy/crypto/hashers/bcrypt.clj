@@ -3,9 +3,7 @@
             [buddy.crypto.hashers.sha256 :refer [make-sha256]]
             [buddy.crypto.core :refer :all]
             [clojure.string :refer [split]])
-  (:import (buddy.impl BCrypt)
-           (javax.crypto.spec PBEKeySpec)
-           (javax.crypto SecretKeyFactory)))
+  (:import (buddy.impl BCrypt)))
 
 (defn make-bcrypt
   [password log-rouds]
