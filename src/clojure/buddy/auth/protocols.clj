@@ -13,10 +13,6 @@
 
 (defprotocol IAuthorization
   "Base protocol for all authorization backends."
-  (do-unauthorized [_ request metadata]
-    "Execute when a authenticated user enters on unathorized
-    location and unauthorized exception is raised.")
-  (do-unauthenticated [_ request metadata]
-    "Execute when a unauthenticated user enters on unauthorized
-    location and unauthorized exception is raised."))
-
+  (handle-unauthorized [_ request metadata]
+    "Function that are executed when a NotAuthorizedException
+    is raised from ring handler execution."))
