@@ -1,6 +1,7 @@
 (ns buddy.crypto.core
   "Basic crypto primitives that used for more high
   level abstractions."
+  (:require [clojure.string :refer [trim]])
   (:import (org.apache.commons.codec.binary Base64 Hex)
            (javax.crypto Mac)
            (javax.crypto.spec SecretKeySpec)
@@ -36,7 +37,7 @@
   "Encode a bytes array to base64."
   [#^bytes data]
   (let [codec (Base64. true)]
-    (.encodeToString codec data)))
+    (trim (.encodeToString codec data))))
 
 (defn base64->bytes
   "Decode from base64 to bytes."
@@ -50,7 +51,7 @@
   [^String s]
   (let [codec (Base64. true)
         data  (str->bytes s)]
-    (.encodeToString codec data)))
+    (trim (.encodeToString codec data))))
 
 (defn base64->str
   "Decode from base64 to string."
