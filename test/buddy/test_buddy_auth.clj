@@ -16,8 +16,7 @@
   [request parsed-data]
   (let [username (:username parsed-data)]
     (cond
-      (= username "foo") :foo
-      :else :anonymous)))
+      (= username "foo") :foo)))
 
 (deftest authentication-middleware-test
   (testing "Auth middleware with http-basic backend 01"
@@ -34,7 +33,7 @@
           handler (wrap-authentication handler backend)]
       (let [req   (make-request "user" "pass")
             resp  (handler req)]
-        (is (= (:identity resp) :anonymous)))
+        (is (nil? (:identity resp))))
       (let [req   (make-request "foo" "pass")
             resp  (handler req)]
         (is (= (:identity resp) :foo))))))
@@ -42,11 +41,11 @@
 (deftest authorization-middleware-test
   (testing "Auth middleware with http-basic backend 01"
     (let [backend (http-basic :realm "Foo" :authfn auth-fn)
-          handler (fn [req] (if (= (:identity req) :anonymous)
+          handler (fn [req] (if (nil? (:identity req))
                               (throw-notauthorized {:msg "FooMsg"})
                               req))
           handler (wrap-authentication handler backend)
           handler (wrap-authorization handler backend)
           req     (make-request "user" "pass")
           resp    (handler req)]
-      (println resp))))
+      (is (= (:status resp) 401)))))
