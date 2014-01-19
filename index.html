@@ -1148,7 +1148,7 @@ Self contained token generation for use it on completelly stateless token based 
 <td class="icon">
 <div class="title">Note</div>
 </td>
-<td class="content">hmac+sha256 is used for sing all data.</td>
+<td class="content">hmac+sha256 is used for sign all data.</td>
 </tr></table>
 </div>
 <div class="sect3">
@@ -1180,7 +1180,7 @@ and timestamp. <strong>Timestamp</strong> can be used for invalidate by time som
 <div class="content"><div class="highlight"><pre><span class="c1">;; Unsign with maxago (15min)</span>
 <span class="p">(</span><span class="k">def </span><span class="nv">unsigned-data</span> <span class="p">(</span><span class="nf">unsign</span> <span class="nv">signed-data</span> <span class="s">&quot;my-secret-key&quot;</span> <span class="p">{</span><span class="ss">:maxago</span> <span class="p">(</span><span class="nb">* </span><span class="mi">60</span> <span class="mi">15</span> <span class="mi">1000</span><span class="p">)}))</span>
 
-<span class="c1">;; unsigned-data should contain nil value if a singned date is older than 15 min.</span>
+<span class="c1">;; unsigned-data should contain nil value if a signed date is older than 15 min.</span>
 </pre></div></div></div>
 </div>
 <div class="sect3">
@@ -1319,14 +1319,6 @@ protocols. Each available authentication backend also implements a protocol for 
 you can use sabe backend for authentication and authorization.</p></div>
 <div class="paragraph"><p>Each authentication backend has it own default flow for handle not authorized requests, but it can
 be overwrited with <span class="monospaced">:unauthorized-handler</span> parameter to backend constructor.</p></div>
-<div class="admonitionblock">
-<table><tr>
-<td class="icon">
-<div class="title">Note</div>
-</td>
-<td class="content">for you want know how it really works, see <a href="#how-it-works">How it works</a> section.</td>
-</tr></table>
-</div>
 <div class="paragraph"><p>As example, the default behavior of http basic auth backend, is:</p></div>
 <div class="ulist"><ul>
 <li>
@@ -1375,6 +1367,14 @@ overwrite it:</p></div>
                     <span class="p">(</span><span class="nf">wrap-authorization</span> <span class="nv">backend</span><span class="p">))]</span>
     <span class="p">(</span><span class="nf">jetty/run-jetty</span> <span class="nv">handler</span> <span class="p">{</span><span class="ss">:port</span> <span class="mi">9090</span><span class="p">})))</span>
 </pre></div></div></div>
+<div class="admonitionblock">
+<table><tr>
+<td class="icon">
+<div class="title">Note</div>
+</td>
+<td class="content">for you want know how it really works, see <a href="#how-it-works">How it works</a> section.</td>
+</tr></table>
+</div>
 </div>
 </div>
 </div>
@@ -1383,7 +1383,87 @@ overwrite it:</p></div>
 <div class="sectionbody">
 <div class="sect2">
 <h3 id="how-it-works">5.1. How It Works</h3>
-<div class="paragraph"><p>TODO</p></div>
+<div class="paragraph"><p>Each backend implements two protocols: <span class="monospaced">IAuthentication</span> and <span class="monospaced">IAuthorization</span>.</p></div>
+<div class="paragraph"><p><strong>IAuthentication</strong> provides two functions: <span class="monospaced">parse</span> and <span class="monospaced">authenticate</span> and is automaticaly
+handled with <span class="monospaced">wrap-authentication</span> ring middleware. This is a example flow of http basic
+backend:</p></div>
+<div class="olist arabic"><ol class="arabic">
+<li>
+<p>
+Received request, is passed to <span class="monospaced">parse</span> function. This function, extracts <span class="monospaced">Authorization</span>
+   header, decode a base64 encoded string and return clojure map with <span class="monospaced">:username</span> and <span class="monospaced">:password</span>
+   keys. If parse error is ocurred, it returns nil.
+</p>
+</li>
+<li>
+<p>
+If previous step parses token successfully, <span class="monospaced">authenticate</span> function is called with current
+   request and parsed data from previous step. <span class="monospaced">authenticate</span> can delegate authentication
+   to user defined function passed as <span class="monospaced">:authfn</span> parameter to backend constructor.
+   <span class="monospaced">authenticate</span> should return a request with <span class="monospaced">:identity</span> key assigned to nil or any other
+   value. All requests with <span class="monospaced">:identity</span> key with nil value are considered not authenticated.
+</p>
+</li>
+<li>
+<p>
+User handler is called.
+</p>
+</li>
+</ol></div>
+<div class="admonitionblock">
+<table><tr>
+<td class="icon">
+<div class="title">Note</div>
+</td>
+<td class="content">
+<div class="ulist"><ul>
+<li>
+<p>
+<span class="monospaced">parse</span> function can return valid response, in that case response is returned inmediatel
+  ignoring user handler.
+</p>
+</li>
+<li>
+<p>
+if <span class="monospaced">parse</span> function returns nil, <span class="monospaced">authenticate</span> function is ignored and user handler is
+  called directly.
+</p>
+</li>
+<li>
+<p>
+<span class="monospaced">authenticate</span> also can return a valid response, in these case it has same behavior that
+  with <span class="monospaced">parse</span> function.
+</p>
+</li>
+</ul></div>
+</td>
+</tr></table>
+</div>
+<div class="paragraph"><p><strong>IAuthorization</strong> provides <span class="monospaced">handle-unauthorized</span> function. Each backend implements it default
+behavior but it can be overwritted with user defined function, passed on <span class="monospaced">:handle-unauthorized</span>
+keyword parameter to backend constructor. It always should return a valid response.</p></div>
+<div class="paragraph"><p>Authorization is handled automatically with <span class="monospaced">wrap-authorization</span> ring middleware. It wraps
+all request in try/catch block for intercept only authorization exception.</p></div>
+<div class="paragraph"><p>This is a flow that follows authorization middleware:</p></div>
+<div class="olist arabic"><ol class="arabic">
+<li>
+<p>
+User handler is wrapped in try/catch block and executed.
+</p>
+</li>
+<li>
+<p>
+Not authorized exception is raised with <span class="monospaced">buddy.auth/throw-notauthorized</span> function from
+   any part of your handler.
+</p>
+</li>
+<li>
+<p>
+handle-unauthorized is executed of your backend, if user has specified it own function,
+   the user defined function is executed else, default behavior is executed.
+</p>
+</li>
+</ol></div>
 </div>
 </div>
 </div>
@@ -1428,7 +1508,7 @@ limitations under the License.</pre>
 <div id="footer">
 <div id="footer-text">
 Version 0.1.0<br>
-Last updated 2014-01-19 20:16:51 CET
+Last updated 2014-01-19 20:52:22 CET
 </div>
 </div>
 </body>
