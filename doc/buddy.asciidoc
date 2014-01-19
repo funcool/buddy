@@ -1,0 +1,358 @@
+buddy documentation
+===================
+Andrey Antukh, <niwi@niwi.be>
+0.1.0, 2014-01-19
+
+:toc:
+:numbered:
+
+
+Introduction
+------------
+
+_buddy_ is a simple authentication, authorization and signing library for clojure.
+It's designed with simplicity in mind and and high level framework agnostic
+(it only depends on ring).
+
+_buddy_ follows the principe of single responsability:
+
+- authentication & authorization has clear separation between them.
+- protocols and implementation also are clearly separated.
+
+link:api/index.html[Api reference documentation.]
+
+
+Philosofy
+~~~~~~~~~
+
+Five most important rules:
+
+- Beautiful is better than ugly.
+- Explicit is better than implicit.
+- Simple is better than complex.
+- Complex is better than complicated.
+- Readability counts.
+
+All contributions to _buddy_ should keep these important rules in mind.
+
+Project Maturity
+----------------
+
+_buddy_ is a young project and can experiment some api changes.
+
+Install
+-------
+
+This section covers a installation of _buddy_.
+
+Leiningen
+~~~~~~~~~
+
+The simplest way to use _buddy_ on clojure project, is including it on dependency
+vector of your *_project.clj_* file:
+
+._on project.clj_
+[source,clojure]
+----
+[niwi.be/buddy "0.1.0"]
+----
+
+Maven
+~~~~~
+
+Also, you can use it on your java projects with maven. As first step add a clojars repository:
+
+[source,xml]
+----
+<repository>
+    <id>clojars.org</id>
+    <url>http://clojars.org/repo</url>
+</repository>
+----
+
+Following of jnanomsg package dependecy:
+
+[source,xml]
+----
+<dependency>
+    <groupId>niwi.be</groupId>
+    <artifactId>buddy</artifactId>
+    <version>0.1.0</version>
+</dependency>
+----
+
+User guide
+----------
+
+Signing
+~~~~~~~
+
+_buddy_ commes with "batteries included" philosofy, and one of the main
+parts of it, is signing framework/library.
+
+One of the main parts of _buddy_ is a "Signing framework",
+that is mainly based on django's link:https://docs.djangoproject.com/en/1.6/topics/signing/[Cryptographic signing]
+library.
+
+That can be used for several purposes:
+
+- Safely store session data on cookie instead on a database. (It prevents that other can change a session content)
+- Self contained token generation for use it on completelly stateless token based authentication.
+
+NOTE: this library is used by one of authentication backends for implement token based stateless authentication.
+
+NOTE: hmac+sha256 is used for sing all data.
+
+Using low level api
+^^^^^^^^^^^^^^^^^^^
+
+_buddy's_ signing functions live in *`buddy.crypto.signing`* namespace and it consists on four
+functions: `sing`, `unsign`, `loads` and `dumps`.
+
+`sign` and `unsign` functions represents a low level api and them works with
+strings as primary data.
+
+.Unsigning previously signed data
+[source,clojure]
+----
+(require '[buddy.crypto.signing :refer [sign unsign]])
+
+;; Sign data
+(def signed-data (sign "mystring" "my-secret-key"))
+
+;; signed-data should contain string similtar to:
+;; "mystring:f08dd937a438f43639d34a345910148cb933ea8ea0c2c306e8733e0255677e3d:MTM5MDEzMTQzMQ"
+
+;; Unsign previosly signed data
+(def unsigned-data (unsign signed-data "my-secret-key"))
+
+;; unsigned-data should contain a original string: "mystring"
+----
+
+As you can see, a signing process consists on concat signature to the original string
+separating it with ":" as separator character. A signature consists on hmac signature
+and timestamp. *Timestamp* can be used for invalidate by time some signed data:
+
+.Invalidate signed data using timestamp
+[source,clojure]
+----
+;; Unsign with maxago (15min)
+(def unsigned-data (unsign signed-data "my-secret-key" {:maxago (* 60 15 1000)}))
+
+;; unsigned-data should contain nil value if a singned date is older than 15 min.
+----
+
+Protecting complex data structures
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+If you wish to protect a clojure native data structure (hash-map, hash-set, list, vector, etc...)
+you can do so using the signing *`dumps`* and *`loads`* functions. Them accepts same parameters that
+their friends (`sign` and `unsign`) but also can sign clojure more complex data.
+
+.Sign/Unsign clojure hash-map
+[source,clojure]
+----
+(require '[buddy.crypto.signing :refer [dumps loads]])
+
+;; Sign data
+(def signed-data (dumps {:userid 1} "my-secret-key"))
+
+;; signed-data should contain string similar to:
+;; "TlBZARlgGwAAAAIOAAAABnVzZXJpZCsAAAAAAAAAAQ:59d9e8063ad80f6abd3092b45857810b10f4359f0634da8..."
+
+;; Unsign previosly signed data
+(def unsigned-data (loads signed-data "my-secret-key"))
+
+;; unsigned-data should contain a original map: {:userid 1}
+----
+
+NOTE: it uses a clojure serialization library link:https://github.com/ptaoussanis/nippy[Nippy]
+
+
+Authentication
+~~~~~~~~~~~~~~
+
+_buddy_ comes with authentication system. It is implemented with protocols, that can be used for
+implement own authentication backend if one of the now supported backends by buddy does not satisfy
+your needs.
+
+_buddy_ has implemented these authentication backends:
+
+- Http Basic
+- Session
+- Stateless Token (using previousle explained signing framework).
+
+Http Basic
+^^^^^^^^^^
+
+Http Basic authentication backend is one of the simplest/unsecure authentication ways, but works
+well as first introduction of how authentication works with _buddy_.
+
+The main goal of _buddy_ is not depending on any high level framework like (compojure, caribou, pedestal)
+and it works directly as ring middleware.
+
+.Example app: _main.clj_
+[source,clojure]
+----
+(ns yourapp.main
+  (:require [ring.adapter.jetty :as jetty]
+            [ring.util.response :refer [response]]
+            [buddy.auth.backends.httpbasic :refer [http-basic-backend]]
+            [buddy.auth.middleware :refer [wrap-authentication]]
+            [bussy.auth :refer [authenticated?]])
+  (:gen-class))
+
+;; Simple ring handler. This also, can be a compojure routes handler
+;; or any other while it be compatible with ring middlewares.
+
+(defn handler
+  [request]
+  (if (authenticated? request)
+    (response (format "Hello %s" (:identity request)))
+    (response "Hello Anonymous")))
+
+;; This function always receives request and authdata, authdata
+;; can vary with other backends. For http basic backend, authdata
+;; parameter has this form: {:username xxxx :password yyyy}
+;;
+;; This function should return some not nil value that
+;; are automatically stored on :identity key on request
+;; If it return nil, a request is considered unautenticated.
+
+(defn my-authfn
+  [request, authdata]
+  (let [username (:username authdata)
+        password (:password authdata)]
+    (cond
+      (and (= username "foo")
+           (= password "bae")) :myuser)))
+
+(defn -main
+  [& args]
+  (let [auth-backend (http-basic-backend :realm "MyApi" :authfn my-authfn)
+        app          (-> handler
+                         (wrap-authentication backend))]
+    (jetty/run-jetty app {:port 9090}))
+----
+
+
+Session
+^^^^^^^
+
+Session authentication backend, is the simplest backend of all implemented backends
+on _buddy_ but it requires of other additional middlewares from ring: cookies and session.
+
+Unlike the previous auth backend, this does not requires authfn, because it relies and trust
+a session `:identity` key. If a session contains the `:identity` key, it put it value as is
+on request `:identity` key.
+
+NOTE: all requests with `:identity` key with not nil value are considered authenticated.
+
+See xref:examples[examples section] for complete examples for this backend.
+
+Stateless Token
+^^^^^^^^^^^^^^^
+
+This works similar to *session* backend, but it uses a signing framework explained in a
+first section of this document.
+
+It instead of trust a session key, extract a token from Authorization header like oauth, and
+unsigns these token usingo signing framework. If a signature is valid, the contents of unsigned
+data trustly set to `:identity` key on request.
+
+See xref:examples[examples section] for complete examples for this backend.
+
+Authorization
+~~~~~~~~~~~~~
+
+_buddy_ also comes with authorization system. Similar to authentication, it is implemented using
+protocols. Each available authentication backend also implements a protocol for authorization, however,
+you can use sabe backend for authentication and authorization.
+
+Each authentication backend has it own default flow for handle not authorized requests, but it can
+be overwrited with `:unauthorized-handler` parameter to backend constructor.
+
+NOTE: for you want know how it really works, see xref:how-it-works[How it works] section.
+
+
+As example, the default behavior of http basic auth backend, is:
+
+- If a user is authenticated, and *notauthorized* exception is raised, 403 response is returned automaticaly.
+- If a user is anonymosus, 401 response with `WWW-Authenticate` is returned.
+
+Similar behavior are implemented by default in other backends. But if you want other behavior, you can
+overwrite it:
+
+.Incomplete example of how overwrite unauthorized handler behavior.
+[source,clojure]
+----
+(ns myns.somensfile
+  (:require [clojure.java.io :as io]
+            [ring.util.response :refer [response redirect]]
+            [buddy.auth :refer [authenticated? throw-notauthorized]]
+            [buddy.auth.backends.httpbasic :refer [http-basic-backend]]
+            [buddy.auth.middleware :refer [wrap-authentication wrap-authorization]]))
+
+;; This function always receives a request and exception metadata.
+
+(defn my-unauthorized-handler
+  [request metadata]
+  (if (authenticated? request)
+    (response (io/resource "error.html"))
+    (redirect "/login")))
+
+(defn handler
+  [request]
+  (if (authenticated?)
+    (response "Hello World")
+    (throw-notauthorized)))
+
+(defn -main
+  [& args]
+  (let [backend (http-basic-backend :realm "Api"
+                                    :authfn (fn [_ _] :foo-user)
+                                    :unauthorized-handler my-unauthorized-handler)
+        handler (-> handler
+                    (wrap-authentication backend)
+                    (wrap-authorization backend))]
+    (jetty/run-jetty handler {:port 9090})))
+----
+
+Advanced Usage
+--------------
+
+[[how-it-works]]
+How It Works
+~~~~~~~~~~~~
+
+TODO
+
+Examples
+--------
+
+_buddy_ comes with some examples for facilitate a new user understand how it works. All
+examples are available on `examples/` directory on root project.
+
+Additionaly, this is a list of examples:
+
+- link:https://github.com/niwibe/buddy/tree/master/examples/sessionexample[Use session backend as authentication and authorization.]
+
+
+License
+-------
+
+----
+Copyright 2013 Andrey Antukh <niwi@niwi.be>
+
+Licensed under the Apache License, Version 2.0 (the "License")
+you may not use this file except in compliance with the License.
+You may obtain a copy of the License at
+
+    http://www.apache.org/licenses/LICENSE-2.0
+
+Unless required by applicable law or agreed to in writing, software
+distributed under the License is distributed on an "AS IS" BASIS,
+WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+See the License for the specific language governing permissions and
+limitations under the License.
+----
