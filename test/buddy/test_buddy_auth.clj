@@ -96,22 +96,31 @@
         (is (= (:identity resp) :foo))))))
 
 (deftest authorization-middleware-test-with-httpbasic
-  (testing "Auth middleware with http-basic backend 01"
+  (testing "Authorization middleware tests 01 with httpbasic backend"
     (let [backend (http-basic-backend :realm "Foo" :authfn httpbasic-auth-fn)
           handler (fn [req] (if (nil? (:identity req))
                               (throw-notauthorized {:msg "FooMsg"})
                               req))
-          handler (wrap-authentication handler backend)
           handler (wrap-authorization handler backend)
+          handler (wrap-authentication handler backend)
           req     (make-httpbasic-request "user" "pass")
           resp    (handler req)]
-      (is (= (:status resp) 401)))
+      (is (= (:status resp) 401))))
+  (testing "Authorization middleware tests 02 with httpbasic backend"
     (let [backend (http-basic-backend :realm "Foo" :authfn httpbasic-auth-fn)
           handler (fn [req] (if (nil? (:identity req))
                               (throw-notauthorized {:msg "FooMsg"})
                               req))
-          handler (wrap-authentication handler backend)
           handler (wrap-authorization handler backend)
+          handler (wrap-authentication handler backend)
           req     (make-httpbasic-request "foo" "pass")
           resp    (handler req)]
-      (is (= (:identity resp) :foo)))))
+      (is (= (:identity resp) :foo))))
+  (testing "Authorization middleware tests 03 with httpbasic backend"
+    (let [backend (http-basic-backend :realm "Foo" :authfn httpbasic-auth-fn)
+          handler (fn [req] (throw-notauthorized {:msg "FooMsg"}))
+          handler (wrap-authorization handler backend)
+          handler (wrap-authentication handler backend)
+          req     (make-httpbasic-request "foo" "pass")
+          resp    (handler req)]
+      (is (= (:status resp) 403)))))

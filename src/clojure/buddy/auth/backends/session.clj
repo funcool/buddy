@@ -1,11 +1,12 @@
 (ns buddy.auth.backends.session
   (:require [buddy.auth.protocols :as proto]
+            [buddy.auth :refer [authenticated?]]
             [buddy.crypto.core :refer [base64->str]]
             [buddy.util :refer [m-maybe]]
             [clojure.string :refer [split]]
-            [ring.util.response :refer [response? header status]]))
+            [ring.util.response :refer [response response? header status]]))
 
-(defrecord SessionAuthBackend [not-authorized-handler]
+(defrecord SessionAuthBackend [unauthorized-handler]
   proto/IAuthentication
   (parse [_ request]
     (:identity (:session request)))
@@ -14,15 +15,16 @@
 
   proto/IAuthorization
   (handle-unauthorized [_ request metadata]
-    (let [rsp (when not-authorized-handler
-                (not-authorized-handler request metadata))
-          rsp (if (response? rsp) rsp
-                (if (nil? rsp) {:body ""} {:body rsp}))]
-      (-> rsp
-          (status 401)))))
+    (if unauthorized-handler
+      (unauthorized-handler request metadata)
+      (if (authenticated? request)
+        (-> (response "Permission denied")
+            (status 403))
+        (-> (response "Unauthorized")
+            (status 401))))))
 
 (defn session-backend
   "Given some options, create a new instance
   of HttpBasicBackend and return it."
-  [& {:keys [authorization-handler]}]
-  (->SessionAuthBackend authorization-handler))
+  [& {:keys [unauthorized-handler]}]
+  (->SessionAuthBackend unauthorized-handler))

@@ -1,9 +1,10 @@
 (ns buddy.auth.backends.httpbasic
   (:require [buddy.auth.protocols :as proto]
+            [buddy.auth :refer [authenticated?]]
             [buddy.crypto.core :refer [base64->str]]
             [buddy.util :refer [m-maybe]]
             [clojure.string :refer [split]]
-            [ring.util.response :refer [response? header status]]))
+            [ring.util.response :refer [response response? header status]]))
 
 (defn parse-httpbasic-header
   "Given a request, try extract and parse
@@ -17,7 +18,7 @@
     (let [[username, password] (split decoded #":")]
       {:username username :password password})))
 
-(defrecord HttpBasicBackend [realm authfn not-authorized-handler]
+(defrecord HttpBasicBackend [realm authfn unauthorized-handler]
   proto/IAuthentication
   (parse [_ request]
     (parse-httpbasic-header request))
@@ -28,16 +29,18 @@
 
   proto/IAuthorization
   (handle-unauthorized [_ request metadata]
-    (let [rsp (when not-authorized-handler
-                (not-authorized-handler request metadata))
-          rsp (if (response? rsp) rsp
-                (if (nil? rsp) {:body ""} {:body rsp}))]
-      (-> rsp
-          (header "WWW-Authenticate" (format "Basic realm=\"%s\"" realm))
-          (status 401)))))
+    (if unauthorized-handler
+      (unauthorized-handler request (assoc metadata :realm realm))
+      (do
+        (if (authenticated? request)
+          (-> (response "Permission denied")
+              (status 403))
+          (-> (response "Unauthorized")
+              (header "WWW-Authenticate" (format "Basic realm=\"%s\"" realm))
+              (status 401)))))))
 
 (defn http-basic-backend
   "Given some options, create a new instance
   of HttpBasicBackend and return it."
-  [& {:keys [realm authfn authorization-handler] :or {realm "Buddy Auth"}}]
-  (->HttpBasicBackend realm authfn authorization-handler))
+  [& {:keys [realm authfn unauthorized-handler] :or {realm "Buddy Auth"}}]
+  (->HttpBasicBackend realm authfn unauthorized-handler))
