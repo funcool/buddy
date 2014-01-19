@@ -376,6 +376,24 @@ Additionaly, this is a list of examples:
 - link:https://github.com/niwibe/buddy/tree/master/examples/sessionexample[Use session backend as authentication and authorization.]
 
 
+How to contribute
+-----------------
+
+_buddy_ unlike clojure and other clojure contrib libs, does not have much restrictions for contribute. Just
+follow the following steps depending on the situation:
+
+*Bugfix*:
+
+- Fork github repo.
+- Fix a bug/typo on new branch.
+- Make a pull-request.
+
+*New feature*:
+
+- Open new issue with new feature purpose.
+- If it is accepted, follow same steps as "bugfix".
+
+
 License
 -------
 
