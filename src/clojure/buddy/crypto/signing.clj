@@ -49,4 +49,5 @@
   "Unsign data signed with dumps."
   [s & args]
   (let [unsigned (apply unsign s (vec args))]
-    (nippy/thaw (base64->bytes unsigned))))
+    (when-not (nil? unsigned)
+      (nippy/thaw (base64->bytes unsigned)))))
