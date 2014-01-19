@@ -48,4 +48,13 @@
           handler (wrap-authorization handler backend)
           req     (make-request "user" "pass")
           resp    (handler req)]
-      (is (= (:status resp) 401)))))
+      (is (= (:status resp) 401)))
+    (let [backend (http-basic-backend :realm "Foo" :authfn auth-fn)
+          handler (fn [req] (if (nil? (:identity req))
+                              (throw-notauthorized {:msg "FooMsg"})
+                              req))
+          handler (wrap-authentication handler backend)
+          handler (wrap-authorization handler backend)
+          req     (make-request "foo" "pass")
+          resp    (handler req)]
+      (is (= (:identity resp) :foo)))))
