@@ -3,7 +3,7 @@
             [ring.util.response :refer [response? response]]
             [buddy.crypto.core :refer :all]
             [buddy.auth :refer [throw-notauthorized]]
-            [buddy.auth.backends.httpbasic :refer [http-basic]]
+            [buddy.auth.backends.httpbasic :refer [http-basic-backend]]
             [buddy.auth.middleware :refer [wrap-authentication wrap-authorization]]))
 
 (defn make-request
@@ -20,7 +20,7 @@
 
 (deftest authentication-middleware-test
   (testing "Auth middleware with http-basic backend 01"
-    (let [backend (http-basic :realm "Foo")
+    (let [backend (http-basic-backend :realm "Foo")
           handler (fn [req] req)
           handler (wrap-authentication handler backend)
           req     (make-request "user" "pass")
@@ -28,7 +28,7 @@
         (is (nil? (:identity resp)))))
 
   (testing "Auth middleware with http-basic backend 02"
-    (let [backend (http-basic :realm "Foo" :authfn auth-fn)
+    (let [backend (http-basic-backend :realm "Foo" :authfn auth-fn)
           handler (fn [req] req)
           handler (wrap-authentication handler backend)]
       (let [req   (make-request "user" "pass")
@@ -40,7 +40,7 @@
 
 (deftest authorization-middleware-test
   (testing "Auth middleware with http-basic backend 01"
-    (let [backend (http-basic :realm "Foo" :authfn auth-fn)
+    (let [backend (http-basic-backend :realm "Foo" :authfn auth-fn)
           handler (fn [req] (if (nil? (:identity req))
                               (throw-notauthorized {:msg "FooMsg"})
                               req))

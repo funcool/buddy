@@ -36,7 +36,7 @@
           (header "WWW-Authenticate" (format "Basic realm=\"%s\"" realm))
           (status 401)))))
 
-(defn http-basic
+(defn http-basic-backend
   "Given some options, create a new instance
   of HttpBasicBackend and return it."
   [& {:keys [realm authfn authorization-handler] :or {realm "Buddy Auth"}}]
