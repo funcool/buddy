@@ -5,6 +5,7 @@
             [buddy.crypto.signing :as signing]
             [buddy.auth :refer [throw-notauthorized]]
             [buddy.auth.backends.httpbasic :refer [http-basic-backend parse-httpbasic-header]]
+            [buddy.auth.backends.session :refer [session-backend]]
             [buddy.auth.backends.stateless-token :as stoken]
             [buddy.auth.middleware :refer [wrap-authentication wrap-authorization]]))
 
@@ -56,6 +57,22 @@
           handler         (fn [req] req)
           handler         (wrap-authentication handler backend)
           resp            (handler request)]
+      (is (nil? (:identity resp))))))
+
+(deftest session-auth-test
+  (testing "Simple backend authentication 01"
+    (let [request {:session {:identity {:userid 1}}}
+          backend (session-backend)
+          handler (fn [req] req)
+          handler (wrap-authentication handler backend)
+          resp    (handler request)]
+      (is (= (:identity resp) {:userid 1}))))
+  (testing "Simple backend authentication 01"
+    (let [request {:session {}}
+          backend (session-backend)
+          handler (fn [req] req)
+          handler (wrap-authentication handler backend)
+          resp    (handler request)]
       (is (nil? (:identity resp))))))
 
 (deftest authentication-middleware-test-with-httpbasic
