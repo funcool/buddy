@@ -272,9 +272,6 @@ you can use sabe backend for authentication and authorization.
 Each authentication backend has it own default flow for handle not authorized requests, but it can
 be overwrited with `:unauthorized-handler` parameter to backend constructor.
 
-NOTE: for you want know how it really works, see xref:how-it-works[How it works] section.
-
-
 As example, the default behavior of http basic auth backend, is:
 
 - If a user is authenticated, and *notauthorized* exception is raised, 403 response is returned automaticaly.
@@ -318,6 +315,8 @@ overwrite it:
     (jetty/run-jetty handler {:port 9090})))
 ----
 
+NOTE: for you want know how it really works, see xref:how-it-works[How it works] section.
+
 Advanced Usage
 --------------
 
@@ -325,7 +324,46 @@ Advanced Usage
 How It Works
 ~~~~~~~~~~~~
 
-TODO
+Each backend implements two protocols: `IAuthentication` and `IAuthorization`.
+
+*IAuthentication* provides two functions: `parse` and `authenticate` and is automaticaly
+handled with `wrap-authentication` ring middleware. This is a example flow of http basic
+backend:
+
+1. Received request, is passed to `parse` function. This function, extracts +Authorization+
+   header, decode a base64 encoded string and return clojure map with `:username` and `:password`
+   keys. If parse error is ocurred, it returns nil.
+2. If previous step parses token successfully, `authenticate` function is called with current
+   request and parsed data from previous step. `authenticate` can delegate authentication
+   to user defined function passed as `:authfn` parameter to backend constructor.
+   `authenticate` should return a request with `:identity` key assigned to nil or any other
+   value. All requests with `:identity` key with nil value are considered not authenticated.
+3. User handler is called.
+
+[NOTE]
+=========================
+- `parse` function can return valid response, in that case response is returned inmediatel
+  ignoring user handler.
+- if `parse` function returns nil, `authenticate` function is ignored and user handler is
+  called directly.
+- `authenticate` also can return a valid response, in these case it has same behavior that
+  with `parse` function.
+=========================
+
+*IAuthorization* provides `handle-unauthorized` function. Each backend implements it default
+behavior but it can be overwritted with user defined function, passed on `:handle-unauthorized`
+keyword parameter to backend constructor. It always should return a valid response.
+
+Authorization is handled automatically with `wrap-authorization` ring middleware. It wraps
+all request in try/catch block for intercept only authorization exception.
+
+This is a flow that follows authorization middleware:
+
+1. User handler is wrapped in try/catch block and executed.
+2. Not authorized exception is raised with `buddy.auth/throw-notauthorized` function from
+   any part of your handler.
+3. handle-unauthorized is executed of your backend, if user has specified it own function,
+   the user defined function is executed else, default behavior is executed.
 
 Examples
 --------
