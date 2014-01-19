@@ -7,7 +7,7 @@
 
 (defn wrap-authentication
   "Ring middleware that enables authentication
-  for your routes."
+  for your ring handler."
   [handler backend]
   (fn [request]
     (let [request (assoc request :auth-backend backend)
@@ -21,7 +21,7 @@
 
 (defn wrap-authorization
   "Ring middleware that enables authorization
-  workflow you your ring handler."
+  workflow for your ring handler."
   [handler & [backend]]
   (fn [request]
     (let [backend (or backend (:auth-backend request))]
