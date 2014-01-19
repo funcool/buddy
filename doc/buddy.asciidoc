@@ -101,7 +101,7 @@ That can be used for several purposes:
 
 NOTE: this library is used by one of authentication backends for implement token based stateless authentication.
 
-NOTE: hmac+sha256 is used for sing all data.
+NOTE: hmac+sha256 is used for sign all data.
 
 Using low level api
 ^^^^^^^^^^^^^^^^^^^
@@ -139,7 +139,7 @@ and timestamp. *Timestamp* can be used for invalidate by time some signed data:
 ;; Unsign with maxago (15min)
 (def unsigned-data (unsign signed-data "my-secret-key" {:maxago (* 60 15 1000)}))
 
-;; unsigned-data should contain nil value if a singned date is older than 15 min.
+;; unsigned-data should contain nil value if a signed date is older than 15 min.
 ----
 
 Protecting complex data structures
