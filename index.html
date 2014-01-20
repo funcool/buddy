@@ -1472,7 +1472,7 @@ handle-unauthorized is executed of your backend, if user has specified it own fu
 <div class="sectionbody">
 <div class="paragraph"><p><em>buddy</em> comes with some examples for facilitate a new user understand how it works. All
 examples are available on <span class="monospaced">examples/</span> directory on root project.</p></div>
-<div class="paragraph"><p>Additionaly, this is a list of examples:</p></div>
+<div class="paragraph"><p>At this momment one example is available:</p></div>
 <div class="ulist"><ul>
 <li>
 <p>
@@ -1501,7 +1501,7 @@ Fix a bug/typo on new branch.
 </li>
 <li>
 <p>
-Make a pull-request.
+Make a pull-request to master.
 </p>
 </li>
 </ul></div>
@@ -1521,7 +1521,21 @@ If it is accepted, follow same steps as "bugfix".
 </div>
 </div>
 <div class="sect1">
-<h2 id="_license">8. License</h2>
+<h2 id="_faq">8. FAQ</h2>
+<div class="sectionbody">
+<div class="paragraph"><p><strong>How can use <em>buddy</em> with <a href="http://clojure-liberator.github.io/liberator/">liberator</a>?</strong></p></div>
+<div class="paragraph"><p><em>buddy</em> by design, has authorization and authentication concepts well separated. This
+helps a lot if you want use some one part of it (ex: authentencation only) without including
+other parts.</p></div>
+<div class="paragraph"><p>This makes, integration with liberator very simple, because liberator comes with good
+decision handlers for authorization and by normally usage, you should use it instead
+of integrate other third party authorization system to liberator.</p></div>
+<div class="paragraph"><p>The best combination is use <em>buddy</em> authentication middleware with liberator (using it
+authorization system).</p></div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_license">9. License</h2>
 <div class="sectionbody">
 <div class="listingblock">
 <div class="content monospaced">
@@ -1546,7 +1560,7 @@ limitations under the License.</pre>
 <div id="footer">
 <div id="footer-text">
 Version 0.1.0<br>
-Last updated 2014-01-19 21:14:10 CET
+Last updated 2014-01-20 20:03:08 CET
 </div>
 </div>
 </body>
