@@ -5,14 +5,17 @@
   (:import (javax.crypto.spec PBEKeySpec)
            (javax.crypto SecretKeyFactory)))
 
-(defn- make-pbkdf2
+(defn make-pbkdf2
   [password salt iterations]
-  {:pre [(or (nil? salt) (bytes? salt))]}
-  (let [saltbytes        (if (nil? salt) (random-bytes 12) salt)
-        passwordarray     (.toCharArray password)
-        pbe-keyspec       (PBEKeySpec. passwordarray saltbytes iterations 160)]
+  {:pre [(string? password)]}
+  (let [salt    (cond
+                  (string? salt) (str->bytes salt)
+                  (bytes? salt) salt
+                  :else (throw (IllegalArgumentException. "invalid salt type")))
+        passwd  (.toCharArray password)
+        keyspec (PBEKeySpec. passwd salt iterations 160)]
     (-> (SecretKeyFactory/getInstance "PBKDF2WithHmacSHA1")
-        (.generateSecret pbe-keyspec)
+        (.generateSecret keyspec)
         (.getEncoded)
         (bytes->hex))))
 
@@ -21,18 +24,16 @@
   pbkdf2_sha1 algorithm and return formatted
   string."
   [pw & [{:keys [salt iterations] :or {iterations 10000}}]]
-  {:pre [(or (nil? salt) (bytes? salt))]}
-
-  (let [bsalt         (if (nil? salt) (random-bytes 12) salt)
-        password      (make-pbkdf2 pw bsalt iterations)]
-    (format "pbkdf2_sha1$%s$%s$%s" (bytes->hex bsalt) iterations password)))
+  (let [salt      (if (nil? salt) (random-bytes 12) salt)
+        password  (make-pbkdf2 pw salt iterations)]
+    (format "pbkdf2+sha1$%s$%s$%s" (bytes->hex salt) iterations password)))
 
 (defn check-password
   "Check if a unencrypted password matches
   with another encrypted password."
   [attempt encrypted]
   (let [[t s i p] (split encrypted #"\$")]
-    (if (not= t "pbkdf2_sha1")
+    (if (not= t "pbkdf2+sha1")
       (throw (IllegalArgumentException. "invalid type of hasher"))
       (let [salt        (hex->bytes s)
             iterations  (Integer/parseInt i)]

@@ -4,13 +4,16 @@
             [clojure.string :refer [split]])
   (:import (java.security MessageDigest)))
 
-(defn- make-md5
+(defn make-md5
   [password salt]
-  {:pre [(or (nil? salt) (bytes? salt))]}
-  (let [ba-passwd (str->bytes password)
-        md        (doto (MessageDigest/getInstance "MD5")
-                    (.update salt)
-                    (.update ba-passwd))]
+  (let [passwd  (str->bytes password)
+        salt    (cond
+                  (string? salt) (str->bytes salt)
+                  (bytes? salt) salt
+                  :else (throw (IllegalArgumentException. "invalid salt type")))
+        md      (doto (MessageDigest/getInstance "MD5")
+                  (.update salt)
+                  (.update passwd))]
     (bytes->hex (.digest md))))
 
 (defn make-password
@@ -18,10 +21,9 @@
   md5 hash algorithm and return formatted
   string."
   [pw & [{:keys [salt]}]]
-  {:pre [(or (nil? salt) (bytes? salt))]}
-  (let [bsalt         (if (nil? salt) (random-bytes 12) salt)
-        password      (make-md5 pw bsalt)]
-    (format "md5$%s$%s" (bytes->hex bsalt) password)))
+  (let [salt      (if (nil? salt) (random-bytes 12) salt)
+        password  (make-md5 pw salt)]
+    (format "md5$%s$%s" (bytes->hex salt) password)))
 
 (defn check-password
   "Check if a unencrypted password matches
@@ -38,6 +40,6 @@
   (verify [_ attempt encrypted]
     (check-password attempt encrypted))
   (make-hash [_ password salt]
-    (make-password password {:salt (str->bytes salt)}))
+    (make-password password {:salt salt}))
   (make-hash [_ password]
     (make-password password)))
