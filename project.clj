@@ -1,5 +1,5 @@
-(defproject niwi.be/buddy "0.1.0"
-  :description "Authentication, Authorization and Sign library."
+(defproject buddy "0.1.0-beta1"
+  :description "Authentication, Authorization and Signing library."
   :url "https://github.com/niwibe/buddy"
   :license {:name "Apache 2.0"
             :url "http://www.apache.org/licenses/LICENSE-2.0.txt"}
@@ -11,6 +11,6 @@
   :source-paths ["src/clojure"]
   :java-source-paths ["src/java"]
   :plugins [[codox "0.6.6"]]
-  :codox {:output-dir "docs/api/clojure"
+  :codox {:output-dir "doc/api"
           :src-dir-uri "http://github.com/niwibe/buddy/blob/master/"
           :src-linenum-anchor-prefix "L"})

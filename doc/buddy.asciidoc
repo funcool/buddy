@@ -54,7 +54,7 @@ vector of your *_project.clj_* file:
 ._on project.clj_
 [source,clojure]
 ----
-[niwi.be/buddy "0.1.0"]
+[buddy "0.1.0-beta1"]
 ----
 
 Maven
@@ -75,9 +75,9 @@ Following of jnanomsg package dependecy:
 [source,xml]
 ----
 <dependency>
-    <groupId>niwi.be</groupId>
+    <groupId>buddy</groupId>
     <artifactId>buddy</artifactId>
-    <version>0.1.0</version>
+    <version>0.1.0-beta1</version>
 </dependency>
 ----
 
