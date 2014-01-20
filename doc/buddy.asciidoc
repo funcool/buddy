@@ -371,7 +371,7 @@ Examples
 _buddy_ comes with some examples for facilitate a new user understand how it works. All
 examples are available on `examples/` directory on root project.
 
-Additionaly, this is a list of examples:
+At this momment one example is available:
 
 - link:https://github.com/niwibe/buddy/tree/master/examples/sessionexample[Use session backend as authentication and authorization.]
 
@@ -386,12 +386,28 @@ follow the following steps depending on the situation:
 
 - Fork github repo.
 - Fix a bug/typo on new branch.
-- Make a pull-request.
+- Make a pull-request to master.
 
 *New feature*:
 
 - Open new issue with new feature purpose.
 - If it is accepted, follow same steps as "bugfix".
+
+FAQ
+---
+
+*How can use _buddy_ with link:http://clojure-liberator.github.io/liberator/[liberator]?*
+
+_buddy_ by design, has authorization and authentication concepts well separated. This
+helps a lot if you want use some one part of it (ex: authentencation only) without including
+other parts.
+
+This makes, integration with liberator very simple, because liberator comes with good
+decision handlers for authorization and by normally usage, you should use it instead
+of integrate other third party authorization system to liberator.
+
+The best combination is use _buddy_ authentication middleware with liberator (using it
+authorization system).
 
 
 License
