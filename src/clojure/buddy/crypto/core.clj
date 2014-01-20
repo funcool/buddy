@@ -7,6 +7,13 @@
            (javax.crypto.spec SecretKeySpec)
            (java.security MessageDigest SecureRandom)))
 
+(defn bytes?
+  "Test if a first parameter is a byte
+  array or not."
+  [x]
+  (= (Class/forName "[B")
+    (.getClass x)))
+
 (defn str->bytes
   "Convert string to java bytes array"
   ([^String s]
@@ -63,11 +70,15 @@
 (defn hmac-sha256
   "Returns a salted hmac-sha256."
   [value secret & [{:keys [salt] :or {salt ""}}]]
-  (let [md  (doto (MessageDigest/getInstance "SHA-256")
-              (.update (str->bytes secret))
-              (.update (str->bytes salt)))
-        mac (doto (Mac/getInstance "HmacSHA256")
-              (.init (SecretKeySpec. (.digest md) "HmacSHA256")))]
+  (let [salt  (cond
+                (bytes? salt) salt
+                (string? salt) (str->bytes salt)
+                :else (throw (IllegalArgumentException. "invalid salt type")))
+        md    (doto (MessageDigest/getInstance "SHA-256")
+                (.update (str->bytes secret))
+                (.update salt))
+        mac   (doto (Mac/getInstance "HmacSHA256")
+                (.init (SecretKeySpec. (.digest md) "HmacSHA256")))]
     (->
       (.doFinal mac (str->bytes value))
       (bytes->hex))))
@@ -88,13 +99,6 @@
   ([s]
    (let [rbytes (random-bytes (int (/ s 2)))]
      (bytes->hex rbytes))))
-
-(defn bytes?
-  "Test if a first parameter is a byte
-  array or not."
-  [x]
-  (= (Class/forName "[B")
-    (.getClass x)))
 
 (defn timestamp
   "Get current timestamp."

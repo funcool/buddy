@@ -5,11 +5,15 @@
             [taoensso.nippy :as nippy]))
 
 (defn- make-signature
-  [s secret & [{:keys [salt sep stamp]
-                :or {salt "", sep ":", stamp ""}
-                :as opts}]]
+  [s secret salt]
   (let [secretstr (.toString secret)
         signature (hmac-sha256 s secretstr {:salt salt})]
+    signature))
+
+(defn- make-stamped-signature
+  [s secret salt sep stamp]
+  (let [candidate (str s stamp)
+        signature (make-signature candidate secret salt)]
     (format "%s%s%s" signature sep stamp)))
 
 (defn sign
@@ -19,9 +23,7 @@
                 :or {sep ":" salt "clj"}
                 :as opts}]]
    (let [stamp     (str->base64 (str (timestamp)))
-         signature (make-signature s pkey {:salt salt
-                                           :sep sep
-                                           :stamp stamp})]
+         signature (make-stamped-signature s pkey salt sep stamp)]
      (format "%s%s%s" s sep signature))))
 
 (defn unsign
@@ -30,12 +32,13 @@
   if the signature is valed else nil."
   ([s pkey & [{:keys [sep salt max-age]
                :or {sep ":" salt "clj" max-age nil}}]]
-   (let [[value sig stamp] (split s (re-pattern sep))]
-    (when (= sig (make-signature value pkey {:salt salt :sep "" :stamp ""}))
-      (if-not (nil? max-age)
-        (let [old-stamp-value (Integer/parseInt (base64->str stamp))
-              age             (- (timestamp) old-stamp-value)]
-          (if (> age max-age) nil value))
+   (let [[value sig stamp] (split s (re-pattern sep))
+         candidate (str value stamp)]
+     (when (= sig (make-signature candidate pkey salt))
+       (if-not (nil? max-age)
+         (let [old-stamp-value (Integer/parseInt (base64->str stamp))
+               age             (- (timestamp) old-stamp-value)]
+           (if (> age max-age) nil value))
         value)))))
 
 (defn dumps
