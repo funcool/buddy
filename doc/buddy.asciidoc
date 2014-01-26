@@ -87,9 +87,6 @@ User guide
 Signing
 ~~~~~~~
 
-_buddy_ commes with "batteries included" philosofy, and one of the main
-parts of it, is signing framework/library.
-
 One of the main parts of _buddy_ is a "Signing framework",
 that is mainly based on django's link:https://docs.djangoproject.com/en/1.6/topics/signing/[Cryptographic signing]
 library.
