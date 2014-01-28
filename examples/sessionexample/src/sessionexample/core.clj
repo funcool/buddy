@@ -15,10 +15,11 @@
 ;; This macro works as decorator
 
 (defmacro authentication-required
-  [request & body]
-  `(if (authenticated? ~request)
-    (do ~@body)
-    (throw-notauthorized {:msg "Valid user is required"})))
+  [handler]
+  `(fn [request#]
+     (if (authenticated? request#)
+       (~handler request#)
+       (throw-notauthorized {:msg "Valid user is required"}))))
 
 ;; Views
 
@@ -43,18 +44,10 @@
 ;; Routes
 
 (defroutes app
-  (GET "/" request
-    (authentication-required request
-      (home-view request)))
-
-  (GET "/login" request
-    (login-view :get request))
-
-  (POST "/login" request
-    (login-view :post request))
-
-  (GET "/logout" request
-    (logout-view request)))
+  (GET "/" [] (authentication-required home-view))
+  (GET "/login" [] (partial login-view :get))
+  (POST "/login" [] (partial login-view :post))
+  (GET "/logout" [] logout-view))
 
 ;; Self defined unauthorized handler
 
