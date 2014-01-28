@@ -14,7 +14,8 @@
 
 (ns buddy.auth.middleware
   (:require [buddy.auth.protocols :as proto]
-            [buddy.auth :refer [authenticated?]]
+            [buddy.auth.accessrules :as accessrules]
+            [buddy.auth :refer [authenticated? throw-notauthorized]]
             [buddy.util :refer [m-maybe]]
             [ring.util.response :refer [response response?]])
   (:import (buddy.exceptions NotAuthorizedException)))
@@ -45,3 +46,37 @@
           (handler request)
           (catch NotAuthorizedException e
             (proto/handle-unauthorized backend request (.getMetadata e))))))))
+
+(defn wrap-access-rules
+  "An other ring middleware that helps define
+  access rules for ring handler.
+
+  This is a example of access rules list that
+  `wrap-access-rules` middleware expects:
+
+      [{:pattern #\"^/foo.*$\"
+        :handler user-access}
+       {:pattern #\"^/bar.*$\"
+        :handler {:or [user-access admin-access]}}
+       {:pattern #\"^/baz.*$\"
+        :handler {:and [user-access {:or [admin-access operator-access]}]}}]
+
+  Access rules are based on regular expressions associated with
+  handlers list. All rules are evaluated in order and stops on
+  first match found.
+
+  The handler function should accept the request as first
+  parameter and must return true or false. Additionaly, if
+  you are using authorization middleware, the handler funcion
+  can raise unauthorized exception for fast return."
+  [handler rules & [{:keys [policy reject-handler] :or {policy :allow}}]]
+  (fn [request]
+    (let [match   (accessrules/match-rules request)
+          allow?  (if-not (nil? match)
+                    (accessrules/apply-rule request match)
+                    (case policy :allow true :reject false true))]
+      (if (not allow?)
+        (if reject-handler
+          (reject-handler request)
+          (throw-notauthorized))
+        (handler request)))))
