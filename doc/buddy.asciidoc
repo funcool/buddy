@@ -282,9 +282,10 @@ easy way to extend or implement own method.
 Previously explained authentication backends, implements authorization protocol, allowing
 use one backend for both purposes: authentication or/and authorization.
 
-Authorization backend should implement a deterministic workflow for handle not authorized
-exceptions. By default, each builtin backend has it own default flow for handle not authorized
-requests, but it can to be overwrited with `:unauthorized-handler` parameter on the constructor.
+Any authorization backend should implement a deterministic flow for handle not authorized
+exceptions. By default, each builtin backend has its own default flow for handle not authorized
+requests. Additionaly them exposes a simple way to overwrite the default behavior passing
+a custom exception handler to `:unauthorized-handler` parameter in the backend constructor.
 
 As example, the default behavior of http basic auth backend, is:
 
