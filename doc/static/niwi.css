@@ -1,3 +1,5 @@
+@import url("https://fonts.googleapis.com/css?family=Lato:400,700|Roboto+Slab:400,700|Anonymous+Pro:400,700");
+
 /* Shared CSS for AsciiDoc xhtml11 and html5 backends */
 
 /* Default font. */
@@ -538,7 +540,8 @@ body.manpage div.sectionbody {
  */
 body {
   font-family: Garamond, Georgia, serif;
-  font-size: 17px;
+  font-family: "Lato","proxima-nova","Helvetica Neue",Arial,sans-serif;
+  font-size: 19px;
   color: #3E4349;
   line-height: 1.3em;
 }
@@ -549,11 +552,11 @@ thead, p.table.header,
 #author, #revnumber, #revdate, #revremark,
 #footer {
   font-family: Garmond, Georgia, serif;
-  font-weight: normal;
+  font-family: "Roboto Slab","ff-tisa-web-pro","Georgia",Arial,sans-serif;
   border-bottom-width: 0;
   color: #3E4349;
 }
-div.title, caption.title { color: #596673; font-weight: bold; }
+div.title, caption.title { color: #596673; font-weight: normal; font-size:14px; }
 h1 { font-size: 240%; }
 h2 { font-size: 180%; }
 h3 { font-size: 150%; }
@@ -589,8 +592,14 @@ a:hover { color: #6D4100; border-bottom: 1px solid #6D4100; }
 div.tableblock > table, table.tableblock { border: 3px solid #E8E8E8; }
 th.tableblock, td.tableblock { border: 1px solid #E8E8E8; }
 ul > li > * { color: #3E4349; }
-pre, tt, .monospaced { font-family: Consolas,Menlo,'Deja Vu Sans Mono','Bitstream Vera Sans Mono',monospace; }
-tt, .monospaced { font-size: 0.9em; color: black;
+pre {
+    font-family: "Anonymous Pro", Consolas,Menlo,'Deja Vu Sans Mono','Bitstream Vera Sans Mono',monospace;
+    font-size: 16px;
+}
+tt, .monospaced {
+    color: black;
+    font-family: 'Deja Vu Sans Mono', monospace;
+    font-size: 16px;
 }
 div.exampleblock > div.content, div.sidebarblock > div.content, div.listingblock > div.content { border-width: 0 0 0 3px; border-color: #E8E8E8; }
 div.verseblock { border-left-width: 0; margin-left: 3em; }

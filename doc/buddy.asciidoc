@@ -14,9 +14,10 @@ _buddy_ is a simple authentication, authorization and signing library for clojur
 It's designed with simplicity in mind and and high level framework agnostic
 (it only depends on ring).
 
-_buddy_ follows the principe of single responsability:
+Following the principle of single responsability:
 
 - authentication & authorization has clear separation between them.
+- authorization are splited in generic authorization and access rules system.
 - protocols and implementation also are clearly separated.
 
 link:api/index.html[Api reference documentation.]
@@ -118,7 +119,7 @@ strings as primary data.
 (def signed-data (sign "mystring" "my-secret-key"))
 
 ;; signed-data should contain string similtar to:
-;; "mystring:f08dd937a438f43639d34a345910148cb933ea8ea0c2c306e8733e0255677e3d:MTM5MDEzMTQzMQ"
+;; "mystring:f08dd937a438f43639d34a345910148cb933ea8ea0c2c306e8733e0255677e3d:MTM..."
 
 ;; Unsign previosly signed data
 (def unsigned-data (unsign signed-data "my-secret-key"))
@@ -126,9 +127,10 @@ strings as primary data.
 ;; unsigned-data should contain a original string: "mystring"
 ----
 
-As you can see, a signing process consists on concat signature to the original string
-separating it with ":" as separator character. A signature consists on hmac signature
-and timestamp. *Timestamp* can be used for invalidate by time some signed data:
+Signing process consists on concat signature on the end of the original string,
+separating the signature with predefined separator (default ":" char). Signature 
+consists on timestamped hmac signature. *Timestamp* can be used for invalidate by 
+time some signed data.
 
 .Invalidate signed data using timestamp
 [source,clojure]
@@ -144,7 +146,7 @@ Protecting complex data structures
 
 If you wish to protect a clojure native data structure (hash-map, hash-set, list, vector, etc...)
 you can do so using the signing *`dumps`* and *`loads`* functions. Them accepts same parameters that
-their friends (`sign` and `unsign`) but also can sign clojure more complex data.
+their friends (`sign` and `unsign`) but also can sign more complex data.
 
 .Sign/Unsign clojure hash-map
 [source,clojure]
@@ -155,7 +157,7 @@ their friends (`sign` and `unsign`) but also can sign clojure more complex data.
 (def signed-data (dumps {:userid 1} "my-secret-key"))
 
 ;; signed-data should contain string similar to:
-;; "TlBZARlgGwAAAAIOAAAABnVzZXJpZCsAAAAAAAAAAQ:59d9e8063ad80f6abd3092b45857810b10f4359f0634da8..."
+;; "TlBZARlgGwAAAAIOAAAABnVzZXJpZCsAAAAAAAAAAQ:59d9e8063ad80f6abd3092b45857810b10f5..."
 
 ;; Unsign previosly signed data
 (def unsigned-data (loads signed-data "my-secret-key"))
@@ -173,7 +175,7 @@ _buddy_ comes with authentication system. It is implemented with protocols, that
 implement own authentication backend if one of the now supported backends by buddy does not satisfy
 your needs.
 
-_buddy_ has implemented these authentication backends:
+There a list of builtin authentication backends:
 
 - Http Basic
 - Session
@@ -182,7 +184,7 @@ _buddy_ has implemented these authentication backends:
 Http Basic
 ^^^^^^^^^^
 
-Http Basic authentication backend is one of the simplest/unsecure authentication ways, but works
+Http Basic authentication backend is one of the simplest/unsecure authentication system, but works
 well as first introduction of how authentication works with _buddy_.
 
 The main goal of _buddy_ is not depending on any high level framework like (compojure, caribou, pedestal)
@@ -237,13 +239,12 @@ Session
 ^^^^^^^
 
 Session authentication backend, is the simplest backend of all implemented backends
-on _buddy_ but it requires of other additional middlewares from ring: cookies and session.
+on _buddy_ but it requires of other additional middlewares from ring: cookies and/or session.
 
-Unlike the previous auth backend, this does not requires authfn, because it relies and trust
-a session `:identity` key. If a session contains the `:identity` key, it put it value as is
-on request `:identity` key.
-
-NOTE: all requests with `:identity` key with not nil value are considered authenticated.
+Unlike the previous auth backend, this does not requires authfn, because it relies on 
+`:identity` key on session  and trust it. If a session contains the `:identity` key with
+logical true value it identifies the current request as authenticated and put `:identity`
+key on request map.
 
 See xref:examples[examples section] for complete examples for this backend.
 
@@ -253,29 +254,41 @@ Stateless Token
 This works similar to *session* backend, but it uses a signing framework explained in a
 first section of this document.
 
-It instead of trust a session key, extract a token from Authorization header like oauth, and
-unsigns these token usingo signing framework. If a signature is valid, the contents of unsigned
-data trustly set to `:identity` key on request.
+Instead of trust a session key,it extracts a token from `Authorization` header like oauth, and
+unsigns it (extracted token) using the signing framework. 
+
+If a signature is valid, the contents of unsigned data trustly set to `:identity` key on request.
 
 See xref:examples[examples section] for complete examples for this backend.
 
 Authorization
 ~~~~~~~~~~~~~
 
-_buddy_ also comes with authorization system. Similar to authentication, it is implemented using
-protocols. Each available authentication backend also implements a protocol for authorization, however,
-you can use sabe backend for authentication and authorization.
+_buddy_ also comes with authorization system. 
 
-Each authentication backend has it own default flow for handle not authorized requests, but it can
-be overwrited with `:unauthorized-handler` parameter to backend constructor.
+The authorization system is splited in two parts:
+
+- generic authorization system using exceptions for fast return and unauthorized-handler function
+  for handle unauthorized requsts.
+- access rules system based on matching urls using regular expressions and apply some
+  rules handlers. The idea is taken from `lib-noir` but with slighty distinct approach.
+
+Generic authorization
+^^^^^^^^^^^^^^^^^^^^^
+
+For the generic authorization system, _buddy_ exposes protocol for it for easy extend or crete own
+backends. Also, previously explained authentication backends, implements authorization protocol, allowing
+use one backend for both purposes: authentication or/and authorization.
+
+Each backend has it own default flow for handle not authorized requests, but it can to be overwrited with 
+`:unauthorized-handler` parameter to backend constructor.
 
 As example, the default behavior of http basic auth backend, is:
 
 - If a user is authenticated, and *notauthorized* exception is raised, 403 response is returned automaticaly.
 - If a user is anonymosus, 401 response with `WWW-Authenticate` is returned.
 
-Similar behavior are implemented by default in other backends. But if you want other behavior, you can
-overwrite it:
+Similar behavior are implemented in other backends. 
 
 .Incomplete example of how overwrite unauthorized handler behavior.
 [source,clojure]
@@ -313,6 +326,13 @@ overwrite it:
 ----
 
 NOTE: for you want know how it really works, see xref:how-it-works[How it works] section.
+
+
+Access Rules System
+^^^^^^^^^^^^^^^^^^^
+
+TODO
+
 
 Advanced Usage
 --------------
