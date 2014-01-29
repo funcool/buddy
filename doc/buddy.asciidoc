@@ -264,7 +264,7 @@ See xref:examples[examples section] for complete examples for this backend.
 Authorization
 ~~~~~~~~~~~~~
 
-_buddy_ also comes with authorization system. 
+_buddy_ also comes with authorization system.
 
 The authorization system is splited in two parts:
 
@@ -276,19 +276,22 @@ The authorization system is splited in two parts:
 Generic authorization
 ^^^^^^^^^^^^^^^^^^^^^
 
-For the generic authorization system, _buddy_ exposes protocol for it for easy extend or crete own
-backends. Also, previously explained authentication backends, implements authorization protocol, allowing
+Authentication and authorization systems on _buddy_ are implemented using protocols for allow
+easy way to extend or implement own method.
+
+Previously explained authentication backends, implements authorization protocol, allowing
 use one backend for both purposes: authentication or/and authorization.
 
-Each backend has it own default flow for handle not authorized requests, but it can to be overwrited with 
-`:unauthorized-handler` parameter to backend constructor.
+Authorization backend should implement a deterministic workflow for handle not authorized
+exceptions. By default, each builtin backend has it own default flow for handle not authorized
+requests, but it can to be overwrited with `:unauthorized-handler` parameter on the constructor.
 
 As example, the default behavior of http basic auth backend, is:
 
 - If a user is authenticated, and *notauthorized* exception is raised, 403 response is returned automaticaly.
 - If a user is anonymosus, 401 response with `WWW-Authenticate` is returned.
 
-Similar behavior are implemented in other backends. 
+Similar behavior are implemented in other backends.
 
 .Incomplete example of how overwrite unauthorized handler behavior.
 [source,clojure]
