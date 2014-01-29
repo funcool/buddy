@@ -47,5 +47,5 @@
   "Compiles a rule and execute the rule handlers tree.
   If result a boolean value: true for grant access and
   false for deny."
-  (let [rulehandler (compile-rule ((:handler rule)))]
+  (let [rulehandler (compile-rule (:handler rule))]
     (rulehandler request)))
