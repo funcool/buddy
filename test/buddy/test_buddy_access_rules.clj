@@ -4,13 +4,7 @@
             [buddy.crypto.core :refer :all]
             [buddy.auth.accessrules :refer [compile-rule match-rules apply-rule]]
             [buddy.auth :refer [throw-notauthorized]]
-            [buddy.auth.middleware :refer [wrap-authentication wrap-authorization]]))
-
-(defn make-httpbasic-request
-  [username, password]
-  (if (and username password)
-    {:headers {"authorization" (format "Basic %s" (str->base64 (format "%s:%s" username password)))}}
-    {:headers {}}))
+            [buddy.auth.middleware :refer [wrap-access-rules]]))
 
 (defn mkhandler [value] (fn [_] value))
 
@@ -74,3 +68,32 @@
       (let [req   {:uri "/rrr"}
             match (match-rules req rules)]
         (is (nil? match))))))
+
+
+(defn simple-view
+  [request]
+  (response "hello"))
+
+(defn reject-handler
+  [request]
+  {:status 403
+   :headers {}
+   :body "rejected"})
+
+(deftest access-rules-middleware
+  (testing "default policy :allow"
+    (let [handler (wrap-access-rules simple-view [] {:reject-handler reject-handler
+                                                     :policy :allow})
+          request {:uri "/"}]
+      (is (= (:status (handler request)) 200))))
+  (testing "default policy :reject"
+    (let [handler (wrap-access-rules simple-view [] {:reject-handler reject-handler
+                                                     :policy :reject})
+          request {:uri "/"}]
+      (is (= (:status (handler request)) 403))))
+  (testing "rule policy"
+    (let [rules   [{:pattern #".*" :handler (fn [_] false)}]
+          handler (wrap-access-rules simple-view rules {:reject-handler reject-handler
+                                                        :policy :allow})
+          request {:uri "/"}]
+      (is (= (:status (handler request)) 403)))))

@@ -71,7 +71,7 @@
   can raise unauthorized exception for fast return."
   [handler rules & [{:keys [policy reject-handler] :or {policy :allow}}]]
   (fn [request]
-    (let [match   (accessrules/match-rules request)
+    (let [match   (accessrules/match-rules request rules)
           allow?  (if-not (nil? match)
                     (accessrules/apply-rule request match)
                     (case policy :allow true :reject false true))]
