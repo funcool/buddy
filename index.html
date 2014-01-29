@@ -343,9 +343,10 @@ access rules system based on matching urls using regular expressions and apply s
 easy way to extend or implement own method.</p></div>
 <div class="paragraph"><p>Previously explained authentication backends, implements authorization protocol, allowing
 use one backend for both purposes: authentication or/and authorization.</p></div>
-<div class="paragraph"><p>Authorization backend should implement a deterministic workflow for handle not authorized
-exceptions. By default, each builtin backend has it own default flow for handle not authorized
-requests, but it can to be overwrited with <span class="monospaced">:unauthorized-handler</span> parameter on the constructor.</p></div>
+<div class="paragraph"><p>Any authorization backend should implement a deterministic flow for handle not authorized
+exceptions. By default, each builtin backend has its own default flow for handle not authorized
+requests. Additionaly them exposes a simple way to overwrite the default behavior passing
+a custom exception handler to <span class="monospaced">:unauthorized-handler</span> parameter in the backend constructor.</p></div>
 <div class="paragraph"><p>As example, the default behavior of http basic auth backend, is:</p></div>
 <div class="ulist"><ul>
 <li>
@@ -591,7 +592,7 @@ limitations under the License.</pre>
 <div id="footer">
 <div id="footer-text">
 Version 0.1.0<br>
-Last updated 2014-01-29 23:38:05 CET
+Last updated 2014-01-29 23:41:08 CET
 </div>
 </div>
 </body>
