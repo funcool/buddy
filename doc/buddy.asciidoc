@@ -337,7 +337,117 @@ NOTE: for you want know how it really works, see xref:how-it-works[How it works]
 Access Rules System
 ^^^^^^^^^^^^^^^^^^^
 
-TODO
+Introduction
+++++++++++++
+
+Access rules is an other part of authorization system, and it consists on seting a list
+of rules for a one or set uri's using regular expressions. One rule consists in one regular
+expression with associated handler (function) with authorization logic.
+
+Example:
+
+[source,clojure]
+----
+{:pattern #"^/admin/.*"
+ :handler admin-access}
+----
+
+Having the `admin-access` function like this:
+
+[source,clojure]
+----
+(def users {:niwibe {:roles #{:admin}}
+            :pepe {:roles #{:user}}})
+
+(defn admin-access
+  [request]
+  (let [identity (:identity)]
+    (if (nil? identity) false
+      (let [roles (-> identity users :roles)]
+        (boolean (roles :admin))))))
+----
+
+The handler function should receive a request and return: true, false or throw unauthorized
+exception. Throwing unauthorized exception is a fast return method and no other handler
+is excetured before it.
+
+In previous example we have seen a simple handler associated with one regular expression, but
+_buddy_ access rules system allows combine more handlers using logical `:and` & `:or` combinators
+with nesting support.
+
+Imagine the scenario when you want allow access to a set of urls to operators or administrators:
+
+[source,clojure]
+----
+{:pattern #"^/admin/.*"
+ :handler {:or [admin-access operator-access]}}
+----
+
+Or, allow only when a user has both roles, operator and administrator:
+
+[source,clojure]
+----
+{:pattern #"^/admin/.*"
+ :handler {:and [admin-access operator-access]}}
+----
+
+Even more, you want allow readwrite access to administrators and operators, and
+readonly access to any authenticated user:
+
+[source,clojure]
+----
+{:pattern #"^/admin/.*"
+ :handler {:or [admin-access operator-access
+               {:and [safemethod-access authenticated-access]}]}}
+----
+
+
+How to use it?
+++++++++++++++
+
+Access rules system is still flexible for adapt it for a lot of case uses is very
+simple.
+
+The simplest way to use access rules, is using `wrap-access-rules` middleware
+passing to it a ordered vector of rules. Important: rules are evaluated in order,
+therefore, put less restrictive regular expression on the end.
+
+._myapp.clj_
+[source,clojure]
+----
+(ns myapp
+  (:require [myapp.routes :refer [app]]
+            [myapp.permissions :refer [admin-access operator-access
+                                       any-access authenticated-access]]
+            [buddy.auth.middleware :refer [wrap-access-rules]]))
+
+(def rules [{:pattern #"^/admin/.*"
+             :handler {:or [admin-access operator-access]}}
+            {:pattern #"^/login$"
+             :handler any-access}
+            {:pattern #"^/.*"
+             :handler authenticated-access}])
+
+;; Function that used for handle unauthorized requests
+(defn reject-handler
+  [request]
+  {:status 403
+   :headers {}
+   :body "Not authorized"})
+
+(defn -main
+  [& args]
+  (let [handler (wrap-access-rules app rules {:reject-handler reject-handler}))]
+    (jetty/run-jetty handler {:port 9090}))
+----
+
+If no reject handler is specified, unauthorized exception is raised. These exception
+can be captured by generic authorization middleware.
+
+[NOTE]
+The current request uri not match any regular expresion, the default policy enter in
+action. The default policy in _buddy_ is `:allow` but you can change it to `:reject`
+using keyword `:policy` on wrap-access-rules middleware.
 
 
 Advanced Usage
