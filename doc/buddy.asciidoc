@@ -11,14 +11,16 @@ Introduction
 ------------
 
 _buddy_ is a simple authentication, authorization and signing library for clojure.
-It's designed with simplicity in mind and and high level framework agnostic
-(it only depends on ring).
+It's designed with simplicity in mind and high level framework agnostic
+(it only depends on ring) following the principle of single responsability.
 
-Following the principle of single responsability:
+Features/Libraries:
 
-- authentication & authorization has clear separation between them.
-- authorization are splited in generic authorization and access rules system.
-- protocols and implementation also are clearly separated.
+- Modular Authentication(implemented using protocols).
+- Modular Generic Authorization.
+- Simple regular expression based access rules system.
+- Signing library.
+- Password hashers library.
 
 link:api/index.html[Api reference documentation.]
 
