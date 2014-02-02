@@ -38,15 +38,18 @@ Five most important rules:
 
 All contributions to _buddy_ should keep these important rules in mind.
 
+
 Project Maturity
 ----------------
 
 _buddy_ is a young project and can experiment some api changes.
 
+
 Install
 -------
 
 This section covers a installation of _buddy_.
+
 
 Leiningen
 ~~~~~~~~~
@@ -59,6 +62,7 @@ vector of your *_project.clj_* file:
 ----
 [buddy "0.1.0-beta1"]
 ----
+
 
 Maven
 ~~~~~
@@ -83,6 +87,7 @@ Following of jnanomsg package dependecy:
     <version>0.1.0-beta1</version>
 </dependency>
 ----
+
 
 User guide
 ----------
@@ -130,8 +135,8 @@ strings as primary data.
 ----
 
 Signing process consists on concat signature on the end of the original string,
-separating the signature with predefined separator (default ":" char). Signature 
-consists on timestamped hmac signature. *Timestamp* can be used for invalidate by 
+separating the signature with predefined separator (default ":" char). Signature
+consists on timestamped hmac signature. *Timestamp* can be used for invalidate by
 time some signed data.
 
 .Invalidate signed data using timestamp
@@ -288,7 +293,7 @@ Session
 Session authentication backend, is the simplest backend of all implemented backends
 on _buddy_ but it requires of other additional middlewares from ring: cookies and/or session.
 
-Unlike the previous auth backend, this does not requires authfn, because it relies on 
+Unlike the previous auth backend, this does not requires authfn, because it relies on
 `:identity` key on session  and trust it. If a session contains the `:identity` key with
 logical true value it identifies the current request as authenticated and put `:identity`
 key on request map.
@@ -302,7 +307,7 @@ This works similar to *session* backend, but it uses a signing framework explain
 first section of this document.
 
 Instead of trust a session key,it extracts a token from `Authorization` header like oauth, and
-unsigns it (extracted token) using the signing framework. 
+unsigns it (extracted token) using the signing framework.
 
 If a signature is valid, the contents of unsigned data trustly set to `:identity` key on request.
 
