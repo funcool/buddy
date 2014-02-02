@@ -107,7 +107,7 @@ Using low level api
 ^^^^^^^^^^^^^^^^^^^
 
 _buddy's_ signing functions live in *`buddy.crypto.signing`* namespace and it consists on four
-functions: `sing`, `unsign`, `loads` and `dumps`.
+functions: `sign`, `unsign`, `loads` and `dumps`.
 
 `sign` and `unsign` functions represents a low level api and them works with
 strings as primary data.
@@ -225,7 +225,8 @@ There a list of builtin authentication backends:
 
 - Http Basic
 - Session
-- Stateless Token (using previousle explained signing framework).
+- Stateless Token (using previously explained signing framework).
+
 
 Http Basic
 ^^^^^^^^^^
