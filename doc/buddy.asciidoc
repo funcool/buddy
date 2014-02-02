@@ -169,6 +169,50 @@ their friends (`sign` and `unsign`) but also can sign more complex data.
 
 NOTE: it uses a clojure serialization library link:https://github.com/ptaoussanis/nippy[Nippy]
 
+Hashers
+~~~~~~~
+
+An other main part of good authentication/authorization library is give you some facilities
+for generate secure passwords. _buddy_ comes with some abstractions that allows use various
+pasword algorithms and extend it implementing using an other algorithm.
+
+_buddy_ hashers lives on *`buddy.crypto.hashers` namespace and consists on three functions:
+`make-hasher`, `verify` and `make-hash`. The first function works as hasher constructor, and
+should receive a keyword that represents a hasher:
+
+.Example creating pbkdf2 hasher instance
+[source,clojure]
+----
+(require '[buddy.crypto.hashers :as hs])
+
+(def h (hs/make-hasher :pbkdf2))
+----
+
+The rest of functions has obviously purpose, create new password hash and verify a password:
+
+.Example create new hash and verify it
+[source,clojure]
+----
+
+(def myhash (hs/make-hash h "insecurepassword"))
+(def ok (hs/verify h "insecurepassword" myhash))
+
+;; ok var reference should contain true
+----
+
+NOTE: `make-hash` and `verify` also accept salt for using salted hashes.
+
+In previous example we use *pbkdf2* hasher but _budd_ also support many other
+hasher algorithm by default. This is a complete list of implemented hashers:
+
+- `:pbkdf2` (alias for `:pbkdf2-sha1`)
+- `:bcrypt`
+- `:sha256`
+- `:md5`
+
+
+NOTE: in near future scrypt should to be implemented as an other hash backend.
+
 
 Authentication
 ~~~~~~~~~~~~~~
