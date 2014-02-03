@@ -530,8 +530,6 @@ backend:
 - if `parse` function returns nil, `authenticate` function is ignored and user handler is
   called directly.
 - `authenticate` also can return a valid response, in these case it has same behavior that
-
-
   with `parse` function.
 =========================
 
@@ -600,6 +598,7 @@ authorization system).
 License
 -------
 
+[source,text]
 ----
 Copyright 2013 Andrey Antukh <niwi@niwi.be>
 
