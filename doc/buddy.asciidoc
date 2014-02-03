@@ -60,7 +60,7 @@ vector of your *_project.clj_* file:
 ._on project.clj_
 [source,clojure]
 ----
-[buddy "0.1.0-beta1"]
+[buddy "0.1.0-beta2"]
 ----
 
 
@@ -84,7 +84,7 @@ Following of jnanomsg package dependecy:
 <dependency>
     <groupId>buddy</groupId>
     <artifactId>buddy</artifactId>
-    <version>0.1.0-beta1</version>
+    <version>0.1.0-beta2</version>
 </dependency>
 ----
 
