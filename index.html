@@ -33,23 +33,33 @@ asciidoc.install(2);
 <h2 id="_introduction">1. Introduction</h2>
 <div class="sectionbody">
 <div class="paragraph"><p><em>buddy</em> is a simple authentication, authorization and signing library for clojure.
-It&#8217;s designed with simplicity in mind and and high level framework agnostic
-(it only depends on ring).</p></div>
-<div class="paragraph"><p>Following the principle of single responsability:</p></div>
+It&#8217;s designed with simplicity in mind and high level framework agnostic
+(it only depends on ring) following the principle of single responsability.</p></div>
+<div class="paragraph"><p>Features/Libraries:</p></div>
 <div class="ulist"><ul>
 <li>
 <p>
-authentication &amp; authorization has clear separation between them.
+Modular Authentication(implemented using protocols).
 </p>
 </li>
 <li>
 <p>
-authorization are splited in generic authorization and access rules system.
+Modular Generic Authorization.
 </p>
 </li>
 <li>
 <p>
-protocols and implementation also are clearly separated.
+Simple regular expression based access rules system.
+</p>
+</li>
+<li>
+<p>
+Signing library.
+</p>
+</li>
+<li>
+<p>
+Password hashers library.
 </p>
 </li>
 </ul></div>
@@ -167,7 +177,7 @@ Self contained token generation for use it on completelly stateless token based 
 <div class="sect3">
 <h4 id="_using_low_level_api">4.1.1. Using low level api</h4>
 <div class="paragraph"><p><em>buddy&#8217;s</em> signing functions live in <strong><span class="monospaced">buddy.crypto.signing</span></strong> namespace and it consists on four
-functions: <span class="monospaced">sing</span>, <span class="monospaced">unsign</span>, <span class="monospaced">loads</span> and <span class="monospaced">dumps</span>.</p></div>
+functions: <span class="monospaced">sign</span>, <span class="monospaced">unsign</span>, <span class="monospaced">loads</span> and <span class="monospaced">dumps</span>.</p></div>
 <div class="paragraph"><p><span class="monospaced">sign</span> and <span class="monospaced">unsign</span> functions represents a low level api and them works with
 strings as primary data.</p></div>
 <div class="listingblock">
@@ -228,7 +238,70 @@ their friends (<span class="monospaced">sign</span> and <span class="monospaced"
 </div>
 </div>
 <div class="sect2">
-<h3 id="_authentication">4.2. Authentication</h3>
+<h3 id="_hashers">4.2. Hashers</h3>
+<div class="paragraph"><p>An other main part of good authentication/authorization library is give you some facilities
+for generate secure passwords. <em>buddy</em> comes with some abstractions that allows use various
+pasword algorithms and extend it implementing using an other algorithm.</p></div>
+<div class="paragraph"><p><em>buddy</em> hashers lives on *<span class="monospaced">buddy.crypto.hashers</span> namespace and consists on three functions:
+<span class="monospaced">make-hasher</span>, <span class="monospaced">verify</span> and <span class="monospaced">make-hash</span>. The first function works as hasher constructor, and
+should receive a keyword that represents a hasher:</p></div>
+<div class="listingblock">
+<div class="title">Example creating pbkdf2 hasher instance</div>
+<div class="content"><div class="highlight"><pre><span class="p">(</span><span class="nf">require</span> <span class="o">&#39;</span><span class="p">[</span><span class="nv">buddy.crypto.hashers</span> <span class="ss">:as</span> <span class="nv">hs</span><span class="p">])</span>
+
+<span class="p">(</span><span class="k">def </span><span class="nv">h</span> <span class="p">(</span><span class="nf">hs/make-hasher</span> <span class="ss">:pbkdf2</span><span class="p">))</span>
+</pre></div></div></div>
+<div class="paragraph"><p>The rest of functions has obviously purpose, create new password hash and verify a password:</p></div>
+<div class="listingblock">
+<div class="title">Example create new hash and verify it</div>
+<div class="content"><div class="highlight"><pre><span class="p">(</span><span class="k">def </span><span class="nv">myhash</span> <span class="p">(</span><span class="nf">hs/make-hash</span> <span class="nv">h</span> <span class="s">&quot;insecurepassword&quot;</span><span class="p">))</span>
+<span class="p">(</span><span class="k">def </span><span class="nv">ok</span> <span class="p">(</span><span class="nf">hs/verify</span> <span class="nv">h</span> <span class="s">&quot;insecurepassword&quot;</span> <span class="nv">myhash</span><span class="p">))</span>
+
+<span class="c1">;; ok var reference should contain true</span>
+</pre></div></div></div>
+<div class="admonitionblock">
+<table><tr>
+<td class="icon">
+<div class="title">Note</div>
+</td>
+<td class="content"><span class="monospaced">make-hash</span> and <span class="monospaced">verify</span> also accept salt for using salted hashes.</td>
+</tr></table>
+</div>
+<div class="paragraph"><p>In previous example we use <strong>pbkdf2</strong> hasher but <em>budd</em> also support many other
+hasher algorithm by default. This is a complete list of implemented hashers:</p></div>
+<div class="ulist"><ul>
+<li>
+<p>
+<span class="monospaced">:pbkdf2</span> (alias for <span class="monospaced">:pbkdf2-sha1</span>)
+</p>
+</li>
+<li>
+<p>
+<span class="monospaced">:bcrypt</span>
+</p>
+</li>
+<li>
+<p>
+<span class="monospaced">:sha256</span>
+</p>
+</li>
+<li>
+<p>
+<span class="monospaced">:md5</span>
+</p>
+</li>
+</ul></div>
+<div class="admonitionblock">
+<table><tr>
+<td class="icon">
+<div class="title">Note</div>
+</td>
+<td class="content">in near future scrypt should to be implemented as an other hash backend.</td>
+</tr></table>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_authentication">4.3. Authentication</h3>
 <div class="paragraph"><p><em>buddy</em> comes with authentication system. It is implemented with protocols, that can be used for
 implement own authentication backend if one of the now supported backends by buddy does not satisfy
 your needs.</p></div>
@@ -246,12 +319,12 @@ Session
 </li>
 <li>
 <p>
-Stateless Token (using previousle explained signing framework).
+Stateless Token (using previously explained signing framework).
 </p>
 </li>
 </ul></div>
 <div class="sect3">
-<h4 id="_http_basic">4.2.1. Http Basic</h4>
+<h4 id="_http_basic">4.3.1. Http Basic</h4>
 <div class="paragraph"><p>Http Basic authentication backend is one of the simplest/unsecure authentication system, but works
 well as first introduction of how authentication works with <em>buddy</em>.</p></div>
 <div class="paragraph"><p>The main goal of <em>buddy</em> is not depending on any high level framework like (compojure, caribou, pedestal)
@@ -300,7 +373,7 @@ and it works directly as ring middleware.</p></div>
 </pre></div></div></div>
 </div>
 <div class="sect3">
-<h4 id="_session">4.2.2. Session</h4>
+<h4 id="_session">4.3.2. Session</h4>
 <div class="paragraph"><p>Session authentication backend, is the simplest backend of all implemented backends
 on <em>buddy</em> but it requires of other additional middlewares from ring: cookies and/or session.</p></div>
 <div class="paragraph"><p>Unlike the previous auth backend, this does not requires authfn, because it relies on
@@ -310,7 +383,7 @@ key on request map.</p></div>
 <div class="paragraph"><p>See <a href="#examples">examples section</a> for complete examples for this backend.</p></div>
 </div>
 <div class="sect3">
-<h4 id="_stateless_token">4.2.3. Stateless Token</h4>
+<h4 id="_stateless_token">4.3.3. Stateless Token</h4>
 <div class="paragraph"><p>This works similar to <strong>session</strong> backend, but it uses a signing framework explained in a
 first section of this document.</p></div>
 <div class="paragraph"><p>Instead of trust a session key,it extracts a token from <span class="monospaced">Authorization</span> header like oauth, and
@@ -320,7 +393,7 @@ unsigns it (extracted token) using the signing framework.</p></div>
 </div>
 </div>
 <div class="sect2">
-<h3 id="_authorization">4.3. Authorization</h3>
+<h3 id="_authorization">4.4. Authorization</h3>
 <div class="paragraph"><p><em>buddy</em> also comes with authorization system.</p></div>
 <div class="paragraph"><p>The authorization system is splited in two parts:</p></div>
 <div class="ulist"><ul>
@@ -338,7 +411,7 @@ access rules system based on matching urls using regular expressions and apply s
 </li>
 </ul></div>
 <div class="sect3">
-<h4 id="_generic_authorization">4.3.1. Generic authorization</h4>
+<h4 id="_generic_authorization">4.4.1. Generic authorization</h4>
 <div class="paragraph"><p>Authentication and authorization systems on <em>buddy</em> are implemented using protocols for allow
 easy way to extend or implement own method.</p></div>
 <div class="paragraph"><p>Previously explained authentication backends, implements authorization protocol, allowing
@@ -404,8 +477,100 @@ If a user is anonymosus, 401 response with <span class="monospaced">WWW-Authenti
 </div>
 </div>
 <div class="sect3">
-<h4 id="_access_rules_system">4.3.2. Access Rules System</h4>
-<div class="paragraph"><p>TODO</p></div>
+<h4 id="_access_rules_system">4.4.2. Access Rules System</h4>
+<div class="sect4">
+<h5 id="_introduction_2">Introduction</h5>
+<div class="paragraph"><p>Access rules is an other part of authorization system, and it consists on seting a list
+of rules for a one or set uri&#8217;s using regular expressions. One rule consists in one regular
+expression with associated handler (function) with authorization logic.</p></div>
+<div class="paragraph"><p>Example:</p></div>
+<div class="listingblock">
+<div class="content"><div class="highlight"><pre><span class="p">{</span><span class="ss">:pattern</span> <span class="o">#</span><span class="s">&quot;^/admin/.*&quot;</span>
+ <span class="ss">:handler</span> <span class="nv">admin-access</span><span class="p">}</span>
+</pre></div></div></div>
+<div class="paragraph"><p>Having the <span class="monospaced">admin-access</span> function like this:</p></div>
+<div class="listingblock">
+<div class="content"><div class="highlight"><pre><span class="p">(</span><span class="k">def </span><span class="nv">users</span> <span class="p">{</span><span class="ss">:niwibe</span> <span class="p">{</span><span class="ss">:roles</span> <span class="o">#</span><span class="p">{</span><span class="ss">:admin</span><span class="p">}}</span>
+            <span class="ss">:pepe</span> <span class="p">{</span><span class="ss">:roles</span> <span class="o">#</span><span class="p">{</span><span class="ss">:user</span><span class="p">}}})</span>
+
+<span class="p">(</span><span class="kd">defn </span><span class="nv">admin-access</span>
+  <span class="p">[</span><span class="nv">request</span><span class="p">]</span>
+  <span class="p">(</span><span class="k">let </span><span class="p">[</span><span class="nb">identity </span><span class="p">(</span><span class="ss">:identity</span><span class="p">)]</span>
+    <span class="p">(</span><span class="k">if </span><span class="p">(</span><span class="nb">nil? </span><span class="nv">identity</span><span class="p">)</span> <span class="nv">false</span>
+      <span class="p">(</span><span class="k">let </span><span class="p">[</span><span class="nv">roles</span> <span class="p">(</span><span class="nb">-&gt; identity </span><span class="nv">users</span> <span class="ss">:roles</span><span class="p">)]</span>
+        <span class="p">(</span><span class="nb">boolean </span><span class="p">(</span><span class="nf">roles</span> <span class="ss">:admin</span><span class="p">))))))</span>
+</pre></div></div></div>
+<div class="paragraph"><p>The handler function should receive a request and return: true, false or throw unauthorized
+exception. Throwing unauthorized exception is a fast return method and no other handler
+is excetured before it.</p></div>
+<div class="paragraph"><p>In previous example we have seen a simple handler associated with one regular expression, but
+<em>buddy</em> access rules system allows combine more handlers using logical <span class="monospaced">:and</span> &amp; <span class="monospaced">:or</span> combinators
+with nesting support.</p></div>
+<div class="paragraph"><p>Imagine the scenario when you want allow access to a set of urls to operators or administrators:</p></div>
+<div class="listingblock">
+<div class="content"><div class="highlight"><pre><span class="p">{</span><span class="ss">:pattern</span> <span class="o">#</span><span class="s">&quot;^/admin/.*&quot;</span>
+ <span class="ss">:handler</span> <span class="p">{</span><span class="ss">:or</span> <span class="p">[</span><span class="nv">admin-access</span> <span class="nv">operator-access</span><span class="p">]}}</span>
+</pre></div></div></div>
+<div class="paragraph"><p>Or, allow only when a user has both roles, operator and administrator:</p></div>
+<div class="listingblock">
+<div class="content"><div class="highlight"><pre><span class="p">{</span><span class="ss">:pattern</span> <span class="o">#</span><span class="s">&quot;^/admin/.*&quot;</span>
+ <span class="ss">:handler</span> <span class="p">{</span><span class="ss">:and</span> <span class="p">[</span><span class="nv">admin-access</span> <span class="nv">operator-access</span><span class="p">]}}</span>
+</pre></div></div></div>
+<div class="paragraph"><p>Even more, you want allow readwrite access to administrators and operators, and
+readonly access to any authenticated user:</p></div>
+<div class="listingblock">
+<div class="content"><div class="highlight"><pre><span class="p">{</span><span class="ss">:pattern</span> <span class="o">#</span><span class="s">&quot;^/admin/.*&quot;</span>
+ <span class="ss">:handler</span> <span class="p">{</span><span class="ss">:or</span> <span class="p">[</span><span class="nv">admin-access</span> <span class="nv">operator-access</span>
+               <span class="p">{</span><span class="ss">:and</span> <span class="p">[</span><span class="nv">safemethod-access</span> <span class="nv">authenticated-access</span><span class="p">]}]}}</span>
+</pre></div></div></div>
+</div>
+<div class="sect4">
+<h5 id="_how_to_use_it">How to use it?</h5>
+<div class="paragraph"><p>Access rules system is still flexible for adapt it for a lot of case uses is very
+simple.</p></div>
+<div class="paragraph"><p>The simplest way to use access rules, is using <span class="monospaced">wrap-access-rules</span> middleware
+passing to it a ordered vector of rules. Important: rules are evaluated in order,
+therefore, put less restrictive regular expression on the end.</p></div>
+<div class="listingblock">
+<div class="title"><em>myapp.clj</em></div>
+<div class="content"><div class="highlight"><pre><span class="p">(</span><span class="kd">ns </span><span class="nv">myapp</span>
+  <span class="p">(</span><span class="ss">:require</span> <span class="p">[</span><span class="nv">myapp.routes</span> <span class="ss">:refer</span> <span class="p">[</span><span class="nv">app</span><span class="p">]]</span>
+            <span class="p">[</span><span class="nv">myapp.permissions</span> <span class="ss">:refer</span> <span class="p">[</span><span class="nv">admin-access</span> <span class="nv">operator-access</span>
+                                       <span class="nv">any-access</span> <span class="nv">authenticated-access</span><span class="p">]]</span>
+            <span class="p">[</span><span class="nv">buddy.auth.middleware</span> <span class="ss">:refer</span> <span class="p">[</span><span class="nv">wrap-access-rules</span><span class="p">]]))</span>
+
+<span class="p">(</span><span class="k">def </span><span class="nv">rules</span> <span class="p">[{</span><span class="ss">:pattern</span> <span class="o">#</span><span class="s">&quot;^/admin/.*&quot;</span>
+             <span class="ss">:handler</span> <span class="p">{</span><span class="ss">:or</span> <span class="p">[</span><span class="nv">admin-access</span> <span class="nv">operator-access</span><span class="p">]}}</span>
+            <span class="p">{</span><span class="ss">:pattern</span> <span class="o">#</span><span class="s">&quot;^/login$&quot;</span>
+             <span class="ss">:handler</span> <span class="nv">any-access</span><span class="p">}</span>
+            <span class="p">{</span><span class="ss">:pattern</span> <span class="o">#</span><span class="s">&quot;^/.*&quot;</span>
+             <span class="ss">:handler</span> <span class="nv">authenticated-access</span><span class="p">}])</span>
+
+<span class="c1">;; Function that used for handle unauthorized requests</span>
+<span class="p">(</span><span class="kd">defn </span><span class="nv">reject-handler</span>
+  <span class="p">[</span><span class="nv">request</span><span class="p">]</span>
+  <span class="p">{</span><span class="ss">:status</span> <span class="mi">403</span>
+   <span class="ss">:headers</span> <span class="p">{}</span>
+   <span class="ss">:body</span> <span class="s">&quot;Not authorized&quot;</span><span class="p">})</span>
+
+<span class="p">(</span><span class="kd">defn </span><span class="nv">-main</span>
+  <span class="p">[</span><span class="o">&amp;</span> <span class="nv">args</span><span class="p">]</span>
+  <span class="p">(</span><span class="k">let </span><span class="p">[</span><span class="nv">handler</span> <span class="p">(</span><span class="nf">wrap-access-rules</span> <span class="nv">app</span> <span class="nv">rules</span> <span class="p">{</span><span class="ss">:reject-handler</span> <span class="nv">reject-handler</span><span class="p">}))]</span>
+    <span class="p">(</span><span class="nf">jetty/run-jetty</span> <span class="nv">handler</span> <span class="p">{</span><span class="ss">:port</span> <span class="mi">9090</span><span class="p">}))</span>
+</pre></div></div></div>
+<div class="paragraph"><p>If no reject handler is specified, unauthorized exception is raised. These exception
+can be captured by generic authorization middleware.</p></div>
+<div class="admonitionblock">
+<table><tr>
+<td class="icon">
+<div class="title">Note</div>
+</td>
+<td class="content">The current request uri not match any regular expresion, the default policy enter in
+action. The default policy in <em>buddy</em> is <span class="monospaced">:allow</span> but you can change it to <span class="monospaced">:reject</span>
+using keyword <span class="monospaced">:policy</span> on wrap-access-rules middleware.</td>
+</tr></table>
+</div>
+</div>
 </div>
 </div>
 </div>
@@ -592,7 +757,7 @@ limitations under the License.</pre>
 <div id="footer">
 <div id="footer-text">
 Version 0.1.0<br>
-Last updated 2014-01-29 23:41:08 CET
+Last updated 2014-02-03 20:39:30 CET
 </div>
 </div>
 </body>
