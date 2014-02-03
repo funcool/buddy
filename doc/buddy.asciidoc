@@ -207,7 +207,7 @@ The rest of functions has obviously purpose, create new password hash and verify
 
 NOTE: `make-hash` and `verify` also accept salt for using salted hashes.
 
-In previous example we use *pbkdf2* hasher but _budd_ also support many other
+In previous example we use *pbkdf2* hasher but _buddy_ also support many other
 hasher algorithm by default. This is a complete list of implemented hashers:
 
 - `:pbkdf2` (alias for `:pbkdf2-sha1`)
@@ -530,6 +530,8 @@ backend:
 - if `parse` function returns nil, `authenticate` function is ignored and user handler is
   called directly.
 - `authenticate` also can return a valid response, in these case it has same behavior that
+
+
   with `parse` function.
 =========================
 
@@ -547,6 +549,7 @@ This is a flow that follows authorization middleware:
    any part of your handler.
 3. handle-unauthorized is executed of your backend, if user has specified it own function,
    the user defined function is executed else, default behavior is executed.
+
 
 Examples
 --------
@@ -575,6 +578,7 @@ follow the following steps depending on the situation:
 
 - Open new issue with new feature purpose.
 - If it is accepted, follow same steps as "bugfix".
+
 
 FAQ
 ---
