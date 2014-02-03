@@ -267,7 +267,7 @@ should receive a keyword that represents a hasher:</p></div>
 <td class="content"><span class="monospaced">make-hash</span> and <span class="monospaced">verify</span> also accept salt for using salted hashes.</td>
 </tr></table>
 </div>
-<div class="paragraph"><p>In previous example we use <strong>pbkdf2</strong> hasher but <em>budd</em> also support many other
+<div class="paragraph"><p>In previous example we use <strong>pbkdf2</strong> hasher but <em>buddy</em> also support many other
 hasher algorithm by default. This is a complete list of implemented hashers:</p></div>
 <div class="ulist"><ul>
 <li>
@@ -629,13 +629,9 @@ if <span class="monospaced">parse</span> function returns nil, <span class="mono
 <li>
 <p>
 <span class="monospaced">authenticate</span> also can return a valid response, in these case it has same behavior that
-  with <span class="monospaced">parse</span> function.
 </p>
 </li>
 </ul></div>
-</td>
-</tr></table>
-</div>
 <div class="paragraph"><p><strong>IAuthorization</strong> provides <span class="monospaced">handle-unauthorized</span> function. Each backend implements it default
 behavior but it can be overwritted with user defined function, passed on <span class="monospaced">:handle-unauthorized</span>
 keyword parameter to backend constructor. It always should return a valid response.</p></div>
@@ -661,12 +657,6 @@ handle-unauthorized is executed of your backend, if user has specified it own fu
 </p>
 </li>
 </ol></div>
-</div>
-</div>
-</div>
-<div class="sect1">
-<h2 id="_examples">6. Examples</h2>
-<div class="sectionbody">
 <div class="paragraph"><p><em>buddy</em> comes with some examples for facilitate a new user understand how it works. All
 examples are available on <span class="monospaced">examples/</span> directory on root project.</p></div>
 <div class="paragraph"><p>At this momment one example is available:</p></div>
@@ -677,11 +667,6 @@ examples are available on <span class="monospaced">examples/</span> directory on
 </p>
 </li>
 </ul></div>
-</div>
-</div>
-<div class="sect1">
-<h2 id="_how_to_contribute">7. How to contribute</h2>
-<div class="sectionbody">
 <div class="paragraph"><p><em>buddy</em> unlike clojure and other clojure contrib libs, does not have much restrictions for contribute. Just
 follow the following steps depending on the situation:</p></div>
 <div class="paragraph"><p><strong>Bugfix</strong>:</p></div>
@@ -715,11 +700,6 @@ If it is accepted, follow same steps as "bugfix".
 </p>
 </li>
 </ul></div>
-</div>
-</div>
-<div class="sect1">
-<h2 id="_faq">8. FAQ</h2>
-<div class="sectionbody">
 <div class="paragraph"><p><strong>How can use <em>buddy</em> with <a href="http://clojure-liberator.github.io/liberator/">liberator</a>?</strong></p></div>
 <div class="paragraph"><p><em>buddy</em> by design, has authorization and authentication concepts well separated. This
 helps a lot if you want use some one part of it (ex: authentencation only) without including
@@ -729,11 +709,6 @@ decision handlers for authorization and by normally usage, you should use it ins
 of integrate other third party authorization system to liberator.</p></div>
 <div class="paragraph"><p>The best combination is use <em>buddy</em> authentication middleware with liberator (using it
 authorization system).</p></div>
-</div>
-</div>
-<div class="sect1">
-<h2 id="_license">9. License</h2>
-<div class="sectionbody">
 <div class="listingblock">
 <div class="content monospaced">
 <pre>Copyright 2013 Andrey Antukh &lt;niwi@niwi.be&gt;
@@ -750,6 +725,10 @@ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 See the License for the specific language governing permissions and
 limitations under the License.</pre>
 </div></div>
+</td>
+</tr></table>
+</div>
+</div>
 </div>
 </div>
 </div>
@@ -757,7 +736,7 @@ limitations under the License.</pre>
 <div id="footer">
 <div id="footer-text">
 Version 0.1.0<br>
-Last updated 2014-02-03 20:39:30 CET
+Last updated 2014-02-03 20:50:03 CET
 </div>
 </div>
 </body>
