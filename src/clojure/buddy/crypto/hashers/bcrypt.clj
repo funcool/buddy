@@ -16,6 +16,7 @@
   (:require [buddy.crypto.hashers.protocols :refer [IHasher]]
             [buddy.crypto.hashers.sha256 :refer [make-sha256]]
             [buddy.crypto.core :refer :all]
+            [buddy.codecs :refer :all]
             [clojure.string :refer [split]])
   (:import (buddy.impl BCrypt)))
 

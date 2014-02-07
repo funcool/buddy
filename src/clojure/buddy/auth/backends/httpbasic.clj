@@ -15,7 +15,7 @@
 (ns buddy.auth.backends.httpbasic
   (:require [buddy.auth.protocols :as proto]
             [buddy.auth :refer [authenticated?]]
-            [buddy.crypto.core :refer [base64->str]]
+            [buddy.codecs :refer [base64->str]]
             [buddy.util :refer [m-maybe]]
             [clojure.string :refer [split]]
             [ring.util.response :refer [response response? header status]]))

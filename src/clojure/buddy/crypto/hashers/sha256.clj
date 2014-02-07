@@ -14,6 +14,7 @@
 
 (ns buddy.crypto.hashers.sha256
   (:require [buddy.crypto.hashers.protocols :refer [IHasher]]
+            [buddy.codecs :refer :all]
             [buddy.crypto.core :refer :all]
             [clojure.string :refer [split]])
   (:import (java.security MessageDigest)))

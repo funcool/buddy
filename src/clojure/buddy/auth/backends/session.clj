@@ -15,7 +15,6 @@
 (ns buddy.auth.backends.session
   (:require [buddy.auth.protocols :as proto]
             [buddy.auth :refer [authenticated?]]
-            [buddy.crypto.core :refer [base64->str]]
             [buddy.util :refer [m-maybe]]
             [clojure.string :refer [split]]
             [ring.util.response :refer [response response? header status]]))

@@ -9,3 +9,6 @@ pom.xml.asc
 /.lein-*
 /.nrepl-port
 doc/index.html
+\#*\#
+*~
+.\#*

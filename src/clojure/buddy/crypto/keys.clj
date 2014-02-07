@@ -13,7 +13,7 @@
 ;; limitations under the License.
 
 (ns buddy.crypto.keys
-  (:require [buddy.crypto.core :refer [str->bytes]])
+  (:require [buddy.codecs :refer [str->bytes]])
   (:import java.security.Key))
 
 (defn make-secret-key

@@ -1,6 +1,6 @@
 (ns buddy.test_buddy_crypto_core
   (:require [clojure.test :refer :all]
-            [buddy.crypto.core :as crypto]
+            [buddy.codecs :as codecs]
             [buddy.crypto.signing :as signing]
             [buddy.crypto.keys :refer [make-secret-key]])
   (:import (java.util Arrays)))
@@ -9,16 +9,16 @@
 
 (deftest core-utils-test
   (testing "Hex encode/decode 01"
-    (let [some-bytes  (crypto/str->bytes "FooBar")
-          encoded     (crypto/bytes->hex some-bytes)
-          decoded     (crypto/hex->bytes encoded)
-          some-str    (crypto/bytes->str decoded)]
+    (let [some-bytes  (codecs/str->bytes "FooBar")
+          encoded     (codecs/bytes->hex some-bytes)
+          decoded     (codecs/hex->bytes encoded)
+          some-str    (codecs/bytes->str decoded)]
       (is (Arrays/equals decoded, some-bytes))
       (is (= some-str "FooBar"))))
   (testing "Hex encode/decode 02"
     (let [mybytes (into-array Byte/TYPE (range 10))
-          encoded (crypto/bytes->hex mybytes)
-          decoded (crypto/hex->bytes encoded)]
+          encoded (codecs/bytes->hex mybytes)
+          decoded (codecs/hex->bytes encoded)]
       (is (Arrays/equals decoded mybytes)))))
 
 (deftest sign-tests

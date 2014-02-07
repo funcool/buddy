@@ -1,6 +1,6 @@
 (ns buddy.test_buddy_crypto_hashers
   (:require [clojure.test :refer :all]
-            [buddy.crypto.core :as crypto]
+            [buddy.codecs :as crypto]
             [buddy.crypto.hashers :as hs]
             [buddy.crypto.hashers.pbkdf2 :as pbkdf2]
             [buddy.crypto.hashers.bcrypt :as bcrypt]

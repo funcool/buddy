@@ -1,6 +1,7 @@
 (ns buddy.test_buddy_auth
   (:require [clojure.test :refer :all]
             [ring.util.response :refer [response? response]]
+            [buddy.codecs :refer :all]
             [buddy.crypto.core :refer :all]
             [buddy.crypto.signing :as signing]
             [buddy.auth :refer [throw-notauthorized]]
