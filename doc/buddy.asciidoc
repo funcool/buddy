@@ -210,8 +210,7 @@ This is a complete list of implemented hashers:
 - `byddy.crypto.hashers.bcrypt`
 - `buddy.crypto.hashers.sha256`
 - `buddy.crypto.hashers.md5`
-
-NOTE: in near future scrypt should to be implemented.
+- `buddy.crypto.hashers.scrypt`
 
 
 Authentication
