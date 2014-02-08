@@ -21,26 +21,35 @@
 
 (defn make-bcrypt
   [password log-rouds]
-  (let [salt    (BCrypt/gensalt log-rouds)
-        passwd  (-> (make-sha256 password)
-                    (BCrypt/hashpw salt))]
-    (bytes->hex (str->bytes passwd))))
+  (let [salt    (BCrypt/gensalt log-rouds)]
+    (-> (make-sha256 password)
+        (BCrypt/hashpw salt))))
 
 (defn make-password
   "Encrypts a raw string password using
   pbkdf2_sha1 algorithm and return formatted
   string."
-  [pw & [{:keys [rounds] :or {rounds 12}}]]
-  (format "bcrypt+sha256$%s" (make-bcrypt pw rounds)))
+  [pw & [{:keys [salt rounds] :or {rounds 12}}]]
+  (let [salt   (cond
+                (nil? salt) (bytes->hex (random-bytes 12))
+                (string? salt) salt
+                (bytes? salt) (bytes->hex salt)
+                :else (throw (IllegalArgumentException. "invalid salt type")))
+        passwd (-> (str salt pw salt)
+                   (make-bcrypt rounds)
+                   (str->bytes)
+                   (bytes->hex))]
+    (format "bcrypt+sha256$%s$%s" salt passwd)))
 
 (defn check-password
-  "Check if a unencrypted password matches
-  with another encrypted password."
+  "Check if a plaintext password matches with other
+hashed password."
   [attempt hashed]
-  (let [[t p] (split hashed #"\$")]
+  (let [[t s p] (split hashed #"\$")]
     (if (not= t "bcrypt+sha256")
       (throw (IllegalArgumentException. "invalid type of hasher"))
-      (let [p       (-> (hex->bytes p)
+      (let [hashed  (-> (hex->bytes p)
                         (bytes->str))
-            attempt (make-sha256 attempt)]
-        (BCrypt/checkpw attempt p)))))
+            attempt (-> (str s attempt s)
+                        (make-sha256))]
+        (BCrypt/checkpw attempt hashed)))))

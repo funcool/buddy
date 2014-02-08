@@ -199,8 +199,7 @@ password with previously created password hash.
 ----
 
 [NOTE] 
-`make-password` accept distinct parameters depending on hashers. As example
-bcrypt does not allow set own salt.
+`make-password` accept distinct parameters depending on hasher implementation.
 
 In previous example we use *bcrypt* hasher but _buddy_ also support many other
 hasher algorithm by default. 
