@@ -240,22 +240,18 @@ their friends (<span class="monospaced">sign</span> and <span class="monospaced"
 <div class="sect2">
 <h3 id="_hashers">4.2. Hashers</h3>
 <div class="paragraph"><p>An other main part of good authentication/authorization library is give you some facilities
-for generate secure passwords. <em>buddy</em> comes with some abstractions that allows use various
-pasword algorithms and extend it implementing using an other algorithm.</p></div>
-<div class="paragraph"><p><em>buddy</em> hashers lives on *<span class="monospaced">buddy.crypto.hashers</span> namespace and consists on three functions:
-<span class="monospaced">make-hasher</span>, <span class="monospaced">verify</span> and <span class="monospaced">make-hash</span>. The first function works as hasher constructor, and
-should receive a keyword that represents a hasher:</p></div>
-<div class="listingblock">
-<div class="title">Example creating pbkdf2 hasher instance</div>
-<div class="content"><div class="highlight"><pre><span class="p">(</span><span class="nf">require</span> <span class="o">&#39;</span><span class="p">[</span><span class="nv">buddy.crypto.hashers</span> <span class="ss">:as</span> <span class="nv">hs</span><span class="p">])</span>
-
-<span class="p">(</span><span class="k">def </span><span class="nv">h</span> <span class="p">(</span><span class="nf">hs/make-hasher</span> <span class="ss">:pbkdf2</span><span class="p">))</span>
-</pre></div></div></div>
-<div class="paragraph"><p>The rest of functions has obviously purpose, create new password hash and verify a password:</p></div>
+for generate secure passwords. <em>buddy</em> comes with few functions for generate and verify passwords
+using widely used password derivation algorithms like bcrypt and pbkdf2(with sha256).</p></div>
+<div class="paragraph"><p><em>buddy</em> hashers lives on *<span class="monospaced">buddy.crypto.hashers.*</span> namespace and usually consists on two functions:
+<span class="monospaced">make-password</span> and <span class="monospaced">check-password</span>.</p></div>
+<div class="paragraph"><p>The purpose of these functions is obvious: creating new password, and verify incoming plain text
+password with previously created password hash.</p></div>
 <div class="listingblock">
 <div class="title">Example create new hash and verify it</div>
-<div class="content"><div class="highlight"><pre><span class="p">(</span><span class="k">def </span><span class="nv">myhash</span> <span class="p">(</span><span class="nf">hs/make-hash</span> <span class="nv">h</span> <span class="s">&quot;insecurepassword&quot;</span><span class="p">))</span>
-<span class="p">(</span><span class="k">def </span><span class="nv">ok</span> <span class="p">(</span><span class="nf">hs/verify</span> <span class="nv">h</span> <span class="s">&quot;insecurepassword&quot;</span> <span class="nv">myhash</span><span class="p">))</span>
+<div class="content"><div class="highlight"><pre><span class="p">(</span><span class="nf">require</span> <span class="o">&#39;</span><span class="p">[</span><span class="nv">buddy.crypto.hashers.bcrypt</span> <span class="ss">:as</span> <span class="nv">hs</span><span class="p">])</span>
+
+<span class="p">(</span><span class="k">def </span><span class="nv">myhash</span> <span class="p">(</span><span class="nf">hs/make-password</span> <span class="s">&quot;secretpassword&quot;</span><span class="p">))</span>
+<span class="p">(</span><span class="k">def </span><span class="nv">ok</span> <span class="p">(</span><span class="nf">hs/check-password</span> <span class="s">&quot;secretpassword&quot;</span> <span class="nv">myhash</span><span class="p">))</span>
 
 <span class="c1">;; ok var reference should contain true</span>
 </pre></div></div></div>
@@ -264,30 +260,32 @@ should receive a keyword that represents a hasher:</p></div>
 <td class="icon">
 <div class="title">Note</div>
 </td>
-<td class="content"><span class="monospaced">make-hash</span> and <span class="monospaced">verify</span> also accept salt for using salted hashes.</td>
+<td class="content"><span class="monospaced">make-password</span> accept distinct parameters depending on hashers. As example
+bcrypt does not allow set own salt.</td>
 </tr></table>
 </div>
-<div class="paragraph"><p>In previous example we use <strong>pbkdf2</strong> hasher but <em>buddy</em> also support many other
-hasher algorithm by default. This is a complete list of implemented hashers:</p></div>
+<div class="paragraph"><p>In previous example we use <strong>bcrypt</strong> hasher but <em>buddy</em> also support many other
+hasher algorithm by default.</p></div>
+<div class="paragraph"><p>This is a complete list of implemented hashers:</p></div>
 <div class="ulist"><ul>
 <li>
 <p>
-<span class="monospaced">:pbkdf2</span> (alias for <span class="monospaced">:pbkdf2-sha1</span>)
+<span class="monospaced">buddy.crypto.hashers.pbkdf2</span> (implements pbkdf2 with sha256)
 </p>
 </li>
 <li>
 <p>
-<span class="monospaced">:bcrypt</span>
+<span class="monospaced">byddy.crypto.hashers.bcrypt</span>
 </p>
 </li>
 <li>
 <p>
-<span class="monospaced">:sha256</span>
+<span class="monospaced">buddy.crypto.hashers.sha256</span>
 </p>
 </li>
 <li>
 <p>
-<span class="monospaced">:md5</span>
+<span class="monospaced">buddy.crypto.hashers.md5</span>
 </p>
 </li>
 </ul></div>
@@ -296,7 +294,7 @@ hasher algorithm by default. This is a complete list of implemented hashers:</p>
 <td class="icon">
 <div class="title">Note</div>
 </td>
-<td class="content">in near future scrypt should to be implemented as an other hash backend.</td>
+<td class="content">in near future scrypt should to be implemented.</td>
 </tr></table>
 </div>
 </div>
@@ -756,7 +754,7 @@ limitations under the License.
 <div id="footer">
 <div id="footer-text">
 Version 0.1.0<br>
-Last updated 2014-02-03 21:04:00 CET
+Last updated 2014-02-08 19:52:54 CET
 </div>
 </div>
 </body>
