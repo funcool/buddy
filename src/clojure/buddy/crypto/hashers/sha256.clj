@@ -13,8 +13,7 @@
 ;; limitations under the License.
 
 (ns buddy.crypto.hashers.sha256
-  (:require [buddy.crypto.hashers.protocols :refer [IHasher]]
-            [buddy.codecs :refer :all]
+  (:require [buddy.codecs :refer :all]
             [buddy.crypto.core :refer :all]
             [clojure.string :refer [split]])
   (:import (java.security MessageDigest)))
@@ -48,12 +47,3 @@
       (throw (IllegalArgumentException. "invalid type of hasher"))
       (let [salt        (hex->bytes s)]
         (= (make-sha256 attempt salt) p)))))
-
-(defrecord Sha256 []
-  IHasher
-  (verify [_ attempt encrypted]
-    (check-password attempt encrypted))
-  (make-hash [_ password salt]
-    (make-password password {:salt (str->bytes salt)}))
-  (make-hash [_ password]
-    (make-password password)))

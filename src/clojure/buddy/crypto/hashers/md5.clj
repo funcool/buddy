@@ -13,8 +13,7 @@
 ;; limitations under the License.
 
 (ns buddy.crypto.hashers.md5
-  (:require [buddy.crypto.hashers.protocols :refer [IHasher]]
-            [buddy.crypto.core :refer :all]
+  (:require [buddy.crypto.core :refer :all]
             [buddy.codecs :refer :all]
             [clojure.string :refer [split]])
   (:import (java.security MessageDigest)))
@@ -49,12 +48,3 @@
       (throw (IllegalArgumentException. "invalid type of hasher"))
       (let [salt        (hex->bytes s)]
         (= (make-md5 attempt salt) p)))))
-
-(defrecord Md5 []
-  IHasher
-  (verify [_ attempt encrypted]
-    (check-password attempt encrypted))
-  (make-hash [_ password salt]
-    (make-password password {:salt salt}))
-  (make-hash [_ password]
-    (make-password password)))

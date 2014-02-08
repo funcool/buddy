@@ -20,7 +20,6 @@ import javax.crypto.SecretKeyFactory;
 
 
 public class Pbkdf2 {
-    public static int defaultIterations = 14000;
     public static String defaultAlgorithm = "HmacSHA256";
 
     public static byte[] deriveKey(final byte[] password, final byte[] salt, 

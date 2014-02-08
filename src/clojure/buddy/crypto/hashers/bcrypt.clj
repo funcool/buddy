@@ -13,8 +13,7 @@
 ;; limitations under the License.
 
 (ns buddy.crypto.hashers.bcrypt
-  (:require [buddy.crypto.hashers.protocols :refer [IHasher]]
-            [buddy.crypto.hashers.sha256 :refer [make-sha256]]
+  (:require [buddy.crypto.hashers.sha256 :refer [make-sha256]]
             [buddy.crypto.core :refer :all]
             [buddy.codecs :refer :all]
             [clojure.string :refer [split]])
@@ -31,23 +30,17 @@
   "Encrypts a raw string password using
   pbkdf2_sha1 algorithm and return formatted
   string."
-  [pw]
-  (format "bcrypt+sha256$%s" (make-bcrypt pw 11)))
+  [pw & [{:keys [rounds] :or {rounds 12}}]]
+  (format "bcrypt+sha256$%s" (make-bcrypt pw rounds)))
 
 (defn check-password
   "Check if a unencrypted password matches
   with another encrypted password."
-  [attempt encrypted]
-  (let [[t p] (split encrypted #"\$")]
+  [attempt hashed]
+  (let [[t p] (split hashed #"\$")]
     (if (not= t "bcrypt+sha256")
       (throw (IllegalArgumentException. "invalid type of hasher"))
-      (BCrypt/hashpw attempt (bytes->str (hex->bytes p))))))
-
-(defrecord Bcrypt []
-  IHasher
-  (verify [_ attempt encrypted]
-    (check-password attempt encrypted))
-  (make-hash [_ password salt]
-    (make-password password))
-  (make-hash [_ password]
-    (make-password password)))
+      (let [p       (-> (hex->bytes p)
+                        (bytes->str))
+            attempt (make-sha256 attempt)]
+        (BCrypt/checkpw attempt p)))))
