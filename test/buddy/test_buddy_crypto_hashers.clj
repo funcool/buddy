@@ -4,7 +4,8 @@
             [buddy.crypto.hashers.pbkdf2 :as pbkdf2]
             [buddy.crypto.hashers.bcrypt :as bcrypt]
             [buddy.crypto.hashers.sha256 :as sha256]
-            [buddy.crypto.hashers.md5 :as md5])
+            [buddy.crypto.hashers.md5 :as md5]
+            [buddy.crypto.hashers.scrypt :as scrypt])
   (:import (java.util Arrays)))
 
 (deftest pbkdf2-tests
@@ -30,4 +31,10 @@
     (let [plain-password      "my-test-password"
           encrypted-password  (bcrypt/make-password plain-password)]
       (is (bcrypt/check-password plain-password encrypted-password)))))
+
+(deftest scrypt-tests
+  (testing "Test low level api for encrypt/verify 01"
+    (let [plain-password      "my-test-password"
+          encrypted-password  (scrypt/make-password plain-password)]
+      (is (scrypt/check-password plain-password encrypted-password)))))
 
