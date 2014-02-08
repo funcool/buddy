@@ -1,0 +1,21 @@
+Changelog
+=========
+
+Version 0.1.0-beta2
+-------------------
+
+Date: unreleased
+
+- Simplify hashers namespace
+- Add scrypt hasher.
+- Add access rule system
+- Replace pbkdf2-sha1 with pbkdf2-sha256
+- Minor bug fixes on hashers
+
+
+Version 0.1.0-beta1
+-------------------
+
+Date: 2014-01-20
+
+- Initial version
