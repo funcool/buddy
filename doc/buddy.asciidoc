@@ -10,7 +10,7 @@ Andrey Antukh, <niwi@niwi.be>
 Introduction
 ------------
 
-_buddy_ is a simple authentication, authorization and signing library for clojure.
+_buddy_ is an authentication, authorization and signing library for clojure.
 It's designed with simplicity in mind and high level framework agnostic
 (it only depends on ring) following the principle of single responsability.
 
@@ -108,6 +108,7 @@ NOTE: this library is used by one of authentication backends for implement token
 
 NOTE: hmac+sha256 is used for sign all data.
 
+
 Using low level api
 ^^^^^^^^^^^^^^^^^^^
 
@@ -182,7 +183,7 @@ for generate secure passwords. _buddy_ comes with few functions for generate and
 using widely used password derivation algorithms like bcrypt and pbkdf2(with sha256).
 
 _buddy_ hashers lives on *`buddy.crypto.hashers.*` namespace and usually consists on two functions:
-`make-password` and `check-password`. 
+`make-password` and `check-password`.
 
 The purpose of these functions is obvious: creating new password, and verify incoming plain text
 password with previously created password hash.
@@ -198,11 +199,11 @@ password with previously created password hash.
 ;; ok var reference should contain true
 ----
 
-[NOTE] 
+[NOTE]
 `make-password` accept distinct parameters depending on hasher implementation.
 
 In previous example we use *bcrypt* hasher but _buddy_ also support many other
-hasher algorithm by default. 
+hasher algorithm by default.
 
 This is a complete list of implemented hashers:
 
@@ -249,7 +250,6 @@ and it works directly as ring middleware.
 
 ;; Simple ring handler. This also, can be a compojure routes handler
 ;; or any other while it be compatible with ring middlewares.
-
 (defn handler
   [request]
   (if (authenticated? request)
@@ -263,7 +263,6 @@ and it works directly as ring middleware.
 ;; This function should return some not nil value that
 ;; are automatically stored on :identity key on request
 ;; If it return nil, a request is considered unautenticated.
-
 (defn my-authfn
   [request, authdata]
   (let [username (:username authdata)
@@ -274,9 +273,9 @@ and it works directly as ring middleware.
 
 (defn -main
   [& args]
-  (let [auth-backend (http-basic-backend :realm "MyApi" :authfn my-authfn)
-        app          (-> handler
-                         (wrap-authentication backend))]
+  (let [backend (http-basic-backend :realm "MyApi" :authfn my-authfn)
+        app     (-> handler
+                    (wrap-authentication backend))]
     (jetty/run-jetty app {:port 9090}))
 ----
 
@@ -284,8 +283,8 @@ and it works directly as ring middleware.
 Session
 ^^^^^^^
 
-Session authentication backend, is the simplest backend of all implemented backends
-on _buddy_ but it requires of other additional middlewares from ring: cookies and/or session.
+Session authenticated backend has the simplest implementation comparing it with
+others, but it requires session middleware for properly work.
 
 Unlike the previous auth backend, this does not requires authfn, because it relies on
 `:identity` key on session  and trust it. If a session contains the `:identity` key with
@@ -319,28 +318,27 @@ The authorization system is splited in two parts:
 - access rules system based on matching urls using regular expressions and apply some
   rules handlers. The idea is taken from `lib-noir` but with slighty distinct approach.
 
+
 Generic authorization
 ^^^^^^^^^^^^^^^^^^^^^
 
-Authentication and authorization systems on _buddy_ are implemented using protocols for allow
-easy way to extend or implement own method.
+This authorization system encapsulates your hadlers/controllers in one try/catch block
+catching only notauthorized exceptions. So spliting unauthorized request handling code from
+your handlers/controllers in a separate function. Moreover, permits fast return when
+not authorized request is detected.
 
-Previously explained authentication backends, implements authorization protocol, allowing
-use one backend for both purposes: authentication or/and authorization.
+Like authentication system, authorization is also implemented using protocols. Taking advantage of
+it, all builtin authentication backends implements authorization protocol.
 
-Any authorization backend should implement a deterministic flow for handle not authorized
-exceptions. By default, each builtin backend has its own default flow for handle not authorized
-requests. Additionaly them exposes a simple way to overwrite the default behavior passing
-a custom exception handler to `:unauthorized-handler` parameter in the backend constructor.
+Some authentication backends requires specific behavior on authorization layer (like http-basic
+that should return `WWW-Authenticate` header when request is unauthorized) and by default, all
+builtin backends implements specific bahavior.
 
-As example, the default behavior of http basic auth backend, is:
+NOTE: You can overwrite the default handler, passing your own exception handler function as
+`:unauthorized-handler` keyword parameter to backend constructor.
 
-- If a user is authenticated, and *notauthorized* exception is raised, 403 response is returned automaticaly.
-- If a user is anonymosus, 401 response with `WWW-Authenticate` is returned.
 
-Similar behavior are implemented in other backends.
-
-.Incomplete example of how overwrite unauthorized handler behavior.
+.Example of how overwrite default behavior for unauthorized requests.
 [source,clojure]
 ----
 (ns myns.somensfile
