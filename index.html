@@ -483,7 +483,7 @@ expression with associated handler (function) with authorization logic.</p></div
 
 <span class="p">(</span><span class="kd">defn </span><span class="nv">admin-access</span>
   <span class="p">[</span><span class="nv">request</span><span class="p">]</span>
-  <span class="p">(</span><span class="k">let </span><span class="p">[</span><span class="nb">identity </span><span class="p">(</span><span class="ss">:identity</span><span class="p">)]</span>
+  <span class="p">(</span><span class="k">let </span><span class="p">[</span><span class="nb">identity </span><span class="p">(</span><span class="ss">:identity</span> <span class="nv">request</span><span class="p">)]</span>
     <span class="p">(</span><span class="k">if </span><span class="p">(</span><span class="nb">nil? </span><span class="nv">identity</span><span class="p">)</span> <span class="nv">false</span>
       <span class="p">(</span><span class="k">let </span><span class="p">[</span><span class="nv">roles</span> <span class="p">(</span><span class="nb">-&gt; identity </span><span class="nv">users</span> <span class="ss">:roles</span><span class="p">)]</span>
         <span class="p">(</span><span class="nb">boolean </span><span class="p">(</span><span class="nf">roles</span> <span class="ss">:admin</span><span class="p">))))))</span>
@@ -657,11 +657,16 @@ handle-unauthorized is executed of your backend, if user has specified it own fu
 <div class="sectionbody">
 <div class="paragraph"><p><em>buddy</em> comes with some examples for facilitate a new user understand how it works. All
 examples are available on <span class="monospaced">examples/</span> directory on root project.</p></div>
-<div class="paragraph"><p>At this momment one example is available:</p></div>
+<div class="paragraph"><p>At this momment two examples are available:</p></div>
 <div class="ulist"><ul>
 <li>
 <p>
 <a href="https://github.com/niwibe/buddy/tree/master/examples/sessionexample">Use session backend as authentication and authorization.</a>
+</p>
+</li>
+<li>
+<p>
+<a href="https://github.com/niwibe/buddy/tree/master/examples/oauthexample">Use session backend with oauth2 using Github api.</a>
 </p>
 </li>
 </ul></div>
@@ -744,7 +749,7 @@ limitations under the License.
 <div id="footer">
 <div id="footer-text">
 Version 0.1.0<br>
-Last updated 2014-02-09 12:00:28 CET
+Last updated 2014-02-09 17:35:37 CET
 </div>
 </div>
 </body>
