@@ -12,7 +12,7 @@
 ;; See the License for the specific language governing permissions and
 ;; limitations under the License.
 
-(ns buddy.auth.backends.stateless-token
+(ns buddy.auth.backends.token
   (:require [buddy.auth.protocols :as proto]
             [buddy.auth :refer [authenticated?]]
             [buddy.crypto.keys :refer [make-secret-key]]
@@ -27,11 +27,11 @@
   [request]
   (m-maybe [headers-map (:headers request)
             auth-header (get headers-map "authorization")
-            pattern     (re-pattern "^Bearer (.+)$")
+            pattern     (re-pattern "^Token (.+)$")
             matches     (re-find pattern auth-header)]
     (get matches 1)))
 
-(defrecord StatelessTokenAuthBackend [pkey unauthorized-handler maxage]
+(defrecord TokenBackend [pkey unauthorized-handler maxage]
   proto/IAuthentication
   (parse [_ request]
     (parse-authorization-header request))
@@ -48,11 +48,6 @@
         (-> (response "Unauthorized")
             (status 401))))))
 
-(defn stateless-token-backend
-  "Given some options, create a new instance
-  of HttpBasicBackend and return it."
+(defn token-backend
   [pkey & {:keys [unauthorized-handler maxage]}]
-  (->StatelessTokenAuthBackend
-    (make-secret-key pkey)
-    unauthorized-handler
-    maxage))
+  (->TokenBackend (make-secret-key pkey) unauthorized-handler maxage))
