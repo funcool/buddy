@@ -19,7 +19,7 @@
             [clojure.string :refer [split]]
             [ring.util.response :refer [response response? header status]]))
 
-(defrecord SessionAuthBackend [unauthorized-handler]
+(defrecord SessionBackend [unauthorized-handler]
   proto/IAuthentication
   (parse [_ request]
     (:identity (:session request)))
@@ -40,4 +40,4 @@
   "Given some options, create a new instance
   of HttpBasicBackend and return it."
   [& {:keys [unauthorized-handler]}]
-  (->SessionAuthBackend unauthorized-handler))
+  (->SessionBackend unauthorized-handler))
