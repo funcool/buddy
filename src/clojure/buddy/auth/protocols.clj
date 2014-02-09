@@ -14,7 +14,7 @@
 
 (ns buddy.auth.protocols)
 
-(defprotocol IAuthentication
+(defprotocol Authentication
   "Protocol that defines unfied workflow steps for
   all authentication backends."
   (parse [_ request]
@@ -35,7 +35,7 @@
     Some backends can be extended with user defined function
     for as ex, lookup user information in a database, etc..."))
 
-(defprotocol IAuthorization
+(defprotocol Authorization
   "Protocol that defines unfied workflow steps for
   authorization exceptions."
   (handle-unauthorized [_ request metadata]

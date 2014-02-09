@@ -33,7 +33,7 @@
       {:username username :password password})))
 
 (defrecord HttpBasicBackend [realm authfn unauthorized-handler]
-  proto/IAuthentication
+  proto/Authentication
   (parse [_ request]
     (parse-httpbasic-header request))
   (authenticate [_ request data]
@@ -41,7 +41,7 @@
       (if (response? rsq) rsq
         (assoc request :identity rsq))))
 
-  proto/IAuthorization
+  proto/Authorization
   (handle-unauthorized [_ request metadata]
     (if unauthorized-handler
       (unauthorized-handler request (assoc metadata :realm realm))

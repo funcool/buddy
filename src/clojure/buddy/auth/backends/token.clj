@@ -32,13 +32,13 @@
     (get matches 1)))
 
 (defrecord TokenBackend [pkey unauthorized-handler maxage]
-  proto/IAuthentication
+  proto/Authentication
   (parse [_ request]
     (parse-authorization-header request))
   (authenticate [_ request data]
     (assoc request :identity (loads data pkey {:maxage maxage})))
 
-  proto/IAuthorization
+  proto/Authorization
   (handle-unauthorized [_ request metadata]
     (if unauthorized-handler
       (unauthorized-handler request metadata)

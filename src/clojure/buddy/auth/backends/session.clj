@@ -20,13 +20,13 @@
             [ring.util.response :refer [response response? header status]]))
 
 (defrecord SessionBackend [unauthorized-handler]
-  proto/IAuthentication
+  proto/Authentication
   (parse [_ request]
     (:identity (:session request)))
   (authenticate [_ request data]
     (assoc request :identity data))
 
-  proto/IAuthorization
+  proto/Authorization
   (handle-unauthorized [_ request metadata]
     (if unauthorized-handler
       (unauthorized-handler request metadata)
