@@ -403,7 +403,7 @@ Having the `admin-access` function like this:
 
 (defn admin-access
   [request]
-  (let [identity (:identity)]
+  (let [identity (:identity request)]
     (if (nil? identity) false
       (let [roles (-> identity users :roles)]
         (boolean (roles :admin))))))
@@ -547,9 +547,10 @@ Examples
 _buddy_ comes with some examples for facilitate a new user understand how it works. All
 examples are available on `examples/` directory on root project.
 
-At this momment one example is available:
+At this momment two examples are available:
 
 - link:https://github.com/niwibe/buddy/tree/master/examples/sessionexample[Use session backend as authentication and authorization.]
+- link:https://github.com/niwibe/buddy/tree/master/examples/oauthexample[Use session backend with oauth2 using Github api.]
 
 
 How to contribute
