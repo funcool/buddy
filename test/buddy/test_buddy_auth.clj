@@ -7,7 +7,7 @@
             [buddy.auth :refer [throw-notauthorized]]
             [buddy.auth.backends.httpbasic :refer [http-basic-backend parse-httpbasic-header]]
             [buddy.auth.backends.session :refer [session-backend]]
-            [buddy.auth.backends.stateless-token :as stoken]
+            [buddy.auth.backends.token :as stoken]
             [buddy.auth.middleware :refer [wrap-authentication wrap-authorization]]))
 
 (defn make-httpbasic-request
@@ -33,28 +33,28 @@
       (is (= (:password parsed) "bar"))
       (is (= (:username parsed) "foo")))))
 
-(deftest stateless-token-test
+(deftest token-test
   (testing "Parse authorization header"
     (let [signed-data     (signing/dumps {:userid 1} secret-key)
-          header-content  (format "Bearer %s" signed-data)
+          header-content  (format "Token %s" signed-data)
           request         {:headers {"authorization" header-content}}
           parsed          (stoken/parse-authorization-header request)]
       (is (= parsed signed-data))))
 
   (testing "Simple backend authentication 01"
     (let [signed-data     (signing/dumps {:userid 1} secret-key)
-          header-content  (format "Bearer %s" signed-data)
+          header-content  (format "Token %s" signed-data)
           request         {:headers {"authorization" header-content}}
-          backend         (stoken/stateless-token-backend secret-key)
+          backend         (stoken/token-backend secret-key)
           handler         (fn [req] req)
           handler         (wrap-authentication handler backend)
           resp            (handler request)]
       (is (= (:identity resp) {:userid 1}))))
   (testing "Simple backend authentication 02"
     (let [signed-data     (signing/dumps {:userid 1} "wrong-key")
-          header-content  (format "Bearer %s" signed-data)
+          header-content  (format "Token %s" signed-data)
           request         {:headers {"authorization" header-content}}
-          backend         (stoken/stateless-token-backend secret-key)
+          backend         (stoken/token-backend secret-key)
           handler         (fn [req] req)
           handler         (wrap-authentication handler backend)
           resp            (handler request)]
