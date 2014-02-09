@@ -75,8 +75,12 @@
           allow?  (if-not (nil? match)
                     (accessrules/apply-rule request match)
                     (case policy :allow true :reject false true))]
-      (if (not allow?)
-        (if reject-handler
-          (reject-handler request)
-          (throw-notauthorized))
-        (handler request)))))
+      (let [request (if match
+                      (assoc request :access-rules-match
+                             (re-matches (:pattern match) (:uri request)))
+                      request)]
+        (if (not allow?)
+          (if reject-handler
+            (reject-handler request)
+            (throw-notauthorized))
+          (handler request))))))
