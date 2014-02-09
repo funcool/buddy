@@ -32,7 +32,7 @@ asciidoc.install(2);
 <div class="sect1">
 <h2 id="_introduction">1. Introduction</h2>
 <div class="sectionbody">
-<div class="paragraph"><p><em>buddy</em> is a simple authentication, authorization and signing library for clojure.
+<div class="paragraph"><p><em>buddy</em> is an authentication, authorization and signing library for clojure.
 It&#8217;s designed with simplicity in mind and high level framework agnostic
 (it only depends on ring) following the principle of single responsability.</p></div>
 <div class="paragraph"><p>Features/Libraries:</p></div>
@@ -335,7 +335,6 @@ and it works directly as ring middleware.</p></div>
 
 <span class="c1">;; Simple ring handler. This also, can be a compojure routes handler</span>
 <span class="c1">;; or any other while it be compatible with ring middlewares.</span>
-
 <span class="p">(</span><span class="kd">defn </span><span class="nv">handler</span>
   <span class="p">[</span><span class="nv">request</span><span class="p">]</span>
   <span class="p">(</span><span class="k">if </span><span class="p">(</span><span class="nf">authenticated?</span> <span class="nv">request</span><span class="p">)</span>
@@ -349,7 +348,6 @@ and it works directly as ring middleware.</p></div>
 <span class="c1">;; This function should return some not nil value that</span>
 <span class="c1">;; are automatically stored on :identity key on request</span>
 <span class="c1">;; If it return nil, a request is considered unautenticated.</span>
-
 <span class="p">(</span><span class="kd">defn </span><span class="nv">my-authfn</span>
   <span class="p">[</span><span class="nv">request</span>, <span class="nv">authdata</span><span class="p">]</span>
   <span class="p">(</span><span class="k">let </span><span class="p">[</span><span class="nv">username</span> <span class="p">(</span><span class="ss">:username</span> <span class="nv">authdata</span><span class="p">)</span>
@@ -360,16 +358,16 @@ and it works directly as ring middleware.</p></div>
 
 <span class="p">(</span><span class="kd">defn </span><span class="nv">-main</span>
   <span class="p">[</span><span class="o">&amp;</span> <span class="nv">args</span><span class="p">]</span>
-  <span class="p">(</span><span class="k">let </span><span class="p">[</span><span class="nv">auth-backend</span> <span class="p">(</span><span class="nf">http-basic-backend</span> <span class="ss">:realm</span> <span class="s">&quot;MyApi&quot;</span> <span class="ss">:authfn</span> <span class="nv">my-authfn</span><span class="p">)</span>
-        <span class="nv">app</span>          <span class="p">(</span><span class="nb">-&gt; </span><span class="nv">handler</span>
-                         <span class="p">(</span><span class="nf">wrap-authentication</span> <span class="nv">backend</span><span class="p">))]</span>
+  <span class="p">(</span><span class="k">let </span><span class="p">[</span><span class="nv">backend</span> <span class="p">(</span><span class="nf">http-basic-backend</span> <span class="ss">:realm</span> <span class="s">&quot;MyApi&quot;</span> <span class="ss">:authfn</span> <span class="nv">my-authfn</span><span class="p">)</span>
+        <span class="nv">app</span>     <span class="p">(</span><span class="nb">-&gt; </span><span class="nv">handler</span>
+                    <span class="p">(</span><span class="nf">wrap-authentication</span> <span class="nv">backend</span><span class="p">))]</span>
     <span class="p">(</span><span class="nf">jetty/run-jetty</span> <span class="nv">app</span> <span class="p">{</span><span class="ss">:port</span> <span class="mi">9090</span><span class="p">}))</span>
 </pre></div></div></div>
 </div>
 <div class="sect3">
 <h4 id="_session">4.3.2. Session</h4>
-<div class="paragraph"><p>Session authentication backend, is the simplest backend of all implemented backends
-on <em>buddy</em> but it requires of other additional middlewares from ring: cookies and/or session.</p></div>
+<div class="paragraph"><p>Session authenticated backend has the simplest implementation comparing it with
+others, but it requires session middleware for properly work.</p></div>
 <div class="paragraph"><p>Unlike the previous auth backend, this does not requires authfn, because it relies on
 <span class="monospaced">:identity</span> key on session  and trust it. If a session contains the <span class="monospaced">:identity</span> key with
 logical true value it identifies the current request as authenticated and put <span class="monospaced">:identity</span>
@@ -406,30 +404,26 @@ access rules system based on matching urls using regular expressions and apply s
 </ul></div>
 <div class="sect3">
 <h4 id="_generic_authorization">4.4.1. Generic authorization</h4>
-<div class="paragraph"><p>Authentication and authorization systems on <em>buddy</em> are implemented using protocols for allow
-easy way to extend or implement own method.</p></div>
-<div class="paragraph"><p>Previously explained authentication backends, implements authorization protocol, allowing
-use one backend for both purposes: authentication or/and authorization.</p></div>
-<div class="paragraph"><p>Any authorization backend should implement a deterministic flow for handle not authorized
-exceptions. By default, each builtin backend has its own default flow for handle not authorized
-requests. Additionaly them exposes a simple way to overwrite the default behavior passing
-a custom exception handler to <span class="monospaced">:unauthorized-handler</span> parameter in the backend constructor.</p></div>
-<div class="paragraph"><p>As example, the default behavior of http basic auth backend, is:</p></div>
-<div class="ulist"><ul>
-<li>
-<p>
-If a user is authenticated, and <strong>notauthorized</strong> exception is raised, 403 response is returned automaticaly.
-</p>
-</li>
-<li>
-<p>
-If a user is anonymosus, 401 response with <span class="monospaced">WWW-Authenticate</span> is returned.
-</p>
-</li>
-</ul></div>
-<div class="paragraph"><p>Similar behavior are implemented in other backends.</p></div>
+<div class="paragraph"><p>This authorization system encapsulates your hadlers/controllers in one try/catch block
+catching only notauthorized exceptions. So spliting unauthorized request handling code from
+your handlers/controllers in a separate function. Moreover, permits fast return when
+not authorized request is detected.</p></div>
+<div class="paragraph"><p>Like authentication system, authorization is also implemented using protocols. Taking advantage of
+it, all builtin authentication backends implements authorization protocol.</p></div>
+<div class="paragraph"><p>Some authentication backends requires specific behavior on authorization layer (like http-basic
+that should return <span class="monospaced">WWW-Authenticate</span> header when request is unauthorized) and by default, all
+builtin backends implements specific bahavior.</p></div>
+<div class="admonitionblock">
+<table><tr>
+<td class="icon">
+<div class="title">Note</div>
+</td>
+<td class="content">You can overwrite the default handler, passing your own exception handler function as
+<span class="monospaced">:unauthorized-handler</span> keyword parameter to backend constructor.</td>
+</tr></table>
+</div>
 <div class="listingblock">
-<div class="title">Incomplete example of how overwrite unauthorized handler behavior.</div>
+<div class="title">Example of how overwrite default behavior for unauthorized requests.</div>
 <div class="content"><div class="highlight"><pre><span class="p">(</span><span class="kd">ns </span><span class="nv">myns.somensfile</span>
   <span class="p">(</span><span class="ss">:require</span> <span class="p">[</span><span class="nv">clojure.java.io</span> <span class="ss">:as</span> <span class="nv">io</span><span class="p">]</span>
             <span class="p">[</span><span class="nv">ring.util.response</span> <span class="ss">:refer</span> <span class="p">[</span><span class="nv">response</span> <span class="nv">redirect</span><span class="p">]]</span>
@@ -750,7 +744,7 @@ limitations under the License.
 <div id="footer">
 <div id="footer-text">
 Version 0.1.0<br>
-Last updated 2014-02-08 21:22:42 CET
+Last updated 2014-02-09 12:00:28 CET
 </div>
 </div>
 </body>
