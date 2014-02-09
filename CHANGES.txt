@@ -2,6 +2,11 @@ Changelog
 =========
 
 
+Version 0.1.0-beta4
+-------------------
+
+- Assoc matching access rule to request.
+
 Version 0.1.0-beta3
 -------------------
 
