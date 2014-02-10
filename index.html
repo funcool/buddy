@@ -427,7 +427,7 @@ builtin backends implements specific bahavior.</p></div>
 <div class="content"><div class="highlight"><pre><span class="p">(</span><span class="kd">ns </span><span class="nv">myns.somensfile</span>
   <span class="p">(</span><span class="ss">:require</span> <span class="p">[</span><span class="nv">clojure.java.io</span> <span class="ss">:as</span> <span class="nv">io</span><span class="p">]</span>
             <span class="p">[</span><span class="nv">ring.util.response</span> <span class="ss">:refer</span> <span class="p">[</span><span class="nv">response</span> <span class="nv">redirect</span><span class="p">]]</span>
-            <span class="p">[</span><span class="nv">buddy.auth</span> <span class="ss">:refer</span> <span class="p">[</span><span class="nv">authenticated?</span> <span class="nv">throw-notauthorized</span><span class="p">]]</span>
+            <span class="p">[</span><span class="nv">buddy.auth</span> <span class="ss">:refer</span> <span class="p">[</span><span class="nv">authenticated?</span> <span class="nv">throw-unauthorized</span><span class="p">]]</span>
             <span class="p">[</span><span class="nv">buddy.auth.backends.httpbasic</span> <span class="ss">:refer</span> <span class="p">[</span><span class="nv">http-basic-backend</span><span class="p">]]</span>
             <span class="p">[</span><span class="nv">buddy.auth.middleware</span> <span class="ss">:refer</span> <span class="p">[</span><span class="nv">wrap-authentication</span> <span class="nv">wrap-authorization</span><span class="p">]]))</span>
 
@@ -443,7 +443,7 @@ builtin backends implements specific bahavior.</p></div>
   <span class="p">[</span><span class="nv">request</span><span class="p">]</span>
   <span class="p">(</span><span class="k">if </span><span class="p">(</span><span class="nf">authenticated?</span><span class="p">)</span>
     <span class="p">(</span><span class="nf">response</span> <span class="s">&quot;Hello World&quot;</span><span class="p">)</span>
-    <span class="p">(</span><span class="nf">throw-notauthorized</span><span class="p">)))</span>
+    <span class="p">(</span><span class="nf">throw-unauthorized</span><span class="p">)))</span>
 
 <span class="p">(</span><span class="kd">defn </span><span class="nv">-main</span>
   <span class="p">[</span><span class="o">&amp;</span> <span class="nv">args</span><span class="p">]</span>
@@ -638,7 +638,7 @@ User handler is wrapped in try/catch block and executed.
 </li>
 <li>
 <p>
-Not authorized exception is raised with <span class="monospaced">buddy.auth/throw-notauthorized</span> function from
+Not authorized exception is raised with <span class="monospaced">buddy.auth/throw-unauthorized</span> function from
    any part of your handler.
 </p>
 </li>
@@ -749,7 +749,7 @@ limitations under the License.
 <div id="footer">
 <div id="footer-text">
 Version 0.1.0<br>
-Last updated 2014-02-09 17:35:37 CET
+Last updated 2014-02-10 20:33:58 CET
 </div>
 </div>
 </body>
