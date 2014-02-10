@@ -5,7 +5,7 @@
             [ring.middleware.session :refer [wrap-session]]
             [ring.middleware.params :refer [wrap-params]]
             [ring.adapter.jetty :as jetty]
-            [buddy.auth :refer [authenticated? throw-notauthorized]]
+            [buddy.auth :refer [authenticated? throw-unauthorized]]
             [buddy.auth.backends.session :refer [session-backend]]
             [buddy.auth.middleware :refer [wrap-authentication wrap-access-rules wrap-authorization]]
             [clj-http.client :as client]

@@ -15,10 +15,10 @@
 (ns buddy.auth.middleware
   (:require [buddy.auth.protocols :as proto]
             [buddy.auth.accessrules :as accessrules]
-            [buddy.auth :refer [authenticated? throw-notauthorized]]
+            [buddy.auth :refer [authenticated? throw-unauthorized]]
             [buddy.util :refer [m-maybe]]
             [ring.util.response :refer [response response?]])
-  (:import (buddy.exceptions NotAuthorizedException)))
+  (:import (buddy.exceptions UnauthorizedAccessException)))
 
 (defn wrap-authentication
   "Ring middleware that enables authentication
@@ -44,8 +44,8 @@
         (throw (IllegalAccessError. "no backend found"))
         (try
           (handler request)
-          (catch NotAuthorizedException e
-            (proto/handle-unauthorized backend request (.getMetadata e))))))))
+          (catch UnauthorizedAccessException e
+            (proto/handle-unauthorized backend request (.-metadata e))))))))
 
 (defn wrap-access-rules
   "An other ring middleware that helps define
@@ -82,5 +82,5 @@
         (if (not allow?)
           (if reject-handler
             (reject-handler request)
-            (throw-notauthorized))
+            (throw-unauthorized))
           (handler request))))))

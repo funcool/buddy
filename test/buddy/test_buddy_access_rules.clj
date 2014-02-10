@@ -3,7 +3,6 @@
             [ring.util.response :refer [response? response]]
             [buddy.codecs :refer :all]
             [buddy.auth.accessrules :refer [compile-rule match-rules apply-rule]]
-            [buddy.auth :refer [throw-notauthorized]]
             [buddy.auth.middleware :refer [wrap-access-rules]]))
 
 (defn mkhandler [value] (fn [_] value))

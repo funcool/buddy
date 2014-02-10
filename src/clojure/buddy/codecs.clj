@@ -7,7 +7,7 @@ and encode them to base64 ot hex format."
 (defn bytes?
   "Test if a first parameter is a byte
   array or not."
-  [x]
+  [^Object x]
   (= (Class/forName "[B")
     (.getClass x)))
 

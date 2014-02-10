@@ -344,7 +344,7 @@ NOTE: You can overwrite the default handler, passing your own exception handler 
 (ns myns.somensfile
   (:require [clojure.java.io :as io]
             [ring.util.response :refer [response redirect]]
-            [buddy.auth :refer [authenticated? throw-notauthorized]]
+            [buddy.auth :refer [authenticated? throw-unauthorized]]
             [buddy.auth.backends.httpbasic :refer [http-basic-backend]]
             [buddy.auth.middleware :refer [wrap-authentication wrap-authorization]]))
 
@@ -360,7 +360,7 @@ NOTE: You can overwrite the default handler, passing your own exception handler 
   [request]
   (if (authenticated?)
     (response "Hello World")
-    (throw-notauthorized)))
+    (throw-unauthorized)))
 
 (defn -main
   [& args]
@@ -535,7 +535,7 @@ all request in try/catch block for intercept only authorization exception.
 This is a flow that follows authorization middleware:
 
 1. User handler is wrapped in try/catch block and executed.
-2. Not authorized exception is raised with `buddy.auth/throw-notauthorized` function from
+2. Not authorized exception is raised with `buddy.auth/throw-unauthorized` function from
    any part of your handler.
 3. handle-unauthorized is executed of your backend, if user has specified it own function,
    the user defined function is executed else, default behavior is executed.

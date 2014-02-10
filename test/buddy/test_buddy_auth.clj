@@ -4,7 +4,7 @@
             [buddy.codecs :refer :all]
             [buddy.crypto.core :refer :all]
             [buddy.crypto.signing :as signing]
-            [buddy.auth :refer [throw-notauthorized]]
+            [buddy.auth :refer [throw-unauthorized]]
             [buddy.auth.backends.httpbasic :refer [http-basic-backend parse-httpbasic-header]]
             [buddy.auth.backends.session :refer [session-backend]]
             [buddy.auth.backends.token :as stoken]
@@ -100,7 +100,7 @@
   (testing "Authorization middleware tests 01 with httpbasic backend"
     (let [backend (http-basic-backend :realm "Foo" :authfn httpbasic-auth-fn)
           handler (fn [req] (if (nil? (:identity req))
-                              (throw-notauthorized {:msg "FooMsg"})
+                              (throw-unauthorized {:msg "FooMsg"})
                               req))
           handler (wrap-authorization handler backend)
           handler (wrap-authentication handler backend)
@@ -110,7 +110,7 @@
   (testing "Authorization middleware tests 02 with httpbasic backend"
     (let [backend (http-basic-backend :realm "Foo" :authfn httpbasic-auth-fn)
           handler (fn [req] (if (nil? (:identity req))
-                              (throw-notauthorized {:msg "FooMsg"})
+                              (throw-unauthorized {:msg "FooMsg"})
                               req))
           handler (wrap-authorization handler backend)
           handler (wrap-authentication handler backend)
@@ -119,7 +119,7 @@
       (is (= (:identity resp) :foo))))
   (testing "Authorization middleware tests 03 with httpbasic backend"
     (let [backend (http-basic-backend :realm "Foo" :authfn httpbasic-auth-fn)
-          handler (fn [req] (throw-notauthorized {:msg "FooMsg"}))
+          handler (fn [req] (throw-unauthorized {:msg "FooMsg"}))
           handler (wrap-authorization handler backend)
           handler (wrap-authentication handler backend)
           req     (make-httpbasic-request "foo" "pass")

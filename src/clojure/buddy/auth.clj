@@ -13,7 +13,7 @@
 ;; limitations under the License.
 
 (ns buddy.auth
-  (:import (buddy.exceptions NotAuthorizedException)))
+  (:import (buddy.exceptions UnauthorizedAccessException)))
 
 (defn authenticated?
   "Test if a current request is
@@ -21,7 +21,7 @@
   [request]
   (boolean (:identity request)))
 
-(defn throw-notauthorized
-  ([] (throw-notauthorized {}))
+(defn throw-unauthorized
+  ([] (throw-unauthorized {}))
   ([metadata]
-   (throw (NotAuthorizedException. metadata))))
+   (throw (UnauthorizedAccessException. metadata))))

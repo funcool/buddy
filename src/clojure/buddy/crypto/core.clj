@@ -24,7 +24,7 @@
 
 (defn hmac-sha256
   "Returns a salted hmac-sha256."
-  [value secret & [{:keys [salt] :or {salt ""}}]]
+  [^String value, secret & [{:keys [salt] :or {salt ""}}]]
   (let [salt  (cond
                 (bytes? salt) salt
                 (string? salt) (str->bytes salt)
@@ -41,7 +41,7 @@
 (defn random-bytes
   "Generate a byte array of random bytes using
   secure random generator."
-  [s]
+  [^long s]
   (let [data  (byte-array s)
         sr    (SecureRandom/getInstance "SHA1PRNG")]
     (.nextBytes sr data)
@@ -50,9 +50,9 @@
 (defn random-salt
   "Generates a random salt using a secure
   random number generator."
-  ([] (random-salt 8))
-  ([s]
-   (let [rbytes (random-bytes (int (/ s 2)))]
+  (^String [] (random-salt 8))
+  (^String [^long s]
+   (let [rbytes (random-bytes (long (/ s 2)))]
      (bytes->hex rbytes))))
 
 (defn timestamp
