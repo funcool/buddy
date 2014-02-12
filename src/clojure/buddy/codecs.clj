@@ -38,16 +38,21 @@ and encode them to base64 ot hex format."
   (Hex/decodeHex (.toCharArray data)))
 
 (defn bytes->base64
-  "Encode a bytes array to base64."
+  "Encode a bytes array to base64
+and return utf8 string."
   [#^bytes data]
-  (trim (Base64/encodeBase64URLSafeString data)))
+  (Base64/encodeBase64URLSafeString data))
+
+(defn bytes->bbase64
+  "Encode a bytes array to base64 and
+return bytearray."
+  [#^bytes data]
+  (Base64/encodeBase64URLSafe data))
 
 (defn base64->bytes
   "Decode from base64 to bytes."
-  [^String s]
-  (let [codec (Base64. true)
-        data  (.decode codec s)]
-    data))
+  [s]
+  (Base64/decodeBase64 s))
 
 (defn str->base64
   "Encode to urlsafe base64."
@@ -59,7 +64,4 @@ and encode them to base64 ot hex format."
 (defn base64->str
   "Decode from base64 to string."
   [^String s]
-  (let [codec (Base64. true)
-        data  (.decode codec s)]
-    (bytes->str data)))
-
+  (String. (base64->bytes s) "UTF8"))
