@@ -15,7 +15,6 @@
 (ns buddy.auth.backends.token
   (:require [buddy.auth.protocols :as proto]
             [buddy.auth :refer [authenticated?]]
-            [buddy.crypto.keys :refer [make-secret-key]]
             [buddy.crypto.signing :refer [loads]]
             [buddy.util :refer [m-maybe]]
             [clojure.string :refer [split]]
@@ -50,4 +49,4 @@
 
 (defn token-backend
   [pkey & {:keys [unauthorized-handler maxage]}]
-  (->TokenBackend (make-secret-key pkey) unauthorized-handler maxage))
+  (->TokenBackend pkey unauthorized-handler maxage))

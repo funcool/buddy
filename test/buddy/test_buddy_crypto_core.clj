@@ -1,11 +1,10 @@
 (ns buddy.test_buddy_crypto_core
   (:require [clojure.test :refer :all]
             [buddy.codecs :as codecs]
-            [buddy.crypto.signing :as signing]
-            [buddy.crypto.keys :refer [make-secret-key]])
+            [buddy.crypto.signing :as signing])
   (:import (java.util Arrays)))
 
-(def secret (make-secret-key "test"))
+(def secret "test")
 
 (deftest core-utils-test
   (testing "Hex encode/decode 01"
