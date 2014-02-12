@@ -13,14 +13,13 @@
 ;; limitations under the License.
 
 (ns buddy.crypto.keys
-  (:require [buddy.codecs :refer [str->bytes]])
-  (:import java.security.Key))
+  (:require [buddy.codecs :refer [str->bytes]]))
 
-(defn make-secret-key
-  "Generates a Key instance from given raw string key."
-  [^String skey]
-  (let [rawkey (str->bytes skey)]
-    (proxy [Key] []
-      (getFormat [] nil)
-      (getEncoded [] rawkey)
-      (toString [] skey))))
+(defprotocol SecretKey
+  (key->bytes [key] "Normalize key to byte array")
+  (key->str [key] "Normalize key String"))
+
+(extend-protocol SecretKey
+  String
+  (key->bytes [key] (str->bytes key))
+  (key->str [key] key))
