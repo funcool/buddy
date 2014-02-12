@@ -1,12 +1,13 @@
 (ns buddy.test_buddy_crypto_core
   (:require [clojure.test :refer :all]
             [buddy.codecs :as codecs]
+            [buddy.crypto.core :refer :all]
             [buddy.crypto.signing :as signing])
   (:import (java.util Arrays)))
 
 (def secret "test")
 
-(deftest core-utils-test
+(deftest codecs-test
   (testing "Hex encode/decode 01"
     (let [some-bytes  (codecs/str->bytes "FooBar")
           encoded     (codecs/bytes->hex some-bytes)
@@ -36,3 +37,12 @@
   (testing "Signing/Unsigning complex clojure data"
     (let [signed (signing/dumps {:foo 2 :bar 1} secret)]
       (is (= {:foo 2 :bar 1} (signing/loads signed secret))))))
+
+
+(deftest crypto-tests
+  (testing "Sha256 digest"
+    (let [bt (byte-array 0)
+          dg (sha256 bt)
+          hx (codecs/bytes->hex dg)]
+      (is (= hx "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855")))))
+

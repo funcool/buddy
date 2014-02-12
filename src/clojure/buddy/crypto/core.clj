@@ -23,6 +23,31 @@
            (javax.crypto.spec SecretKeySpec)
            (java.security MessageDigest SecureRandom)))
 
+(defn digest
+  "Generic function for create cryptographic hash. Given an algorithm
+name and many parts as byte array. Returns a computed hash as byte array.
+This function hides java api to `java.security.MessageDigest`"
+  [algorithm & parts]
+  (let [md (MessageDigest/getInstance algorithm)]
+    (doseq [part parts]
+      (.update md part))
+    (.digest md)))
+
+(def ^{:doc "Create sha256 secure hash."}
+  sha256 (partial digest "SHA-256"))
+
+(def ^{:doc "Create sha384 secure hash."}
+  sha384 (partial digest "SHA-384"))
+
+(def ^{:doc "Create sha512 secure hash."}
+  sha512 (partial digest "SHA-512"))
+
+(def ^{:doc "Create sha1 secure hash."}
+  sha1 (partial digest "SHA-1"))
+
+(def ^{:doc "Create md5 secure hash."}
+  md5 (partial digest "MD5"))
+
 (defn hmac
   "Generic function that implement salted variant
 of keyed-hash message authentication code (hmac)."
@@ -31,11 +56,9 @@ of keyed-hash message authentication code (hmac)."
                 (bytes? salt) salt
                 (string? salt) (str->bytes salt)
                 :else (throw (IllegalArgumentException. "invalid salt type")))
-        md    (doto (MessageDigest/getInstance "SHA-512")
-                (.update (keys/key->bytes pkey))
-                (.update salt))
+        sks   (SecretKeySpec. (sha512 (keys/key->bytes pkey) salt) "HmacSHA256")
         mac   (doto (Mac/getInstance "HmacSHA256")
-                (.init (SecretKeySpec. (.digest md) "HmacSHA256")))]
+                (.init sks))]
     (.doFinal mac (str->bytes value))))
 
 (def ^{:doc "Function that implements the HMAC algorithm with SHA256 digest mode."}
