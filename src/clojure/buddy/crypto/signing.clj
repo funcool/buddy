@@ -19,15 +19,14 @@
             [taoensso.nippy :as nippy]))
 
 (defn- make-signature
-  [s secret salt]
-  (let [secretstr (.toString secret)
-        signature (hmac-sha256 s secretstr {:salt salt})]
-    signature))
+  [s pkey salt]
+  (-> (hmac-sha256 s pkey {:salt salt})
+      (bytes->hex)))
 
 (defn- make-stamped-signature
-  [s secret salt sep stamp]
+  [s pkey salt sep stamp]
   (let [candidate (str s stamp)
-        signature (make-signature candidate secret salt)]
+        signature (make-signature candidate pkey salt)]
     (format "%s%s%s" signature sep stamp)))
 
 (defn sign

@@ -16,27 +16,36 @@
   "Basic crypto primitives that used for more high
   level abstractions."
   (:require [clojure.string :refer [trim]]
-            [buddy.codecs :refer :all])
+            [buddy.codecs :refer :all]
+            [buddy.crypto.keys :as keys])
   (:import (org.apache.commons.codec.binary Base64 Hex)
            (javax.crypto Mac)
            (javax.crypto.spec SecretKeySpec)
            (java.security MessageDigest SecureRandom)))
 
-(defn hmac-sha256
-  "Returns a salted hmac-sha256."
-  [^String value, secret & [{:keys [salt] :or {salt ""}}]]
+(defn hmac
+  "Generic function that implement salted variant
+of keyed-hash message authentication code (hmac)."
+  [algorithm value pkey & [{:keys [salt] :or {salt ""}}]]
   (let [salt  (cond
                 (bytes? salt) salt
                 (string? salt) (str->bytes salt)
                 :else (throw (IllegalArgumentException. "invalid salt type")))
-        md    (doto (MessageDigest/getInstance "SHA-256")
-                (.update (str->bytes secret))
+        md    (doto (MessageDigest/getInstance "SHA-512")
+                (.update (keys/key->bytes pkey))
                 (.update salt))
         mac   (doto (Mac/getInstance "HmacSHA256")
                 (.init (SecretKeySpec. (.digest md) "HmacSHA256")))]
-    (->
-      (.doFinal mac (str->bytes value))
-      (bytes->hex))))
+    (.doFinal mac (str->bytes value))))
+
+(def ^{:doc "Function that implements the HMAC algorithm with SHA256 digest mode."}
+  hmac-sha256 (partial hmac "HmacSHA256"))
+
+(def ^{:doc "Function that implements the HMAC algorithm with SHA384 digest mode."}
+  hmac-sha384 (partial hmac "HmacSHA384"))
+
+(def ^{:doc "Function that implements the HMAC algorithm with SHA512 digest mode."}
+  hmac-sha512 (partial hmac "HmacSHA512"))
 
 (defn random-bytes
   "Generate a byte array of random bytes using
