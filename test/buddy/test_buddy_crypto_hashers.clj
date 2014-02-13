@@ -1,11 +1,11 @@
 (ns buddy.test_buddy_crypto_hashers
   (:require [clojure.test :refer :all]
             [buddy.codecs :as crypto]
-            [buddy.crypto.hashers.pbkdf2 :as pbkdf2]
-            [buddy.crypto.hashers.bcrypt :as bcrypt]
-            [buddy.crypto.hashers.sha256 :as sha256]
-            [buddy.crypto.hashers.md5 :as md5]
-            [buddy.crypto.hashers.scrypt :as scrypt])
+            [buddy.hashers.pbkdf2 :as pbkdf2]
+            [buddy.hashers.bcrypt :as bcrypt]
+            [buddy.hashers.sha256 :as sha256]
+            [buddy.hashers.md5 :as md5]
+            [buddy.hashers.scrypt :as scrypt])
   (:import (java.util Arrays)))
 
 (deftest pbkdf2-tests
