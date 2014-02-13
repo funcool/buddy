@@ -12,8 +12,8 @@
 ;; See the License for the specific language governing permissions and
 ;; limitations under the License.
 
-(ns buddy.crypto.hashers.bcrypt
-  (:require [buddy.crypto.hashers.sha256 :refer [make-sha256]]
+(ns buddy.hashers.bcrypt
+  (:require [buddy.hashers.sha256 :refer [make-sha256]]
             [buddy.crypto.core :refer :all]
             [buddy.codecs :refer :all]
             [clojure.string :refer [split]])

@@ -12,7 +12,7 @@
 ;; See the License for the specific language governing permissions and
 ;; limitations under the License.
 
-(ns buddy.crypto.hashers.pbkdf2
+(ns buddy.hashers.pbkdf2
   (:require [buddy.codecs :refer :all]
             [buddy.crypto.core :refer :all]
             [clojure.string :refer [split]]))

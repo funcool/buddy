@@ -12,7 +12,7 @@
 ;; See the License for the specific language governing permissions and
 ;; limitations under the License.
 
-(ns buddy.crypto.hashers.sha256
+(ns buddy.hashers.sha256
   (:require [buddy.codecs :refer :all]
             [buddy.crypto.core :refer :all]
             [clojure.string :refer [split]])
