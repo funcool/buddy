@@ -114,7 +114,7 @@ Readability counts.
 vector of your <strong><em>project.clj</em></strong> file:</p></div>
 <div class="listingblock">
 <div class="title"><em>on project.clj</em></div>
-<div class="content"><div class="highlight"><pre><span class="p">[</span><span class="nv">buddy</span> <span class="s">&quot;0.1.0-beta3&quot;</span><span class="p">]</span>
+<div class="content"><div class="highlight"><pre><span class="p">[</span><span class="nv">buddy</span> <span class="s">&quot;0.1.0-beta4&quot;</span><span class="p">]</span>
 </pre></div></div></div>
 </div>
 <div class="sect2">
@@ -131,7 +131,7 @@ vector of your <strong><em>project.clj</em></strong> file:</p></div>
 <div class="content"><div class="highlight"><pre><span class="nt">&lt;dependency&gt;</span>
     <span class="nt">&lt;groupId&gt;</span>buddy<span class="nt">&lt;/groupId&gt;</span>
     <span class="nt">&lt;artifactId&gt;</span>buddy<span class="nt">&lt;/artifactId&gt;</span>
-    <span class="nt">&lt;version&gt;</span>0.1.0-beta3<span class="nt">&lt;/version&gt;</span>
+    <span class="nt">&lt;version&gt;</span>0.1.0-beta4<span class="nt">&lt;/version&gt;</span>
 <span class="nt">&lt;/dependency&gt;</span>
 </pre></div></div></div>
 </div>
@@ -142,8 +142,8 @@ vector of your <strong><em>project.clj</em></strong> file:</p></div>
 <div class="sectionbody">
 <div class="sect2">
 <h3 id="_signing">4.1. Signing</h3>
-<div class="paragraph"><p>One of the main parts of <em>buddy</em> is a "Signing framework",
-that is mainly based on django&#8217;s <a href="https://docs.djangoproject.com/en/1.6/topics/signing/">Cryptographic signing</a>
+<div class="paragraph"><p>One of the main parts of <em>buddy</em> is a "Signing framework", that is mainly based on django&#8217;s
+<a href="https://docs.djangoproject.com/en/1.6/topics/signing/">Cryptographic signing</a>
 library.</p></div>
 <div class="paragraph"><p>That can be used for several purposes:</p></div>
 <div class="ulist"><ul>
@@ -182,7 +182,7 @@ functions: <span class="monospaced">sign</span>, <span class="monospaced">unsign
 strings as primary data.</p></div>
 <div class="listingblock">
 <div class="title">Unsigning previously signed data</div>
-<div class="content"><div class="highlight"><pre><span class="p">(</span><span class="nf">require</span> <span class="o">&#39;</span><span class="p">[</span><span class="nv">buddy.crypto.signing</span> <span class="ss">:refer</span> <span class="p">[</span><span class="nv">sign</span> <span class="nv">unsign</span><span class="p">]])</span>
+<div class="content"><div class="highlight"><pre><span class="p">(</span><span class="nf">require</span> <span class="o">&#39;</span><span class="p">[</span><span class="nv">buddy.sign.generic</span> <span class="ss">:refer</span> <span class="p">[</span><span class="nv">sign</span> <span class="nv">unsign</span><span class="p">]])</span>
 
 <span class="c1">;; Sign data</span>
 <span class="p">(</span><span class="k">def </span><span class="nv">signed-data</span> <span class="p">(</span><span class="nf">sign</span> <span class="s">&quot;mystring&quot;</span> <span class="s">&quot;my-secret-key&quot;</span><span class="p">))</span>
@@ -214,7 +214,7 @@ you can do so using the signing <strong><span class="monospaced">dumps</span></s
 their friends (<span class="monospaced">sign</span> and <span class="monospaced">unsign</span>) but also can sign more complex data.</p></div>
 <div class="listingblock">
 <div class="title">Sign/Unsign clojure hash-map</div>
-<div class="content"><div class="highlight"><pre><span class="p">(</span><span class="nf">require</span> <span class="o">&#39;</span><span class="p">[</span><span class="nv">buddy.crypto.signing</span> <span class="ss">:refer</span> <span class="p">[</span><span class="nv">dumps</span> <span class="nv">loads</span><span class="p">]])</span>
+<div class="content"><div class="highlight"><pre><span class="p">(</span><span class="nf">require</span> <span class="o">&#39;</span><span class="p">[</span><span class="nv">buddy.sign.generic</span> <span class="ss">:refer</span> <span class="p">[</span><span class="nv">dumps</span> <span class="nv">loads</span><span class="p">]])</span>
 
 <span class="c1">;; Sign data</span>
 <span class="p">(</span><span class="k">def </span><span class="nv">signed-data</span> <span class="p">(</span><span class="nf">dumps</span> <span class="p">{</span><span class="ss">:userid</span> <span class="mi">1</span><span class="p">}</span> <span class="s">&quot;my-secret-key&quot;</span><span class="p">))</span>
@@ -235,6 +235,8 @@ their friends (<span class="monospaced">sign</span> and <span class="monospaced"
 <td class="content">it uses a clojure serialization library <a href="https://github.com/ptaoussanis/nippy">Nippy</a></td>
 </tr></table>
 </div>
+<div class="paragraph"><p>INFO: at this moment only generic sign method is available, but I am workin on jwt (json web token)
+implementation for buddy and it will be available on next releases</p></div>
 </div>
 </div>
 <div class="sect2">
@@ -242,13 +244,13 @@ their friends (<span class="monospaced">sign</span> and <span class="monospaced"
 <div class="paragraph"><p>An other main part of good authentication/authorization library is give you some facilities
 for generate secure passwords. <em>buddy</em> comes with few functions for generate and verify passwords
 using widely used password derivation algorithms like bcrypt and pbkdf2(with sha256).</p></div>
-<div class="paragraph"><p><em>buddy</em> hashers lives on *<span class="monospaced">buddy.crypto.hashers.*</span> namespace and usually consists on two functions:
+<div class="paragraph"><p><em>buddy</em> hashers lives on <span class="monospaced">buddy.hashers.*</span> namespace and usually consists on two functions:
 <span class="monospaced">make-password</span> and <span class="monospaced">check-password</span>.</p></div>
 <div class="paragraph"><p>The purpose of these functions is obvious: creating new password, and verify incoming plain text
-password with previously created password hash.</p></div>
+password with previously created hash.</p></div>
 <div class="listingblock">
 <div class="title">Example create new hash and verify it</div>
-<div class="content"><div class="highlight"><pre><span class="p">(</span><span class="nf">require</span> <span class="o">&#39;</span><span class="p">[</span><span class="nv">buddy.crypto.hashers.bcrypt</span> <span class="ss">:as</span> <span class="nv">hs</span><span class="p">])</span>
+<div class="content"><div class="highlight"><pre><span class="p">(</span><span class="nf">require</span> <span class="o">&#39;</span><span class="p">[</span><span class="nv">buddy.hashers.bcrypt</span> <span class="ss">:as</span> <span class="nv">hs</span><span class="p">])</span>
 
 <span class="p">(</span><span class="k">def </span><span class="nv">myhash</span> <span class="p">(</span><span class="nf">hs/make-password</span> <span class="s">&quot;secretpassword&quot;</span><span class="p">))</span>
 <span class="p">(</span><span class="k">def </span><span class="nv">ok</span> <span class="p">(</span><span class="nf">hs/check-password</span> <span class="s">&quot;secretpassword&quot;</span> <span class="nv">myhash</span><span class="p">))</span>
@@ -269,27 +271,27 @@ hasher algorithm by default.</p></div>
 <div class="ulist"><ul>
 <li>
 <p>
-<span class="monospaced">buddy.crypto.hashers.pbkdf2</span> (implements pbkdf2 with sha256)
+<span class="monospaced">buddy.hashers.pbkdf2</span> (implements pbkdf2 with sha256)
 </p>
 </li>
 <li>
 <p>
-<span class="monospaced">byddy.crypto.hashers.bcrypt</span>
+<span class="monospaced">byddy.hashers.bcrypt</span>
 </p>
 </li>
 <li>
 <p>
-<span class="monospaced">buddy.crypto.hashers.sha256</span>
+<span class="monospaced">buddy.hashers.sha256</span>
 </p>
 </li>
 <li>
 <p>
-<span class="monospaced">buddy.crypto.hashers.md5</span>
+<span class="monospaced">buddy.hashers.md5</span>
 </p>
 </li>
 <li>
 <p>
-<span class="monospaced">buddy.crypto.hashers.scrypt</span>
+<span class="monospaced">buddy.hashers.scrypt</span>
 </p>
 </li>
 </ul></div>
@@ -313,7 +315,7 @@ Session
 </li>
 <li>
 <p>
-Stateless Token (using previously explained signing framework).
+SignedToken (using previously explained signing framework).
 </p>
 </li>
 </ul></div>
@@ -375,10 +377,10 @@ key on request map.</p></div>
 <div class="paragraph"><p>See <a href="#examples">examples section</a> for complete examples for this backend.</p></div>
 </div>
 <div class="sect3">
-<h4 id="_stateless_token">4.3.3. Stateless Token</h4>
+<h4 id="_signed_token">4.3.3. Signed Token</h4>
 <div class="paragraph"><p>This works similar to <strong>session</strong> backend, but it uses a signing framework explained in a
 first section of this document.</p></div>
-<div class="paragraph"><p>Instead of trust a session key,it extracts a token from <span class="monospaced">Authorization</span> header like oauth, and
+<div class="paragraph"><p>Instead of trust a session key, it extracts a token from <span class="monospaced">Authorization</span> header like oauth, and
 unsigns it (extracted token) using the signing framework.</p></div>
 <div class="paragraph"><p>If a signature is valid, the contents of unsigned data trustly set to <span class="monospaced">:identity</span> key on request.</p></div>
 <div class="paragraph"><p>See <a href="#examples">examples section</a> for complete examples for this backend.</p></div>
@@ -404,21 +406,20 @@ access rules system based on matching urls using regular expressions and apply s
 </ul></div>
 <div class="sect3">
 <h4 id="_generic_authorization">4.4.1. Generic authorization</h4>
-<div class="paragraph"><p>This authorization system encapsulates your hadlers/controllers in one try/catch block
+<div class="paragraph"><p>This authorization system encapsulates your handlers/controllers in one try/catch block
 catching only notauthorized exceptions. So spliting unauthorized request handling code from
 your handlers/controllers in a separate function. Moreover, permits fast return when
 not authorized request is detected.</p></div>
 <div class="paragraph"><p>Like authentication system, authorization is also implemented using protocols. Taking advantage of
-it, all builtin authentication backends implements authorization protocol.</p></div>
+it, all builtin authentication backends implements this authorization protocol.</p></div>
 <div class="paragraph"><p>Some authentication backends requires specific behavior on authorization layer (like http-basic
-that should return <span class="monospaced">WWW-Authenticate</span> header when request is unauthorized) and by default, all
-builtin backends implements specific bahavior.</p></div>
+that should return <span class="monospaced">WWW-Authenticate</span> header when request is unauthorized).</p></div>
 <div class="admonitionblock">
 <table><tr>
 <td class="icon">
 <div class="title">Note</div>
 </td>
-<td class="content">You can overwrite the default handler, passing your own exception handler function as
+<td class="content">You can overwrite the default behavior, passing your own exception handler function as
 <span class="monospaced">:unauthorized-handler</span> keyword parameter to backend constructor.</td>
 </tr></table>
 </div>
@@ -460,7 +461,8 @@ builtin backends implements specific bahavior.</p></div>
 <td class="icon">
 <div class="title">Note</div>
 </td>
-<td class="content">for you want know how it really works, see <a href="#how-it-works">How it works</a> section.</td>
+<td class="content">for you want know how it really works, see <a href="#how-it-works">How it works</a> section or
+take a look on examples.</td>
 </tr></table>
 </div>
 </div>
@@ -468,11 +470,11 @@ builtin backends implements specific bahavior.</p></div>
 <h4 id="_access_rules_system">4.4.2. Access Rules System</h4>
 <div class="sect4">
 <h5 id="_introduction_2">Introduction</h5>
-<div class="paragraph"><p>Access rules is an other part of authorization system, and it consists on seting a list
-of rules for a one or set uri&#8217;s using regular expressions. One rule consists in one regular
+<div class="paragraph"><p>Access rules is an other part of authorization system, and it consists on setting a list
+of rules for a one or a set of uri&#8217;s using regular expressions. One rule consists in one regular
 expression with associated handler (function) with authorization logic.</p></div>
-<div class="paragraph"><p>Example:</p></div>
 <div class="listingblock">
+<div class="title">Simple rule example</div>
 <div class="content"><div class="highlight"><pre><span class="p">{</span><span class="ss">:pattern</span> <span class="o">#</span><span class="s">&quot;^/admin/.*&quot;</span>
  <span class="ss">:handler</span> <span class="nv">admin-access</span><span class="p">}</span>
 </pre></div></div></div>
@@ -490,7 +492,7 @@ expression with associated handler (function) with authorization logic.</p></div
 </pre></div></div></div>
 <div class="paragraph"><p>The handler function should receive a request and return: true, false or throw unauthorized
 exception. Throwing unauthorized exception is a fast return method and no other handler
-is excetured before it.</p></div>
+is excetured before it (only if handler is wraped with <span class="monospaced">wrap-authorization</span> middleware).</p></div>
 <div class="paragraph"><p>In previous example we have seen a simple handler associated with one regular expression, but
 <em>buddy</em> access rules system allows combine more handlers using logical <span class="monospaced">:and</span> &amp; <span class="monospaced">:or</span> combinators
 with nesting support.</p></div>
@@ -728,7 +730,7 @@ authorization system).</p></div>
 <h2 id="_license">9. License</h2>
 <div class="sectionbody">
 <div class="listingblock">
-<div class="content"><div class="highlight"><pre>Copyright 2013 Andrey Antukh &lt;niwi@niwi.be&gt;
+<div class="content"><div class="highlight"><pre>Copyright 2014 Andrey Antukh &lt;niwi@niwi.be&gt;
 
 Licensed under the Apache License, Version 2.0 (the &quot;License&quot;)
 you may not use this file except in compliance with the License.
@@ -749,7 +751,7 @@ limitations under the License.
 <div id="footer">
 <div id="footer-text">
 Version 0.1.0<br>
-Last updated 2014-02-10 20:33:58 CET
+Last updated 2014-02-17 21:51:58 CET
 </div>
 </div>
 </body>
