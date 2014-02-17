@@ -13,13 +13,17 @@
 ;; limitations under the License.
 
 (ns buddy.core.keys
-  (:require [buddy.core.codecs :refer [str->bytes]]))
+  (:require [buddy.core.codecs :refer [str->bytes bytes->hex]]))
 
 (defprotocol SecretKey
   (key->bytes [key] "Normalize key to byte array")
   (key->str [key] "Normalize key String"))
 
 (extend-protocol SecretKey
+  (Class/forName "[B")
+  (key->bytes [it] it)
+  (key->str [it] (bytes->hex it))
+
   String
   (key->bytes [key] (str->bytes key))
   (key->str [key] key))
