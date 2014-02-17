@@ -30,7 +30,7 @@ of keyed-hash message authentication code (hmac)."
   (let [sks   (SecretKeySpec. (make-sha512 (keys/key->bytes pkey) salt) algorithm)
         mac   (doto (Mac/getInstance algorithm)
                 (.init sks))]
-    (.doFinal mac (str->bytes value))))
+    (.doFinal mac (->byte-array value))))
 
 (def ^{:doc "Function that implements the HMAC algorithm with SHA256 digest mode."}
   hmac-sha256 (partial hmac "HmacSHA256"))
