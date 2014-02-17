@@ -1,7 +1,7 @@
 (ns buddy.test_buddy_access_rules
   (:require [clojure.test :refer :all]
             [ring.util.response :refer [response? response]]
-            [buddy.codecs :refer :all]
+            [buddy.core.codecs :refer :all]
             [buddy.auth.accessrules :refer [compile-rule match-rules apply-rule]]
             [buddy.auth.middleware :refer [wrap-access-rules]]))
 

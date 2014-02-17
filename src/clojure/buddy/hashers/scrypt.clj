@@ -13,8 +13,8 @@
 ;; limitations under the License.
 
 (ns buddy.hashers.scrypt
-  (:require [buddy.codecs :refer :all]
-            [buddy.crypto.core :refer :all]
+  (:require [buddy.core.codecs :refer :all]
+            [buddy.core.util :refer :all]
             [clojure.string :refer [split]]
             [clojurewerkz.scrypt.core :as sc]))
 
@@ -30,9 +30,7 @@ and return formated string."
           :or {cpucost 65536 memcost 8 parallelism 1}}]]
   (let [salt   (cond 
                 (nil? salt) (bytes->hex (random-bytes 12))
-                (string? salt) salt
-                (bytes? salt) (bytes->hex salt)
-                :else (throw (IllegalArgumentException. "invalid salt type")))
+                :else (bytes->hex (->byte-array salt)))
         passwd (-> (str salt pw salt)
                    (make-scrypt cpucost memcost parallelism)
                    (str->bytes)

@@ -13,8 +13,9 @@
 ;; limitations under the License.
 
 (ns buddy.sign.generic
-  (:require [buddy.codecs :refer :all]
-            [buddy.crypto.core :refer :all]
+  (:require [buddy.core.codecs :refer :all]
+            [buddy.core.sign :refer [hmac-sha256]]
+            [buddy.core.util :refer [timestamp]]
             [clojure.string :refer [split]]
             [taoensso.nippy :as nippy]))
 

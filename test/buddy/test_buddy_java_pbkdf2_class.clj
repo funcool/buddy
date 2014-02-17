@@ -14,7 +14,7 @@
 
 (ns buddy.test_buddy_java_pbkdf2_class
   (:require [clojure.test :refer :all]
-            [buddy.codecs :refer :all])
+            [buddy.core.codecs :refer :all])
   (:import (buddy.impl.pbkdf2 Pbkdf2)))
 
 

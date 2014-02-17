@@ -13,16 +13,16 @@
 ;; limitations under the License.
 
 (ns buddy.hashers.bcrypt
-  (:require [buddy.hashers.sha256 :refer [make-sha256]]
-            [buddy.crypto.core :refer :all]
-            [buddy.codecs :refer :all]
+  (:require [buddy.core.hash :refer [sha512]]
+            [buddy.core.util :refer :all]
+            [buddy.core.codecs :refer :all]
             [clojure.string :refer [split]])
   (:import (buddy.impl BCrypt)))
 
 (defn make-bcrypt
   [password log-rouds]
-  (let [salt    (BCrypt/gensalt log-rouds)]
-    (-> (make-sha256 password)
+  (let [salt (BCrypt/gensalt log-rouds)]
+    (-> (sha512 password)
         (BCrypt/hashpw salt))))
 
 (defn make-password
@@ -30,11 +30,9 @@
   pbkdf2_sha1 algorithm and return formatted
   string."
   [pw & [{:keys [salt rounds] :or {rounds 12}}]]
-  (let [salt   (cond
-                (nil? salt) (bytes->hex (random-bytes 12))
-                (string? salt) salt
-                (bytes? salt) (bytes->hex salt)
-                :else (throw (IllegalArgumentException. "invalid salt type")))
+  (let [salt   (if (nil? salt) 
+                 (bytes->hex (random-bytes 12))
+                 (bytes->hex (->byte-array salt)))
         passwd (-> (str salt pw salt)
                    (make-bcrypt rounds)
                    (str->bytes)
@@ -51,5 +49,5 @@ hashed password."
       (let [hashed  (-> (hex->bytes p)
                         (bytes->str))
             attempt (-> (str s attempt s)
-                        (make-sha256))]
+                        (sha512))]
         (BCrypt/checkpw attempt hashed)))))

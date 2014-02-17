@@ -1,4 +1,4 @@
-(ns buddy.codecs
+(ns buddy.core.codecs
   "Util functions for make conversion between string, bytes
 and encode them to base64 ot hex format."
   (:require [clojure.string :refer [trim]])
@@ -65,3 +65,16 @@ return bytearray."
   "Decode from base64 to string."
   [^String s]
   (String. (base64->bytes s) "UTF8"))
+
+(defprotocol ByteArray
+  "Facility for convert input parameters
+to bytes array with default implementation 
+for string an bytes array itself."
+  (->byte-array [this] "Represent this as byte array."))
+
+(extend-protocol ByteArray
+  (Class/forName "[B")
+  (->byte-array [it] it)
+
+  String
+  (->byte-array [data] (str->bytes data)))

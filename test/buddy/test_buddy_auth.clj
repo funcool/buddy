@@ -1,9 +1,8 @@
 (ns buddy.test_buddy_auth
   (:require [clojure.test :refer :all]
             [ring.util.response :refer [response? response]]
-            [buddy.codecs :refer :all]
-            [buddy.crypto.core :refer :all]
-            [buddy.crypto.signing :as signing]
+            [buddy.core.codecs :refer :all]
+            [buddy.sign.generic :as s]
             [buddy.auth :refer [throw-unauthorized]]
             [buddy.auth.backends.httpbasic :refer [http-basic-backend parse-httpbasic-header]]
             [buddy.auth.backends.session :refer [session-backend]]
@@ -35,14 +34,14 @@
 
 (deftest token-test
   (testing "Parse authorization header"
-    (let [signed-data     (signing/dumps {:userid 1} secret-key)
+    (let [signed-data     (s/dumps {:userid 1} secret-key)
           header-content  (format "Token %s" signed-data)
           request         {:headers {"authorization" header-content}}
           parsed          (stoken/parse-authorization-header request)]
       (is (= parsed signed-data))))
 
   (testing "Simple backend authentication 01"
-    (let [signed-data     (signing/dumps {:userid 1} secret-key)
+    (let [signed-data     (s/dumps {:userid 1} secret-key)
           header-content  (format "Token %s" signed-data)
           request         {:headers {"authorization" header-content}}
           backend         (stoken/token-backend secret-key)
@@ -51,7 +50,7 @@
           resp            (handler request)]
       (is (= (:identity resp) {:userid 1}))))
   (testing "Simple backend authentication 02"
-    (let [signed-data     (signing/dumps {:userid 1} "wrong-key")
+    (let [signed-data     (s/dumps {:userid 1} "wrong-key")
           header-content  (format "Token %s" signed-data)
           request         {:headers {"authorization" header-content}}
           backend         (stoken/token-backend secret-key)

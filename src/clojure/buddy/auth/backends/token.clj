@@ -15,7 +15,7 @@
 (ns buddy.auth.backends.token
   (:require [buddy.auth.protocols :as proto]
             [buddy.auth :refer [authenticated?]]
-            [buddy.crypto.signing :refer [loads]]
+            [buddy.sign.generic :refer [loads]]
             [buddy.util :refer [m-maybe]]
             [clojure.string :refer [split]]
             [ring.util.response :refer [response response? header status]]))

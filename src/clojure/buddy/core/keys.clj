@@ -12,8 +12,8 @@
 ;; See the License for the specific language governing permissions and
 ;; limitations under the License.
 
-(ns buddy.crypto.keys
-  (:require [buddy.codecs :refer [str->bytes]]))
+(ns buddy.core.keys
+  (:require [buddy.core.codecs :refer [str->bytes]]))
 
 (defprotocol SecretKey
   (key->bytes [key] "Normalize key to byte array")

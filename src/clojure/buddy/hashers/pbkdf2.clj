@@ -13,18 +13,14 @@
 ;; limitations under the License.
 
 (ns buddy.hashers.pbkdf2
-  (:require [buddy.codecs :refer :all]
-            [buddy.crypto.core :refer :all]
+  (:require [buddy.core.codecs :refer :all]
+            [buddy.core.util :refer :all]
             [clojure.string :refer [split]]))
 
 (defn make-pbkdf2
   [password salt iterations]
-  {:pre [(string? password)]}
-  (let [bpasswd (str->bytes password)
-        bsalt   (cond
-                 (string? salt) (str->bytes salt)
-                 (bytes? salt) salt
-                 :else (throw (IllegalArgumentException. "invalid salt type")))]
+  (let [bpasswd (->byte-array password)
+        bsalt   (->byte-array salt)]
     (-> (buddy.impl.pbkdf2.Pbkdf2/deriveKey "HmacSHA256" bpasswd bsalt iterations 32)
         (bytes->hex))))
 
