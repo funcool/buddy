@@ -27,9 +27,8 @@
   "Generic function that implement salted variant
 of keyed-hash message authentication code (hmac)."
   [algorithm value pkey & [{:keys [salt] :or {salt ""}}]]
-  (let [salt  (->byte-array salt)
-        sks   (SecretKeySpec. (make-sha512 (keys/key->bytes pkey) salt) "HmacSHA512")
-        mac   (doto (Mac/getInstance "HmacSHA256")
+  (let [sks   (SecretKeySpec. (make-sha512 (keys/key->bytes pkey) salt) algorithm)
+        mac   (doto (Mac/getInstance algorithm)
                 (.init sks))]
     (.doFinal mac (str->bytes value))))
 
