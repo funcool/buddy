@@ -60,7 +60,7 @@ vector of your *_project.clj_* file:
 ._on project.clj_
 [source,clojure]
 ----
-[buddy "0.1.0-beta3"]
+[buddy "0.1.0-beta4"]
 ----
 
 
@@ -84,7 +84,7 @@ Following of buddy package dependecy:
 <dependency>
     <groupId>buddy</groupId>
     <artifactId>buddy</artifactId>
-    <version>0.1.0-beta3</version>
+    <version>0.1.0-beta4</version>
 </dependency>
 ----
 
@@ -95,8 +95,8 @@ User guide
 Signing
 ~~~~~~~
 
-One of the main parts of _buddy_ is a "Signing framework",
-that is mainly based on django's link:https://docs.djangoproject.com/en/1.6/topics/signing/[Cryptographic signing]
+One of the main parts of _buddy_ is a "Signing framework", that is mainly based on django's 
+link:https://docs.djangoproject.com/en/1.6/topics/signing/[Cryptographic signing]
 library.
 
 That can be used for several purposes:
@@ -121,7 +121,7 @@ strings as primary data.
 .Unsigning previously signed data
 [source,clojure]
 ----
-(require '[buddy.crypto.signing :refer [sign unsign]])
+(require '[buddy.sign.generic :refer [sign unsign]])
 
 ;; Sign data
 (def signed-data (sign "mystring" "my-secret-key"))
@@ -159,7 +159,7 @@ their friends (`sign` and `unsign`) but also can sign more complex data.
 .Sign/Unsign clojure hash-map
 [source,clojure]
 ----
-(require '[buddy.crypto.signing :refer [dumps loads]])
+(require '[buddy.sign.generic :refer [dumps loads]])
 
 ;; Sign data
 (def signed-data (dumps {:userid 1} "my-secret-key"))
@@ -175,6 +175,10 @@ their friends (`sign` and `unsign`) but also can sign more complex data.
 
 NOTE: it uses a clojure serialization library link:https://github.com/ptaoussanis/nippy[Nippy]
 
+INFO: at this moment only generic sign method is available, but I am workin on jwt (json web token)
+implementation for buddy and it will be available on next releases
+
+
 Hashers
 ~~~~~~~
 
@@ -182,16 +186,16 @@ An other main part of good authentication/authorization library is give you some
 for generate secure passwords. _buddy_ comes with few functions for generate and verify passwords
 using widely used password derivation algorithms like bcrypt and pbkdf2(with sha256).
 
-_buddy_ hashers lives on *`buddy.crypto.hashers.*` namespace and usually consists on two functions:
+_buddy_ hashers lives on `buddy.hashers.*` namespace and usually consists on two functions:
 `make-password` and `check-password`.
 
 The purpose of these functions is obvious: creating new password, and verify incoming plain text
-password with previously created password hash.
+password with previously created hash.
 
 .Example create new hash and verify it
 [source,clojure]
 ----
-(require '[buddy.crypto.hashers.bcrypt :as hs])
+(require '[buddy.hashers.bcrypt :as hs])
 
 (def myhash (hs/make-password "secretpassword"))
 (def ok (hs/check-password "secretpassword" myhash))
@@ -207,11 +211,11 @@ hasher algorithm by default.
 
 This is a complete list of implemented hashers:
 
-- `buddy.crypto.hashers.pbkdf2` (implements pbkdf2 with sha256)
-- `byddy.crypto.hashers.bcrypt`
-- `buddy.crypto.hashers.sha256`
-- `buddy.crypto.hashers.md5`
-- `buddy.crypto.hashers.scrypt`
+- `buddy.hashers.pbkdf2` (implements pbkdf2 with sha256)
+- `byddy.hashers.bcrypt`
+- `buddy.hashers.sha256`
+- `buddy.hashers.md5`
+- `buddy.hashers.scrypt`
 
 
 Authentication
@@ -225,7 +229,7 @@ There a list of builtin authentication backends:
 
 - Http Basic
 - Session
-- Stateless Token (using previously explained signing framework).
+- SignedToken (using previously explained signing framework).
 
 
 Http Basic
@@ -293,18 +297,19 @@ key on request map.
 
 See xref:examples[examples section] for complete examples for this backend.
 
-Stateless Token
-^^^^^^^^^^^^^^^
+Signed Token
+^^^^^^^^^^^^
 
 This works similar to *session* backend, but it uses a signing framework explained in a
 first section of this document.
 
-Instead of trust a session key,it extracts a token from `Authorization` header like oauth, and
+Instead of trust a session key, it extracts a token from `Authorization` header like oauth, and
 unsigns it (extracted token) using the signing framework.
 
 If a signature is valid, the contents of unsigned data trustly set to `:identity` key on request.
 
 See xref:examples[examples section] for complete examples for this backend.
+
 
 Authorization
 ~~~~~~~~~~~~~
@@ -322,21 +327,19 @@ The authorization system is splited in two parts:
 Generic authorization
 ^^^^^^^^^^^^^^^^^^^^^
 
-This authorization system encapsulates your hadlers/controllers in one try/catch block
+This authorization system encapsulates your handlers/controllers in one try/catch block
 catching only notauthorized exceptions. So spliting unauthorized request handling code from
 your handlers/controllers in a separate function. Moreover, permits fast return when
 not authorized request is detected.
 
 Like authentication system, authorization is also implemented using protocols. Taking advantage of
-it, all builtin authentication backends implements authorization protocol.
+it, all builtin authentication backends implements this authorization protocol.
 
 Some authentication backends requires specific behavior on authorization layer (like http-basic
-that should return `WWW-Authenticate` header when request is unauthorized) and by default, all
-builtin backends implements specific bahavior.
+that should return `WWW-Authenticate` header when request is unauthorized). 
 
-NOTE: You can overwrite the default handler, passing your own exception handler function as
+NOTE: You can overwrite the default behavior, passing your own exception handler function as
 `:unauthorized-handler` keyword parameter to backend constructor.
-
 
 .Example of how overwrite default behavior for unauthorized requests.
 [source,clojure]
@@ -373,7 +376,8 @@ NOTE: You can overwrite the default handler, passing your own exception handler 
     (jetty/run-jetty handler {:port 9090})))
 ----
 
-NOTE: for you want know how it really works, see xref:how-it-works[How it works] section.
+NOTE: for you want know how it really works, see xref:how-it-works[How it works] section or
+take a look on examples.
 
 
 Access Rules System
@@ -382,12 +386,11 @@ Access Rules System
 Introduction
 ++++++++++++
 
-Access rules is an other part of authorization system, and it consists on seting a list
-of rules for a one or set uri's using regular expressions. One rule consists in one regular
+Access rules is an other part of authorization system, and it consists on setting a list
+of rules for a one or a set of uri's using regular expressions. One rule consists in one regular
 expression with associated handler (function) with authorization logic.
 
-Example:
-
+.Simple rule example
 [source,clojure]
 ----
 {:pattern #"^/admin/.*"
@@ -411,7 +414,7 @@ Having the `admin-access` function like this:
 
 The handler function should receive a request and return: true, false or throw unauthorized
 exception. Throwing unauthorized exception is a fast return method and no other handler
-is excetured before it.
+is excetured before it (only if handler is wraped with `wrap-authorization` middleware).
 
 In previous example we have seen a simple handler associated with one regular expression, but
 _buddy_ access rules system allows combine more handlers using logical `:and` & `:or` combinators
@@ -593,7 +596,7 @@ License
 
 [source,text]
 ----
-Copyright 2013 Andrey Antukh <niwi@niwi.be>
+Copyright 2014 Andrey Antukh <niwi@niwi.be>
 
 Licensed under the Apache License, Version 2.0 (the "License")
 you may not use this file except in compliance with the License.
