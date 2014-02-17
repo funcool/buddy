@@ -6,8 +6,9 @@
 
 (defn digest
   "Generic function for create cryptographic hash. Given an algorithm
-name and many parts as byte array. Returns a computed hash as byte array.
-This function hides java api to `java.security.MessageDigest`"
+name and many parts of any type that implements ByteArray protocol,
+return a computed hash as byte array. This function hides java api
+to `java.security.MessageDigest`"
   [algorithm & parts]
   (let [md (MessageDigest/getInstance algorithm)]
     (doseq [part parts]
@@ -24,7 +25,7 @@ This function hides java api to `java.security.MessageDigest`"
 (def make-md5 (partial digest "MD5"))
 
 ;; Alias of same secure hash algorithms previously
-;; defined but return human readable hexadecimal 
+;; defined but return human readable hexadecimal
 ;; encoded output.
 (def sha256 (comp bytes->hex make-sha256))
 (def sha384 (comp bytes->hex make-sha384))
