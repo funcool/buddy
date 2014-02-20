@@ -48,7 +48,7 @@
             (status 401))))))
 
 (defrecord TokenBackend [authenticate-handler unauthorized-handler]
-  proto/Authorization
+  proto/Authentication
   (parse [_ request]
     (parse-authorization-header request))
   (authenticate [_ request token]
@@ -73,4 +73,3 @@
 (defn token-backend
   [authenticate-handler & {:keys [unauthorized-handler]}]
   (->TokenBackend authenticate-handler unauthorized-handler))
-

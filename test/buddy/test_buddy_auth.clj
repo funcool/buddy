@@ -32,7 +32,7 @@
       (is (= (:password parsed) "bar"))
       (is (= (:username parsed) "foo")))))
 
-(deftest signed-token-test
+(deftest token-test
   (testing "Parse authorization header"
     (let [signed-data     (s/dumps {:userid 1} secret-key)
           header-content  (format "Token %s" signed-data)
@@ -40,7 +40,7 @@
           parsed          (stoken/parse-authorization-header request)]
       (is (= parsed signed-data))))
 
-  (testing "Simple backend authentication 01"
+  (testing "Signed token backend authentication 01"
     (let [signed-data     (s/dumps {:userid 1} secret-key)
           header-content  (format "Token %s" signed-data)
           request         {:headers {"authorization" header-content}}
@@ -49,7 +49,7 @@
           handler         (wrap-authentication handler backend)
           resp            (handler request)]
       (is (= (:identity resp) {:userid 1}))))
-  (testing "Simple backend authentication 02"
+  (testing "Signed token backend authentication 02"
     (let [signed-data     (s/dumps {:userid 1} "wrong-key")
           header-content  (format "Token %s" signed-data)
           request         {:headers {"authorization" header-content}}
@@ -57,7 +57,17 @@
           handler         (fn [req] req)
           handler         (wrap-authentication handler backend)
           resp            (handler request)]
-      (is (nil? (:identity resp))))))
+      (is (nil? (:identity resp)))))
+  (testing "Token backend authentication 01"
+    (let [authenticate-handler (fn [request token]
+                                 (get {:token1 {:userid 1}
+                                       :token2 {:userid 2}} (keyword token)))
+          request              {:headers {"authorization" "Token token1"}}
+          backend              (stoken/token-backend authenticate-handler)
+          handler              (-> (fn [request] (:identity request))
+                                   (wrap-authentication backend))
+          response             (handler request)]
+      (is (= response {:userid 1})))))
 
 (deftest session-auth-test
   (testing "Simple backend authentication 01"
