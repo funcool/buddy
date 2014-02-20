@@ -32,7 +32,7 @@
       (is (= (:password parsed) "bar"))
       (is (= (:username parsed) "foo")))))
 
-(deftest token-test
+(deftest signed-token-test
   (testing "Parse authorization header"
     (let [signed-data     (s/dumps {:userid 1} secret-key)
           header-content  (format "Token %s" signed-data)
@@ -44,7 +44,7 @@
     (let [signed-data     (s/dumps {:userid 1} secret-key)
           header-content  (format "Token %s" signed-data)
           request         {:headers {"authorization" header-content}}
-          backend         (stoken/token-backend secret-key)
+          backend         (stoken/signed-token-backend secret-key)
           handler         (fn [req] req)
           handler         (wrap-authentication handler backend)
           resp            (handler request)]
@@ -53,7 +53,7 @@
     (let [signed-data     (s/dumps {:userid 1} "wrong-key")
           header-content  (format "Token %s" signed-data)
           request         {:headers {"authorization" header-content}}
-          backend         (stoken/token-backend secret-key)
+          backend         (stoken/signed-token-backend secret-key)
           handler         (fn [req] req)
           handler         (wrap-authentication handler backend)
           resp            (handler request)]
