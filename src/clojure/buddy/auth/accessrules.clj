@@ -1,4 +1,5 @@
-(ns buddy.auth.accessrules)
+(ns buddy.auth.accessrules
+  (:require [buddy.auth :refer [throw-unauthorized]]))
 
 (defn compile-rule
   "Receives a rule handler and return one callable that
@@ -49,3 +50,32 @@
   false for deny."
   (let [rulehandler (compile-rule (:handler rule))]
     (rulehandler request)))
+
+(defn restrict
+  "Like `wrap-access-rules` middleware but works as
+decorator. Is intended for use with compojure routing
+library or similar. Example:
+
+  (defn login-ctrl [req] ...)
+  (defn admin-ctrl [req] ...)
+
+  (defroutes app
+    (ANY \"/login\" [] login-ctrl)
+    (GET \"/admin\" [] (restrict admin-ctrl
+                                 :rule admin-access ;; Mandatory
+                                 ;; Optional (uses backend reject-handler instead)
+                                 :reject-handler my-reject-handler)
+
+This decorator allow use same access rules but without
+any url matching algorithm but with disadvantage of
+accoupling your routers code with access rules."
+  [handler & {:keys [rule reject-handler]}]
+  (fn [request]
+    (if (apply-rule request {:handler rule})
+      (handler request)
+      (if reject-handler
+        (reject-handler request)
+        (if-let [reject-handler (get-in request [:access-rules :reject-handler])]
+          (reject-handler request)
+          (throw-unauthorized))))))
+

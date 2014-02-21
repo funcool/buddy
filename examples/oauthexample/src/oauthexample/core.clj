@@ -142,7 +142,7 @@ nothing more."
         ;; Create app with buddy middlewares
         app (-> app
                 (wrap-params)
-                (wrap-access-rules rules {:policy :allow})
+                (wrap-access-rules :rules rules :policy :allow)
                 (wrap-authorization backend)
                 (wrap-authentication backend)
                 (wrap-session))]
