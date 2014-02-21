@@ -14,4 +14,20 @@
   :plugins [[codox "0.6.6"]]
   :codox {:output-dir "doc/api"
           :src-dir-uri "http://github.com/niwibe/buddy/blob/master/"
-          :src-linenum-anchor-prefix "L"})
+          :src-linenum-anchor-prefix "L"}
+  :profiles {:uberjar {:aot :all}
+             :example {:dependencies [[compojure "1.1.6"]
+                                      [ring "1.2.1"]]}
+             :sessionexample [:example
+                              {:source-paths ["examples/sessionexample/src"]
+                               :resource-paths ["examples/sessionexample/resources"]
+                               :target-path "examples/sessionexample/target/%s"
+                               :main ^:skip-aot sessionexample.core}]
+             :oauthexample [:example
+                            {:dependencies [[clj-http "0.7.9"]
+                                            [hiccup "1.0.5"]
+                                            [org.clojure/data.json "0.2.4"]]
+                             :source-paths ["examples/oauthexample/src"]
+                             :resource-paths ["example/oauthexample/resources"]
+                             :target-path "examples/oauthexample/target/%s"
+                             :main ^:skip-aot oauthexample.core}]})
