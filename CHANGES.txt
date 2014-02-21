@@ -6,6 +6,10 @@ Version 0.1.0-beta4
 -------------------
 
 - Assoc matching access rule to request.
+- Add "restricted" handler decorator for url independent access rules assignation.
+- Split token backend in: token-backend and signed-token-backend. token backend
+  now works like any other token authenticacion implementation: parses a token and
+  executes simple function for authenticate it.
 
 Version 0.1.0-beta3
 -------------------
