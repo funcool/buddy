@@ -10,6 +10,7 @@ Version 0.1.0-beta4
 - Split token backend in: token-backend and signed-token-backend. token backend
   now works like any other token authenticacion implementation: parses a token and
   executes simple function for authenticate it.
+- Add ECDSA and RSASSA-PKCS1-V1_5 signature algorithms.
 
 Version 0.1.0-beta3
 -------------------
