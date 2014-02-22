@@ -315,6 +315,11 @@ Session
 </li>
 <li>
 <p>
+Token
+</p>
+</li>
+<li>
+<p>
 SignedToken (using previously explained signing framework).
 </p>
 </li>
@@ -326,14 +331,9 @@ well as first introduction of how authentication works with <em>buddy</em>.</p><
 <div class="paragraph"><p>The main goal of <em>buddy</em> is not depending on any high level framework like (compojure, caribou, pedestal)
 and it works directly as ring middleware.</p></div>
 <div class="listingblock">
-<div class="title">Example app: <em>main.clj</em></div>
-<div class="content"><div class="highlight"><pre><span class="p">(</span><span class="kd">ns </span><span class="nv">yourapp.main</span>
-  <span class="p">(</span><span class="ss">:require</span> <span class="p">[</span><span class="nv">ring.adapter.jetty</span> <span class="ss">:as</span> <span class="nv">jetty</span><span class="p">]</span>
-            <span class="p">[</span><span class="nv">ring.util.response</span> <span class="ss">:refer</span> <span class="p">[</span><span class="nv">response</span><span class="p">]]</span>
-            <span class="p">[</span><span class="nv">buddy.auth.backends.httpbasic</span> <span class="ss">:refer</span> <span class="p">[</span><span class="nv">http-basic-backend</span><span class="p">]]</span>
-            <span class="p">[</span><span class="nv">buddy.auth.middleware</span> <span class="ss">:refer</span> <span class="p">[</span><span class="nv">wrap-authentication</span><span class="p">]]</span>
-            <span class="p">[</span><span class="nv">bussy.auth</span> <span class="ss">:refer</span> <span class="p">[</span><span class="nv">authenticated?</span><span class="p">]])</span>
-  <span class="p">(</span><span class="ss">:gen-class</span><span class="p">))</span>
+<div class="title">Simple handler definition</div>
+<div class="content"><div class="highlight"><pre><span class="p">(</span><span class="nf">require</span> <span class="o">&#39;</span><span class="p">[</span><span class="nv">buddy.auth</span> <span class="ss">:refer</span> <span class="p">(</span><span class="nf">authenticated?</span><span class="p">)])</span>
+<span class="p">(</span><span class="nf">require</span> <span class="o">&#39;</span><span class="p">[</span><span class="nv">ring.util.response</span> <span class="ss">:refer</span> <span class="p">(</span><span class="nf">response</span><span class="p">)])</span>
 
 <span class="c1">;; Simple ring handler. This also, can be a compojure routes handler</span>
 <span class="c1">;; or any other while it be compatible with ring middlewares.</span>
@@ -342,6 +342,13 @@ and it works directly as ring middleware.</p></div>
   <span class="p">(</span><span class="k">if </span><span class="p">(</span><span class="nf">authenticated?</span> <span class="nv">request</span><span class="p">)</span>
     <span class="p">(</span><span class="nf">response</span> <span class="p">(</span><span class="nf">format</span> <span class="s">&quot;Hello %s&quot;</span> <span class="p">(</span><span class="ss">:identity</span> <span class="nv">request</span><span class="p">)))</span>
     <span class="p">(</span><span class="nf">response</span> <span class="s">&quot;Hello Anonymous&quot;</span><span class="p">)))</span>
+</pre></div></div></div>
+<div class="listingblock">
+<div class="title">Middlware usage example</div>
+<div class="content"><div class="highlight"><pre><span class="c1">;; Import middleware function and backend constructor</span>
+
+<span class="p">(</span><span class="nf">require</span> <span class="o">&#39;</span><span class="p">[</span><span class="nv">buddy.auth.backends.httpbasic</span> <span class="ss">:refer</span> <span class="p">[</span><span class="nv">http-basic-backend</span><span class="p">]])</span>
+<span class="p">(</span><span class="nf">require</span> <span class="o">&#39;</span><span class="p">[</span><span class="nv">buddy.auth.middleware</span> <span class="ss">:refer</span> <span class="p">[</span><span class="nv">wrap-authentication</span><span class="p">]])</span>
 
 <span class="c1">;; This function always receives request and authdata, authdata</span>
 <span class="c1">;; can vary with other backends. For http basic backend, authdata</span>
@@ -350,20 +357,19 @@ and it works directly as ring middleware.</p></div>
 <span class="c1">;; This function should return some not nil value that</span>
 <span class="c1">;; are automatically stored on :identity key on request</span>
 <span class="c1">;; If it return nil, a request is considered unautenticated.</span>
+
 <span class="p">(</span><span class="kd">defn </span><span class="nv">my-authfn</span>
   <span class="p">[</span><span class="nv">request</span>, <span class="nv">authdata</span><span class="p">]</span>
   <span class="p">(</span><span class="k">let </span><span class="p">[</span><span class="nv">username</span> <span class="p">(</span><span class="ss">:username</span> <span class="nv">authdata</span><span class="p">)</span>
         <span class="nv">password</span> <span class="p">(</span><span class="ss">:password</span> <span class="nv">authdata</span><span class="p">)]</span>
-    <span class="p">(</span><span class="nf">cond</span>
-      <span class="p">(</span><span class="nb">and </span><span class="p">(</span><span class="nb">= </span><span class="nv">username</span> <span class="s">&quot;foo&quot;</span><span class="p">)</span>
-           <span class="p">(</span><span class="nb">= </span><span class="nv">password</span> <span class="s">&quot;bae&quot;</span><span class="p">))</span> <span class="ss">:myuser</span><span class="p">)))</span>
+    <span class="p">(</span><span class="nf">search-user-on-db</span> <span class="nv">username</span> <span class="nv">password</span><span class="p">)))</span>
 
-<span class="p">(</span><span class="kd">defn </span><span class="nv">-main</span>
-  <span class="p">[</span><span class="o">&amp;</span> <span class="nv">args</span><span class="p">]</span>
-  <span class="p">(</span><span class="k">let </span><span class="p">[</span><span class="nv">backend</span> <span class="p">(</span><span class="nf">http-basic-backend</span> <span class="ss">:realm</span> <span class="s">&quot;MyApi&quot;</span> <span class="ss">:authfn</span> <span class="nv">my-authfn</span><span class="p">)</span>
-        <span class="nv">app</span>     <span class="p">(</span><span class="nb">-&gt; </span><span class="nv">handler</span>
-                    <span class="p">(</span><span class="nf">wrap-authentication</span> <span class="nv">backend</span><span class="p">))]</span>
-    <span class="p">(</span><span class="nf">jetty/run-jetty</span> <span class="nv">app</span> <span class="p">{</span><span class="ss">:port</span> <span class="mi">9090</span><span class="p">}))</span>
+<span class="c1">;; Define the main handler with *app* name wrapping it</span>
+<span class="c1">;; with authentication middleware using an instance of</span>
+<span class="c1">;; just created http-basic backend.</span>
+
+<span class="p">(</span><span class="k">def </span><span class="nv">app</span> <span class="p">(</span><span class="k">let </span><span class="p">[</span><span class="nv">backend</span> <span class="p">(</span><span class="nf">http-basic-backend</span> <span class="ss">:realm</span> <span class="s">&quot;MyApi&quot;</span> <span class="ss">:authfn</span> <span class="nv">my-authfn</span><span class="p">)]</span>
+           <span class="p">(</span><span class="nf">wrap-authentication</span> <span class="nv">handler</span> <span class="nv">backend</span><span class="p">)))</span>
 </pre></div></div></div>
 </div>
 <div class="sect3">
@@ -377,12 +383,17 @@ key on request map.</p></div>
 <div class="paragraph"><p>See <a href="#examples">examples section</a> for complete examples for this backend.</p></div>
 </div>
 <div class="sect3">
-<h4 id="_signed_token">4.3.3. Signed Token</h4>
-<div class="paragraph"><p>This works similar to <strong>session</strong> backend, but it uses a signing framework explained in a
+<h4 id="_token">4.3.3. Token</h4>
+<div class="paragraph"><p>It works as expected, parses token and call function for authenticate the token. Nothing
+more.</p></div>
+</div>
+<div class="sect3">
+<h4 id="_signed_token">4.3.4. Signed Token</h4>
+<div class="paragraph"><p>This works similar to <strong>session</strong> and <strong>token</strong> backends, but it uses a signing framework explained in a
 first section of this document.</p></div>
-<div class="paragraph"><p>Instead of trust a session key, it extracts a token from <span class="monospaced">Authorization</span> header like oauth, and
-unsigns it (extracted token) using the signing framework.</p></div>
-<div class="paragraph"><p>If a signature is valid, the contents of unsigned data trustly set to <span class="monospaced">:identity</span> key on request.</p></div>
+<div class="paragraph"><p>Extracts token from header using same functions as <strong>token</strong> backend but instad of call a function
+for authorize or trust a session key, it try verify the incoming token and if it success, the signed
+data are trustly set to <span class="monospaced">:identity</span> key on request.</p></div>
 <div class="paragraph"><p>See <a href="#examples">examples section</a> for complete examples for this backend.</p></div>
 </div>
 </div>
@@ -411,50 +422,55 @@ catching only notauthorized exceptions. So spliting unauthorized request handlin
 your handlers/controllers in a separate function. Moreover, permits fast return when
 not authorized request is detected.</p></div>
 <div class="paragraph"><p>Like authentication system, authorization is also implemented using protocols. Taking advantage of
-it, all builtin authentication backends implements this authorization protocol.</p></div>
+it, all builtin authentication backends also implements this authorization protocol (<span class="monospaced">IAuthorization</span>).</p></div>
 <div class="paragraph"><p>Some authentication backends requires specific behavior on authorization layer (like http-basic
-that should return <span class="monospaced">WWW-Authenticate</span> header when request is unauthorized).</p></div>
-<div class="admonitionblock">
-<table><tr>
-<td class="icon">
-<div class="title">Note</div>
-</td>
-<td class="content">You can overwrite the default behavior, passing your own exception handler function as
-<span class="monospaced">:unauthorized-handler</span> keyword parameter to backend constructor.</td>
-</tr></table>
-</div>
+that should return <span class="monospaced">WWW-Authenticate</span> header when request is unauthorized) and by default, all
+backends comes with default implementation. You can overwrite the default behavior, passing your
+own exception handler function as <span class="monospaced">:unauthorized-handler</span> keyword parameter to backend constructor.</p></div>
+<div class="paragraph"><p>Below, a complete example of how to setup a basic/generic authorization system
+on your ring compatible web application:</p></div>
 <div class="listingblock">
-<div class="title">Example of how overwrite default behavior for unauthorized requests.</div>
-<div class="content"><div class="highlight"><pre><span class="p">(</span><span class="kd">ns </span><span class="nv">myns.somensfile</span>
-  <span class="p">(</span><span class="ss">:require</span> <span class="p">[</span><span class="nv">clojure.java.io</span> <span class="ss">:as</span> <span class="nv">io</span><span class="p">]</span>
-            <span class="p">[</span><span class="nv">ring.util.response</span> <span class="ss">:refer</span> <span class="p">[</span><span class="nv">response</span> <span class="nv">redirect</span><span class="p">]]</span>
-            <span class="p">[</span><span class="nv">buddy.auth</span> <span class="ss">:refer</span> <span class="p">[</span><span class="nv">authenticated?</span> <span class="nv">throw-unauthorized</span><span class="p">]]</span>
-            <span class="p">[</span><span class="nv">buddy.auth.backends.httpbasic</span> <span class="ss">:refer</span> <span class="p">[</span><span class="nv">http-basic-backend</span><span class="p">]]</span>
-            <span class="p">[</span><span class="nv">buddy.auth.middleware</span> <span class="ss">:refer</span> <span class="p">[</span><span class="nv">wrap-authentication</span> <span class="nv">wrap-authorization</span><span class="p">]]))</span>
+<div class="title">Defining uathorized handler</div>
+<div class="content"><div class="highlight"><pre><span class="p">(</span><span class="nf">require</span> <span class="o">&#39;</span><span class="p">[</span><span class="nv">buddy.auth</span> <span class="ss">:refer</span> <span class="p">[</span><span class="nv">authenticated?</span> <span class="nv">throw-unauthorized</span><span class="p">]])</span>
+<span class="p">(</span><span class="nf">require</span> <span class="o">&#39;</span><span class="p">[</span><span class="nv">ring.util.response</span> <span class="ss">:refer</span> <span class="p">(</span><span class="nf">response</span> <span class="nv">redirect</span><span class="p">)])</span>
 
-<span class="c1">;; This function always receives a request and exception metadata.</span>
+<span class="c1">;; An unauthorized-handler is executed when `buddy.auth/throw-unauthorized`</span>
+<span class="c1">;; exception is raised and captured by genric authorization middleware:</span>
+<span class="c1">;; `wrap-authorization`. It always receives the current request and metadata</span>
+<span class="c1">;; hash-map that in most cases is empty.</span>
 
 <span class="p">(</span><span class="kd">defn </span><span class="nv">my-unauthorized-handler</span>
   <span class="p">[</span><span class="nv">request</span> <span class="nv">metadata</span><span class="p">]</span>
   <span class="p">(</span><span class="k">if </span><span class="p">(</span><span class="nf">authenticated?</span> <span class="nv">request</span><span class="p">)</span>
-    <span class="p">(</span><span class="nf">response</span> <span class="p">(</span><span class="nf">io/resource</span> <span class="s">&quot;error.html&quot;</span><span class="p">))</span>
+    <span class="p">(</span><span class="nf">response</span> <span class="s">&quot;Permission denied&quot;</span><span class="p">)</span>
     <span class="p">(</span><span class="nf">redirect</span> <span class="s">&quot;/login&quot;</span><span class="p">)))</span>
-
+</pre></div></div></div>
+<div class="listingblock">
+<div class="title">Defining a simple handler that raises unauthorized exception when user is not authenticated</div>
+<div class="content"><div class="highlight"><pre><span class="c1">;; This is a simple ring compatible handler</span>
 <span class="p">(</span><span class="kd">defn </span><span class="nv">handler</span>
   <span class="p">[</span><span class="nv">request</span><span class="p">]</span>
   <span class="p">(</span><span class="k">if </span><span class="p">(</span><span class="nf">authenticated?</span><span class="p">)</span>
     <span class="p">(</span><span class="nf">response</span> <span class="s">&quot;Hello World&quot;</span><span class="p">)</span>
     <span class="p">(</span><span class="nf">throw-unauthorized</span><span class="p">)))</span>
+</pre></div></div></div>
+<div class="listingblock">
+<div class="title">Define the final handler</div>
+<div class="content"><div class="highlight"><pre><span class="p">(</span><span class="nf">require</span> <span class="o">&#39;</span><span class="p">[</span><span class="nv">buddy.auth.backends.httpbasic</span> <span class="ss">:refer</span> <span class="p">[</span><span class="nv">http-basic-backend</span><span class="p">]])</span>
+<span class="p">(</span><span class="nf">require</span> <span class="o">&#39;</span><span class="p">[</span><span class="nv">buddy.auth.middleware</span> <span class="ss">:refer</span> <span class="p">[</span><span class="nv">wrap-authentication</span> <span class="nv">wrap-authorization</span><span class="p">]])</span>
 
-<span class="p">(</span><span class="kd">defn </span><span class="nv">-main</span>
-  <span class="p">[</span><span class="o">&amp;</span> <span class="nv">args</span><span class="p">]</span>
-  <span class="p">(</span><span class="k">let </span><span class="p">[</span><span class="nv">backend</span> <span class="p">(</span><span class="nf">http-basic-backend</span> <span class="ss">:realm</span> <span class="s">&quot;Api&quot;</span>
-                                    <span class="ss">:authfn</span> <span class="p">(</span><span class="k">fn </span><span class="p">[</span><span class="nv">_</span> <span class="nv">_</span><span class="p">]</span> <span class="ss">:foo-user</span><span class="p">)</span>
-                                    <span class="ss">:unauthorized-handler</span> <span class="nv">my-unauthorized-handler</span><span class="p">)</span>
-        <span class="nv">handler</span> <span class="p">(</span><span class="nb">-&gt; </span><span class="nv">handler</span>
-                    <span class="p">(</span><span class="nf">wrap-authentication</span> <span class="nv">backend</span><span class="p">)</span>
-                    <span class="p">(</span><span class="nf">wrap-authorization</span> <span class="nv">backend</span><span class="p">))]</span>
-    <span class="p">(</span><span class="nf">jetty/run-jetty</span> <span class="nv">handler</span> <span class="p">{</span><span class="ss">:port</span> <span class="mi">9090</span><span class="p">})))</span>
+<span class="c1">;; Define the final handler wrapping it on authentication and</span>
+<span class="c1">;; authorization handler using the same backend and overwriting</span>
+<span class="c1">;; the default unathorized request behavior with own, previously</span>
+<span class="c1">;; defined function</span>
+
+<span class="p">(</span><span class="k">def </span><span class="nv">app</span> <span class="p">(</span><span class="k">let </span><span class="p">[</span><span class="nv">backend</span> <span class="p">(</span><span class="nf">http-basic-backend</span>
+                         <span class="ss">:realm</span> <span class="s">&quot;API&quot;</span>
+                         <span class="ss">:authfn</span> <span class="nv">my-auth-fn</span>
+                         <span class="ss">:unauthorized-handler</span> <span class="nv">my-unauthorized-handler</span><span class="p">)]</span>
+           <span class="p">(</span><span class="nb">-&gt; </span><span class="nv">handler</span>
+               <span class="p">(</span><span class="nf">wrap-authentication</span> <span class="nv">backend</span><span class="p">)</span>
+               <span class="p">(</span><span class="nf">wrap-authorization</span> <span class="nv">backend</span><span class="p">))))</span>
 </pre></div></div></div>
 <div class="admonitionblock">
 <table><tr>
@@ -516,18 +532,15 @@ readonly access to any authenticated user:</p></div>
 </div>
 <div class="sect4">
 <h5 id="_how_to_use_it">How to use it?</h5>
-<div class="paragraph"><p>Access rules system is still flexible for adapt it for a lot of case uses is very
+<div class="paragraph"><p>Access rules system is still flexible and adapt it for a lot of case uses is very
 simple.</p></div>
 <div class="paragraph"><p>The simplest way to use access rules, is using <span class="monospaced">wrap-access-rules</span> middleware
-passing to it a ordered vector of rules. Important: rules are evaluated in order,
+passing to it an ordered vector of rules. Important: rules are evaluated in order,
 therefore, put less restrictive regular expression on the end.</p></div>
 <div class="listingblock">
-<div class="title"><em>myapp.clj</em></div>
-<div class="content"><div class="highlight"><pre><span class="p">(</span><span class="kd">ns </span><span class="nv">myapp</span>
-  <span class="p">(</span><span class="ss">:require</span> <span class="p">[</span><span class="nv">myapp.routes</span> <span class="ss">:refer</span> <span class="p">[</span><span class="nv">app</span><span class="p">]]</span>
-            <span class="p">[</span><span class="nv">myapp.permissions</span> <span class="ss">:refer</span> <span class="p">[</span><span class="nv">admin-access</span> <span class="nv">operator-access</span>
-                                       <span class="nv">any-access</span> <span class="nv">authenticated-access</span><span class="p">]]</span>
-            <span class="p">[</span><span class="nv">buddy.auth.middleware</span> <span class="ss">:refer</span> <span class="p">[</span><span class="nv">wrap-access-rules</span><span class="p">]]))</span>
+<div class="title">Define a list of rules</div>
+<div class="content"><div class="highlight"><pre><span class="c1">;; Rules handlers used on this example are omited for code clarity</span>
+<span class="c1">;; and them repsents a authorization logic for its name.</span>
 
 <span class="p">(</span><span class="k">def </span><span class="nv">rules</span> <span class="p">[{</span><span class="ss">:pattern</span> <span class="o">#</span><span class="s">&quot;^/admin/.*&quot;</span>
              <span class="ss">:handler</span> <span class="p">{</span><span class="ss">:or</span> <span class="p">[</span><span class="nv">admin-access</span> <span class="nv">operator-access</span><span class="p">]}}</span>
@@ -535,18 +548,27 @@ therefore, put less restrictive regular expression on the end.</p></div>
              <span class="ss">:handler</span> <span class="nv">any-access</span><span class="p">}</span>
             <span class="p">{</span><span class="ss">:pattern</span> <span class="o">#</span><span class="s">&quot;^/.*&quot;</span>
              <span class="ss">:handler</span> <span class="nv">authenticated-access</span><span class="p">}])</span>
+</pre></div></div></div>
+<div class="listingblock">
+<div class="title">Define default behavior for not authorized requests</div>
+<div class="content"><div class="highlight"><pre><span class="c1">;; This functions works like default ring compatible handler</span>
+<span class="c1">;; and should implement the default behavior for request</span>
+<span class="c1">;; that are not authorized by any defined rule</span>
 
-<span class="c1">;; Function that used for handle unauthorized requests</span>
 <span class="p">(</span><span class="kd">defn </span><span class="nv">reject-handler</span>
   <span class="p">[</span><span class="nv">request</span><span class="p">]</span>
   <span class="p">{</span><span class="ss">:status</span> <span class="mi">403</span>
    <span class="ss">:headers</span> <span class="p">{}</span>
    <span class="ss">:body</span> <span class="s">&quot;Not authorized&quot;</span><span class="p">})</span>
-
-<span class="p">(</span><span class="kd">defn </span><span class="nv">-main</span>
+</pre></div></div></div>
+<div class="listingblock">
+<div class="title">Wrap your handler with access rules (and run with jetty as example)</div>
+<div class="content"><div class="highlight"><pre><span class="p">(</span><span class="kd">defn </span><span class="nv">-main</span>
   <span class="p">[</span><span class="o">&amp;</span> <span class="nv">args</span><span class="p">]</span>
-  <span class="p">(</span><span class="k">let </span><span class="p">[</span><span class="nv">handler</span> <span class="p">(</span><span class="nf">wrap-access-rules</span> <span class="nv">app</span> <span class="nv">rules</span> <span class="p">{</span><span class="ss">:reject-handler</span> <span class="nv">reject-handler</span><span class="p">}))]</span>
-    <span class="p">(</span><span class="nf">jetty/run-jetty</span> <span class="nv">handler</span> <span class="p">{</span><span class="ss">:port</span> <span class="mi">9090</span><span class="p">}))</span>
+  <span class="p">(</span><span class="k">let </span><span class="p">[</span><span class="nv">app</span> <span class="p">(</span><span class="nf">wrap-access-rules</span> <span class="nv">your-app-handler</span>
+                               <span class="ss">:rules</span> <span class="nv">rules</span>
+                               <span class="ss">:reject-handler</span> <span class="nv">reject-handler</span><span class="p">))]</span>
+    <span class="p">(</span><span class="nf">run-jetty</span> <span class="nv">app</span> <span class="p">{</span><span class="ss">:port</span> <span class="mi">9090</span><span class="p">}))</span>
 </pre></div></div></div>
 <div class="paragraph"><p>If no reject handler is specified, unauthorized exception is raised. These exception
 can be captured by generic authorization middleware.</p></div>
@@ -560,6 +582,25 @@ action. The default policy in <em>buddy</em> is <span class="monospaced">:allow<
 using keyword <span class="monospaced">:policy</span> on wrap-access-rules middleware.</td>
 </tr></table>
 </div>
+<div class="paragraph"><p>An other way to use access rules is using <span class="monospaced">buddy.auth.accessrules/restrict</span>
+handler decorator that allows assign some rules to concrete handlers omiting
+any url matching.</p></div>
+<div class="paragraph"><p>The usage of it can be easy show using compojure routes:</p></div>
+<div class="listingblock">
+<div class="content"><div class="highlight"><pre><span class="p">(</span><span class="nf">require</span> <span class="o">&#39;</span><span class="p">[</span><span class="nv">buddy.auth.accessrules</span> <span class="ss">:refer</span> <span class="p">[</span><span class="nv">restrict</span><span class="p">]])</span>
+
+<span class="p">(</span><span class="nf">defroutes</span> <span class="nv">app</span>
+  <span class="p">(</span><span class="nf">GET</span> <span class="s">&quot;/&quot;</span> <span class="p">[]</span> <span class="p">(</span><span class="nf">restrict</span> <span class="nv">my-home-ctrl</span>
+                        <span class="c1">;; Mandatory parameter</span>
+                        <span class="ss">:rule</span> <span class="nv">user-access</span>
+                        <span class="c1">;; Optional parameter, in case if not passed</span>
+                        <span class="c1">;; default is used (defined by `wrap-access-rules`</span>
+                        <span class="c1">;; middleware) or `throw-unauthorized` is raised</span>
+                        <span class="c1">;; if default isn&#39;t available</span>
+                        <span class="ss">:reject-handler</span> <span class="nv">reject-handler</span><span class="p">))</span>
+  <span class="p">(</span><span class="nf">GET</span> <span class="s">&quot;/admin&quot;</span> <span class="p">(</span><span class="nf">restrict</span> <span class="nv">my-admin-ctrl</span>
+                          <span class="ss">:rule</span> <span class="nv">admin-access</span><span class="p">)))</span>
+</pre></div></div></div>
 </div>
 </div>
 </div>
@@ -672,6 +713,8 @@ examples are available on <span class="monospaced">examples/</span> directory on
 </p>
 </li>
 </ul></div>
+<div class="paragraph"><p>For run examples, you should be at project root directory and execute <span class="monospaced">lein with-profile examplename run</span> where
+examplename can be <span class="monospaced">sessionexample</span> or <span class="monospaced">oauthexample</span> for this moment.</p></div>
 </div>
 </div>
 <div class="sect1">
@@ -751,7 +794,7 @@ limitations under the License.
 <div id="footer">
 <div id="footer-text">
 Version 0.1.0<br>
-Last updated 2014-02-17 21:51:58 CET
+Last updated 2014-02-22 19:54:51 CET
 </div>
 </div>
 </body>
