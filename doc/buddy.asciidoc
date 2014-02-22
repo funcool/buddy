@@ -229,6 +229,7 @@ There a list of builtin authentication backends:
 
 - Http Basic
 - Session
+- Token
 - SignedToken (using previously explained signing framework).
 
 
@@ -241,16 +242,11 @@ well as first introduction of how authentication works with _buddy_.
 The main goal of _buddy_ is not depending on any high level framework like (compojure, caribou, pedestal)
 and it works directly as ring middleware.
 
-.Example app: _main.clj_
+.Simple handler definition
 [source,clojure]
 ----
-(ns yourapp.main
-  (:require [ring.adapter.jetty :as jetty]
-            [ring.util.response :refer [response]]
-            [buddy.auth.backends.httpbasic :refer [http-basic-backend]]
-            [buddy.auth.middleware :refer [wrap-authentication]]
-            [bussy.auth :refer [authenticated?]])
-  (:gen-class))
+(require '[buddy.auth :refer (authenticated?)])
+(require '[ring.util.response :refer (response)])
 
 ;; Simple ring handler. This also, can be a compojure routes handler
 ;; or any other while it be compatible with ring middlewares.
@@ -259,6 +255,15 @@ and it works directly as ring middleware.
   (if (authenticated? request)
     (response (format "Hello %s" (:identity request)))
     (response "Hello Anonymous")))
+----
+
+.Middlware usage example
+[source,clojure]
+----
+;; Import middleware function and backend constructor
+
+(require '[buddy.auth.backends.httpbasic :refer [http-basic-backend]])
+(require '[buddy.auth.middleware :refer [wrap-authentication]])
 
 ;; This function always receives request and authdata, authdata
 ;; can vary with other backends. For http basic backend, authdata
@@ -267,20 +272,19 @@ and it works directly as ring middleware.
 ;; This function should return some not nil value that
 ;; are automatically stored on :identity key on request
 ;; If it return nil, a request is considered unautenticated.
+
 (defn my-authfn
   [request, authdata]
   (let [username (:username authdata)
         password (:password authdata)]
-    (cond
-      (and (= username "foo")
-           (= password "bae")) :myuser)))
+    (search-user-on-db username password)))
 
-(defn -main
-  [& args]
-  (let [backend (http-basic-backend :realm "MyApi" :authfn my-authfn)
-        app     (-> handler
-                    (wrap-authentication backend))]
-    (jetty/run-jetty app {:port 9090}))
+;; Define the main handler with *app* name wrapping it
+;; with authentication middleware using an instance of
+;; just created http-basic backend.
+
+(def app (let [backend (http-basic-backend :realm "MyApi" :authfn my-authfn)]
+           (wrap-authentication handler backend)))
 ----
 
 
@@ -297,16 +301,22 @@ key on request map.
 
 See xref:examples[examples section] for complete examples for this backend.
 
+
+Token
+^^^^^
+
+It works as expected, parses token and call function for authenticate the token. Nothing
+more.
+
 Signed Token
 ^^^^^^^^^^^^
 
-This works similar to *session* backend, but it uses a signing framework explained in a
+This works similar to *session* and *token* backends, but it uses a signing framework explained in a
 first section of this document.
 
-Instead of trust a session key, it extracts a token from `Authorization` header like oauth, and
-unsigns it (extracted token) using the signing framework.
-
-If a signature is valid, the contents of unsigned data trustly set to `:identity` key on request.
+Extracts token from header using same functions as *token* backend but instad of call a function
+for authorize or trust a session key, it try verify the incoming token and if it success, the signed
+data are trustly set to `:identity` key on request.
 
 See xref:examples[examples section] for complete examples for this backend.
 
@@ -333,47 +343,66 @@ your handlers/controllers in a separate function. Moreover, permits fast return 
 not authorized request is detected.
 
 Like authentication system, authorization is also implemented using protocols. Taking advantage of
-it, all builtin authentication backends implements this authorization protocol.
+it, all builtin authentication backends also implements this authorization protocol (`IAuthorization`).
 
 Some authentication backends requires specific behavior on authorization layer (like http-basic
-that should return `WWW-Authenticate` header when request is unauthorized).
+that should return `WWW-Authenticate` header when request is unauthorized) and by default, all
+backends comes with default implementation. You can overwrite the default behavior, passing your
+own exception handler function as `:unauthorized-handler` keyword parameter to backend constructor.
 
-NOTE: You can overwrite the default behavior, passing your own exception handler function as
-`:unauthorized-handler` keyword parameter to backend constructor.
+Below, a complete example of how to setup a basic/generic authorization system
+on your ring compatible web application:
 
-.Example of how overwrite default behavior for unauthorized requests.
+
+.Defining uathorized handler
 [source,clojure]
 ----
-(ns myns.somensfile
-  (:require [clojure.java.io :as io]
-            [ring.util.response :refer [response redirect]]
-            [buddy.auth :refer [authenticated? throw-unauthorized]]
-            [buddy.auth.backends.httpbasic :refer [http-basic-backend]]
-            [buddy.auth.middleware :refer [wrap-authentication wrap-authorization]]))
+(require '[buddy.auth :refer [authenticated? throw-unauthorized]])
+(require '[ring.util.response :refer (response redirect)])
 
-;; This function always receives a request and exception metadata.
+;; An unauthorized-handler is executed when `buddy.auth/throw-unauthorized`
+;; exception is raised and captured by genric authorization middleware:
+;; `wrap-authorization`. It always receives the current request and metadata
+;; hash-map that in most cases is empty.
 
 (defn my-unauthorized-handler
   [request metadata]
   (if (authenticated? request)
-    (response (io/resource "error.html"))
+    (response "Permission denied")
     (redirect "/login")))
+----
 
+
+.Defining a simple handler that raises unauthorized exception when user is not authenticated
+[source,clojure]
+----
+;; This is a simple ring compatible handler
 (defn handler
   [request]
   (if (authenticated?)
     (response "Hello World")
     (throw-unauthorized)))
+----
 
-(defn -main
-  [& args]
-  (let [backend (http-basic-backend :realm "Api"
-                                    :authfn (fn [_ _] :foo-user)
-                                    :unauthorized-handler my-unauthorized-handler)
-        handler (-> handler
-                    (wrap-authentication backend)
-                    (wrap-authorization backend))]
-    (jetty/run-jetty handler {:port 9090})))
+
+.Define the final handler
+[source,clojure]
+----
+(require '[buddy.auth.backends.httpbasic :refer [http-basic-backend]])
+(require '[buddy.auth.middleware :refer [wrap-authentication wrap-authorization]])
+
+;; Define the final handler wrapping it on authentication and
+;; authorization handler using the same backend and overwriting
+;; the default unathorized request behavior with own, previously
+;; defined function
+
+(def app (let [backend (http-basic-backend
+                         :realm "API"
+                         :authfn my-auth-fn
+                         :unauthorized-handler my-unauthorized-handler)]
+           (-> handler
+               (wrap-authentication backend)
+               (wrap-authorization backend))))
 ----
 
 NOTE: for you want know how it really works, see xref:how-it-works[How it works] section or
@@ -450,21 +479,18 @@ readonly access to any authenticated user:
 How to use it?
 ++++++++++++++
 
-Access rules system is still flexible for adapt it for a lot of case uses is very
+Access rules system is still flexible and adapt it for a lot of case uses is very
 simple.
 
 The simplest way to use access rules, is using `wrap-access-rules` middleware
-passing to it a ordered vector of rules. Important: rules are evaluated in order,
+passing to it an ordered vector of rules. Important: rules are evaluated in order,
 therefore, put less restrictive regular expression on the end.
 
-._myapp.clj_
+.Define a list of rules
 [source,clojure]
 ----
-(ns myapp
-  (:require [myapp.routes :refer [app]]
-            [myapp.permissions :refer [admin-access operator-access
-                                       any-access authenticated-access]]
-            [buddy.auth.middleware :refer [wrap-access-rules]]))
+;; Rules handlers used on this example are omited for code clarity
+;; and them repsents a authorization logic for its name.
 
 (def rules [{:pattern #"^/admin/.*"
              :handler {:or [admin-access operator-access]}}
@@ -472,27 +498,65 @@ therefore, put less restrictive regular expression on the end.
              :handler any-access}
             {:pattern #"^/.*"
              :handler authenticated-access}])
+----
 
-;; Function that used for handle unauthorized requests
+.Define default behavior for not authorized requests
+[source,clojure]
+----
+;; This functions works like default ring compatible handler
+;; and should implement the default behavior for request
+;; that are not authorized by any defined rule
+
 (defn reject-handler
   [request]
   {:status 403
    :headers {}
    :body "Not authorized"})
+----
 
+.Wrap your handler with access rules (and run with jetty as example)
+[source,clojure]
+----
 (defn -main
   [& args]
-  (let [handler (wrap-access-rules app rules {:reject-handler reject-handler}))]
-    (jetty/run-jetty handler {:port 9090}))
+  (let [app (wrap-access-rules your-app-handler
+                               :rules rules
+                               :reject-handler reject-handler))]
+    (run-jetty app {:port 9090}))
 ----
 
 If no reject handler is specified, unauthorized exception is raised. These exception
 can be captured by generic authorization middleware.
 
+
 [NOTE]
 The current request uri not match any regular expresion, the default policy enter in
 action. The default policy in _buddy_ is `:allow` but you can change it to `:reject`
 using keyword `:policy` on wrap-access-rules middleware.
+
+
+An other way to use access rules is using `buddy.auth.accessrules/restrict` 
+handler decorator that allows assign some rules to concrete handlers omiting
+any url matching.
+
+The usage of it can be easy show using compojure routes:
+
+[source,clojure]
+----
+(require '[buddy.auth.accessrules :refer [restrict]])
+
+(defroutes app
+  (GET "/" [] (restrict my-home-ctrl
+                        ;; Mandatory parameter
+                        :rule user-access
+                        ;; Optional parameter, in case if not passed
+                        ;; default is used (defined by `wrap-access-rules` 
+                        ;; middleware) or `throw-unauthorized` is raised 
+                        ;; if default isn't available
+                        :reject-handler reject-handler))
+  (GET "/admin" (restrict my-admin-ctrl
+                          :rule admin-access)))
+----
 
 
 Advanced Usage
