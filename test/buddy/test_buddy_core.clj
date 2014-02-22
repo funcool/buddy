@@ -2,7 +2,7 @@
   (:require [clojure.test :refer :all]
             [buddy.core.codecs :refer :all]
             [buddy.core.hash :refer [sha256]]
-            [buddy.core.sign :refer [hmac-sha256]]
+            [buddy.core.hmac :refer [hmac-sha256]]
             [buddy.hashers.pbkdf2 :as pbkdf2]
             [buddy.hashers.bcrypt :as bcrypt]
             [buddy.hashers.sha256 :as sha256]
