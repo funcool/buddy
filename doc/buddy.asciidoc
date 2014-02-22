@@ -95,7 +95,7 @@ User guide
 Signing
 ~~~~~~~
 
-One of the main parts of _buddy_ is a "Signing framework", that is mainly based on django's 
+One of the main parts of _buddy_ is a "Signing framework", that is mainly based on django's
 link:https://docs.djangoproject.com/en/1.6/topics/signing/[Cryptographic signing]
 library.
 
@@ -336,7 +336,7 @@ Like authentication system, authorization is also implemented using protocols. T
 it, all builtin authentication backends implements this authorization protocol.
 
 Some authentication backends requires specific behavior on authorization layer (like http-basic
-that should return `WWW-Authenticate` header when request is unauthorized). 
+that should return `WWW-Authenticate` header when request is unauthorized).
 
 NOTE: You can overwrite the default behavior, passing your own exception handler function as
 `:unauthorized-handler` keyword parameter to backend constructor.
@@ -554,6 +554,10 @@ At this momment two examples are available:
 
 - link:https://github.com/niwibe/buddy/tree/master/examples/sessionexample[Use session backend as authentication and authorization.]
 - link:https://github.com/niwibe/buddy/tree/master/examples/oauthexample[Use session backend with oauth2 using Github api.]
+
+
+For run examples, you should be at project root directory and execute `lein with-profile examplename run` where
+examplename can be `sessionexample` or `oauthexample` for this moment.
 
 
 How to contribute
