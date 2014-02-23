@@ -405,7 +405,7 @@ on your ring compatible web application:
                (wrap-authorization backend))))
 ----
 
-NOTE: for you want know how it really works, see xref:how-it-works[How it works] section or
+NOTE: If you want know how it really works, see xref:how-it-works[How it works] section or
 take a look on examples.
 
 
