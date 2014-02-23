@@ -15,11 +15,11 @@
 (ns buddy.core.keys
   (:require [buddy.core.codecs :refer [str->bytes bytes->hex]]))
 
-(defprotocol SecretKey
+(defprotocol ISecretKey
   (key->bytes [key] "Normalize key to byte array")
   (key->str [key] "Normalize key String"))
 
-(extend-protocol SecretKey
+(extend-protocol ISecretKey
   (Class/forName "[B")
   (key->bytes [it] it)
   (key->str [it] (bytes->hex it))
