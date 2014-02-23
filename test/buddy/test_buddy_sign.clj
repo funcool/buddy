@@ -1,10 +1,11 @@
 (ns buddy.test_buddy_sign
   (:require [clojure.test :refer :all]
+            [buddy.core.codecs :refer :all]
             [buddy.sign.generic :as gsign]))
 
 (def secret "test")
 
-(deftest sign-tests
+(deftest high-level-sign-tests
   (testing "Signing/Unsigning with default keys"
     (let [signed (gsign/sign "foo" secret)]
       (Thread/sleep 1000)
