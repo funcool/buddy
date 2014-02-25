@@ -5,12 +5,14 @@ Changelog
 Version 0.1.0-beta4
 -------------------
 
+Date: 2014-02-25
+
 - Assoc matching access rule to request.
 - Add "restricted" handler decorator for url independent access rules assignation.
 - Split token backend in: token-backend and signed-token-backend. token backend
   now works like any other token authenticacion implementation: parses a token and
   executes simple function for authenticate it.
-- Add ECDSA and RSASSA-PKCS1-V1_5 signature algorithms.
+- Add ECDSA and RSASSA-PKCS1-V1_5 signature algorithms (experimental and without tests)
 
 Version 0.1.0-beta3
 -------------------
