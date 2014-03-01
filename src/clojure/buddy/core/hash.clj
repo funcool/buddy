@@ -1,34 +1,68 @@
 (ns buddy.core.hash
   "Basic crypto primitives that used for more high
   level abstractions."
-  (:require [buddy.core.codecs :refer :all])
+  (:require [buddy.core.codecs :refer :all]
+            [clojure.java.io :as io])
   (:import (java.security MessageDigest)))
+
+(defprotocol Digest
+  (make-digest [data algorithm] "Low level interface, always returns bytes"))
+
+(extend-protocol Digest
+  (Class/forName "[B")
+  (make-digest [data algorithm]
+    (let [md (MessageDigest/getInstance algorithm)]
+      (.update md data)
+      (.digest md)))
+
+  String
+  (make-digest [data algorithm]
+    (make-digest (->byte-array data) algorithm))
+
+  java.io.InputStream
+  (make-digest [data algorithm]
+    (let [md (MessageDigest/getInstance algorithm)
+          bf (byte-array 5120)]
+      (loop []
+        (let [readed (.read data bf 0 5120)]
+          (when-not (= readed -1)
+            (.update md bf 0 readed)
+            (recur))))
+      (.digest md)))
+
+  java.io.File
+  (make-digest [data algorithm]
+    (make-digest (io/input-stream data) algorithm))
+
+  java.net.URL
+  (make-digest [data algorithm]
+    (make-digest (io/input-stream data) algorithm))
+
+  java.net.URI
+  (make-digest [data algorithm]
+    (make-digest (io/input-stream data) algorithm)))
 
 (defn digest
   "Generic function for create cryptographic hash. Given an algorithm
-name and many parts of any type that implements ByteArray protocol,
-return a computed hash as byte array. This function hides java api
-to `java.security.MessageDigest`"
-  [algorithm & parts]
-  (let [md (MessageDigest/getInstance algorithm)]
-    (doseq [part parts]
-      (.update md (->byte-array part)))
-    (.digest md)))
+and any data that implements `Digest` protocol, return hex encoded
+hash result."
+  [data algorithm]
+  (bytes->hex (make-digest data algorithm)))
 
 ;; Alias for low level interface for all supported
 ;; secure hash algorithms. All of them return alway
 ;; array of bytes.
-(def make-sha256 (partial digest "SHA-256"))
-(def make-sha384 (partial digest "SHA-384"))
-(def make-sha512 (partial digest "SHA-512"))
-(def make-sha1 (partial digest "SHA-1"))
-(def make-md5 (partial digest "MD5"))
+(def make-sha256 #(make-digest % "SHA-256"))
+(def make-sha384 #(make-digest % "SHA-384"))
+(def make-sha512 #(make-digest % "SHA-512"))
+(def make-sha1 #(make-digest % "SHA-1"))
+(def make-md5 #(make-digest % "MD5"))
 
 ;; Alias of same secure hash algorithms previously
-;; defined but return human readable hexadecimal
-;; encoded output.
-(def sha256 (comp bytes->hex make-sha256))
-(def sha384 (comp bytes->hex make-sha384))
-(def sha512 (comp bytes->hex make-sha512))
-(def sha1 (comp bytes->hex make-sha1))
-(def md5 (comp bytes->hex make-md5))
+;; defined but return human readable hex encoded output.
+(def sha256 #(digest % "SHA-256"))
+(def sha384 #(digest % "SHA-384"))
+(def sha512 #(digest % "SHA-512"))
+(def sha1 #(digest % "SHA-1"))
+(def md5 #(digest % "MD5"))
+

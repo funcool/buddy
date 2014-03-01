@@ -2,7 +2,7 @@
   (:require [clojure.test :refer :all]
             [buddy.core.codecs :refer :all]
             [buddy.core.hash :refer [sha256]]
-            [buddy.core.hmac :refer [hmac-sha256]]
+            [buddy.core.hmac :refer [salted-hmac-sha256]]
             [buddy.hashers.pbkdf2 :as pbkdf2]
             [buddy.hashers.bcrypt :as bcrypt]
             [buddy.hashers.sha256 :as sha256]
@@ -34,34 +34,34 @@
   (testing "hmac-sha256 tests"
     (let [key  "foo"
           data "bar"]
-      (is (= (bytes->hex (hmac-sha256 data key))
+      (is (= (salted-hmac-sha256 data "" key)
              "58f125164e3664184898939740cd369130bca60e1f66a4dbe241f494b6403a5f")))))
  
-(deftest pbkdf2-tests
+(deftest hashers-pbkdf2-tests
   (testing "Test low level api for encrypt/verify"
     (let [plain-password      "my-test-password"
           encrypted-password  (pbkdf2/make-password plain-password)]
       (is (pbkdf2/check-password plain-password encrypted-password)))))
 
-(deftest sha256-tests
+(deftest hashers-sha256-tests
   (testing "Test low level api for encrypt/verify"
     (let [plain-password      "my-test-password"
           encrypted-password  (sha256/make-password plain-password)]
       (is (sha256/check-password plain-password encrypted-password)))))
 
-(deftest md5-tests
+(deftest hashers-md5-tests
   (testing "Test low level api for encrypt/verify"
     (let [plain-password      "my-test-password"
           encrypted-password  (md5/make-password plain-password)]
       (is (md5/check-password plain-password encrypted-password)))))
 
-(deftest bcrypt-tests
+(deftest hashers-bcrypt-tests
   (testing "Test low level api for encrypt/verify"
     (let [plain-password      "my-test-password"
           encrypted-password  (bcrypt/make-password plain-password)]
       (is (bcrypt/check-password plain-password encrypted-password)))))
 
-(deftest scrypt-tests
+(deftest hashers-scrypt-tests
   (testing "Test low level api for encrypt/verify 01"
     (let [plain-password      "my-test-password"
           encrypted-password  (scrypt/make-password plain-password)]

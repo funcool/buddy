@@ -16,13 +16,15 @@
   (:require [buddy.core.util :refer :all]
             [buddy.core.codecs :refer :all]
             [buddy.core.hash :refer [md5]]
+            [buddy.core.util :refer [concat-byte-arrays]]
             [clojure.string :refer [split]])
   (:import (java.security MessageDigest)))
 
 (defn make-md5
   [password salt]
-  (md5 (->byte-array password)
-       (->byte-array salt)))
+  (-> (concat-byte-arrays (->byte-array password)
+                          (->byte-array salt))
+      (md5)))
 
 (defn make-password
   "Encrypts a raw string password using

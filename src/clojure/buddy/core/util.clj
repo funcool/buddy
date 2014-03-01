@@ -18,6 +18,14 @@
   (:require [buddy.core.codecs :refer :all])
   (:import (java.security SecureRandom)))
 
+
+(defn concat-byte-arrays
+  "Given N number of byte arrays, concat them in
+one unique byte array and return it."
+  [& parts]
+  (byte-array (for [ar parts
+                    i  ar] i)))
+
 (defn random-bytes
   "Generate a byte array of random bytes using
   secure random generator."

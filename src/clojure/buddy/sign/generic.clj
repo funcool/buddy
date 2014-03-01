@@ -14,15 +14,14 @@
 
 (ns buddy.sign.generic
   (:require [buddy.core.codecs :refer :all]
-            [buddy.core.hmac :refer [hmac-sha256]]
+            [buddy.core.hmac :refer [salted-hmac-sha256]]
             [buddy.core.util :refer [timestamp]]
             [clojure.string :refer [split]]
             [taoensso.nippy :as nippy]))
 
 (defn- make-signature
   [s pkey salt]
-  (-> (hmac-sha256 s pkey {:salt salt})
-      (bytes->hex)))
+  (salted-hmac-sha256 s pkey salt))
 
 (defn- make-stamped-signature
   [s pkey salt sep stamp]

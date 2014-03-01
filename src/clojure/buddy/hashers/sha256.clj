@@ -16,13 +16,15 @@
   (:require [buddy.core.codecs :refer :all]
             [buddy.core.util :refer :all]
             [buddy.core.hash :refer [sha256]]
+            [buddy.core.util :refer [concat-byte-arrays]]
             [clojure.string :refer [split]])
   (:import (java.security MessageDigest)))
 
 (defn make-sha256
   [password salt]
-  (sha256 (->byte-array password)
-          (->byte-array salt)))
+  (-> (concat-byte-arrays (->byte-array password)
+                          (->byte-array salt))
+      (sha256)))
 
 (defn make-password
   "Encrypts a raw string password using
