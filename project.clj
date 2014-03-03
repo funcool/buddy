@@ -8,9 +8,7 @@
                  [ring/ring-core "1.2.1"]
                  [commons-codec/commons-codec "1.8"]
                  [com.taoensso/nippy "2.4.1"]
-                 [clojurewerkz/scrypt "1.1.0"]
-                 [org.bouncycastle/bcprov-jdk15on "1.50"]
-                 [org.bouncycastle/bcpkix-jdk15on "1.50"]]
+                 [clojurewerkz/scrypt "1.1.0"]]
   :source-paths ["src/clojure"]
   :java-source-paths ["src/java"]
   :plugins [[codox "0.6.6"]]
@@ -32,4 +30,5 @@
                              :source-paths ["examples/oauthexample/src"]
                              :resource-paths ["example/oauthexample/resources"]
                              :target-path "examples/oauthexample/target/%s"
-                             :main ^:skip-aot oauthexample.core}]})
+                             :main ^:skip-aot oauthexample.core}]
+             :1.6 {:dependencies [[org.clojure/clojure "1.6.0-beta2"]]}})
