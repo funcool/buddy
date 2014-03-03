@@ -607,6 +607,154 @@ This is a flow that follows authorization middleware:
 3. handle-unauthorized is executed of your backend, if user has specified it own function,
    the user defined function is executed else, default behavior is executed.
 
+Core library
+------------
+
+buddy, behind the scene uses internal library exposed in `buddy.core` namespace that exposes
+more low level access over hash, hmac, coding functions that are used by other parts of buddy.
+
+
+Cryptographic hash algorithms
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+All implementation is found on `buddy.core.hash` namespace and exposes functions for access
+to sha-2/md hash algorithms with two ways to work with them:
+
+This is a basic pattern followed by buddy:
+
+- *make-<hashalgo>*: functions that matches this pattern always return byte array.
+- *<hashalgo>*: functions that always return string that in almost all cases hex encoded.
+
+This is a list of available hash algorithms:
+
+- *sha256*
+- *sha384*
+- *sha512*
+- *sha1*
+- *md5*
+
+Basic usage
+^^^^^^^^^^^
+
+.Import namespace example:
+[source, clojure]
+----
+(require '[buddy.core.hash :refer [make-sha256, sha256]])
+----
+
+.How to use examples:
+[source, clojure]
+----
+(sha256 "foo bar")
+;; -> "fbc1a9f858ea9e177916964bd88c3d37b91a1e84412765e29950777f265c4b75"
+
+(make-sha256 "foo bar")
+;; -> #<byte[] [B@162a657e>
+----
+
+Advanced usage
+^^^^^^^^^^^^^^
+
+Hash functions are implemented using clojure protocols. In previous example we have
+seen how make hash of a string, but the default implementation is also available 
+for: *File*, *URL*, *URI* and *InputStream*.
+
+.Make hash of file example:
+[source, clojure]
+----
+;; Additional import for easy open files
+(require '[clojure.java.io :as io])
+
+(sha256 (io/input-stream "/tmp/some-file"))
+;; -> "bba878639499c8449f69efbfc699413eebfaf41d4b7a7faa560bfaf7e93a43dd"
+----
+
+You can extend it for your own types using *buddy.core.hash/Digest* protocol that
+looks like this:
+
+[source,clojure]
+----
+(defprotocol Digest
+  (make-digest [data algorithm]))
+----
+
+[NOTE]
+Functions like *sha256*/*make-sha256* are partials that works as alias for more generic
+functions: *digest*  and *make-digest*.
+
+
+Hash-based message authentication
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+buddy comes with two varians of *hmac*: standard and salted. Bot are available on 
+`buddy.core.hmac` namespace. Like previously explained hash functions, them follows
+the `make-<algo>` signature.
+
+Basic usage
+^^^^^^^^^^^
+
+.Import namespace
+[source, clojure]
+----
+(require '[buddy.core.hmac :as hmac])
+----
+
+.How to use standard hmac with string
+[source, clojure]
+----
+(hmac/hmac-sha256 "foo bar" "mysecretkey")
+;; -> "61849448bdbb67b39d609471eead667e65b0d1b9e01b1c3bf7aa56b83e9c8083"
+----
+
+.How to use salted variant of hmac with string
+[source, clojure]
+----
+(hmac/salted-hmac-sha256 "foo bar" "salt" "mysecretkey")
+;; -> "bd5f7a0040430a73f4845bac8f980c6398b4baae8a22efcc22038be0f4dd9678"
+----
+
+NOTE: The key parameter can be any type that implements now undocumented
+*buddy.core.keys/ISecretKey* protocol (buddy comes with default implementations
+for String and byte[])
+
+
+Advanced usage
+^^^^^^^^^^^^^^
+
+Like hash functions, hmac is also implemented using clojure protocols and exposes
+implementation for: String, byte[], *File*, *URL*, *URI* and *InputStream*.
+
+
+.Make hmac of file
+[source,clojure]
+----
+;; Additional import for easy open files
+(require '[clojure.java.io :as io])
+
+(hmac/hmac-sha256 (io/input-stream "/tmp/somefile") "mysecretkey")
+;; ->"4cb793e600848da2053238003fce4c010233c49df3e6a04119b4287eb464c27e"
+----
+
+
+You can extend it for your own types using *buddy.core.hmac/HMac* protocol that
+looks like this:
+
+[source,clojure]
+----
+(defprotocol HMac
+  (make-hmac [data key algorithm]))
+----
+
+[NOTE]
+Functions like *hmac-sha256* are just alias for more generic functions: 
+*hmac* and *salted-hmac*.
+
+
+Codecs (binary -> string conversion)
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+TODO
+
 
 Examples
 --------
