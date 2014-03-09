@@ -173,7 +173,7 @@ list, vector, etc...)  you can do so using the signing *`dumps`* and
 NOTE: it uses a Clojure serialization library link:https://github.com/ptaoussanis/nippy[Nippy]
 
 INFO: Currently only a generic sign method is available, but I am
-workin on a jwt (json web token) implementation for buddy. It will be
+working on a jwt (json web token) implementation for buddy. It will be
 available in future releases.
 
 Hashers
