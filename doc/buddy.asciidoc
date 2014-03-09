@@ -10,54 +10,51 @@ Andrey Antukh, <niwi@niwi.be>
 Introduction
 ------------
 
-_buddy_ is an authentication, authorization and signing library for clojure.
-It's designed with simplicity in mind and high level framework agnostic
-(it only depends on ring) following the principle of single responsability.
+_buddy_ is an authentication, authorization and signing library for
+Clojure.  It's designed with simplicity in mind and only depends on
+ring.
+
 
 Features/Libraries:
 
-- Modular Authentication(implemented using protocols).
-- Modular Generic Authorization.
-- Simple regular expression based access rules system.
-- Signing library.
-- Password hashers library.
+- Modular Authentication (implemented using protocols)
+- Modular Generic Authorization
+- Regular expression based access rules system
+- Signing library
+- Password hashing library
 
-link:api/index.html[Api reference documentation.]
+link:api/index.html[API reference documentation.]
 
 
-Philosofy
+Philosophy
 ~~~~~~~~~
 
 Five most important rules:
 
-- Beautiful is better than ugly.
-- Explicit is better than implicit.
-- Simple is better than complex.
-- Complex is better than complicated.
-- Readability counts.
-
-All contributions to _buddy_ should keep these important rules in mind.
-
+- Beautiful is better than ugly
+- Explicit is better than implicit
+- Simple is better than complex
+- Readability counts
 
 Project Maturity
 ----------------
 
-_buddy_ is a young project and can experiment some api changes.
+Since _buddy_ is a young project there can be some API breakage.
 
 
 Install
 -------
 
-This section covers a installation of _buddy_.
+This section covers installing _buddy_.
 
 
 Leiningen
 ~~~~~~~~~
 
-The simplest way to use _buddy_ on clojure project, is including it on dependency
-vector of your *_project.clj_* file:
+The simplest way to use _buddy_ in a Clojure project is by including
+it as a dependency in your *_project.clj_*:
 
-._on project.clj_
+._in project.clj_
 [source,clojure]
 ----
 [buddy "0.1.0-beta4"]
@@ -67,7 +64,7 @@ vector of your *_project.clj_* file:
 Maven
 ~~~~~
 
-Also, you can use it on your projects with maven. As first step add a clojars repository:
+Also, you can use it with maven. First, add the clojars repository:
 
 [source,xml]
 ----
@@ -77,7 +74,7 @@ Also, you can use it on your projects with maven. As first step add a clojars re
 </repository>
 ----
 
-Following of buddy package dependecy:
+Then for buddy: 
 
 [source,xml]
 ----
@@ -95,14 +92,14 @@ User guide
 Signing
 ~~~~~~~
 
-One of the main parts of _buddy_ is a "Signing framework", that is mainly based on django's
-link:https://docs.djangoproject.com/en/1.6/topics/signing/[Cryptographic signing]
-library.
+The "signing framework" of _buddy_ is mainly based on django's
+link:https://docs.djangoproject.com/en/1.6/topics/signing/[Cryptographic
+signing] library.
 
-That can be used for several purposes:
+It can be used for several purposes:
 
-- Safely store session data on cookie instead on a database. (It prevents that other can change a session content)
-- Self contained token generation for use it on completelly stateless token based authentication.
+- Safely storing session data in cookies instead of a database (It prevents others from changing session content)
+- Self contained token generation for use it on completely stateless token based authentication.
 
 NOTE: this library is used by one of authentication backends for implement token based stateless authentication.
 
@@ -112,11 +109,10 @@ NOTE: hmac+sha256 is used for sign all data.
 Using low level api
 ^^^^^^^^^^^^^^^^^^^
 
-_buddy's_ signing functions live in *`buddy.crypto.signing`* namespace and it consists on four
-functions: `sign`, `unsign`, `loads` and `dumps`.
+There are four signing functions in *`buddy.crypto.signing`*: `sign`,
+`unsign`, `loads` and `dumps`.
 
-`sign` and `unsign` functions represents a low level api and them works with
-strings as primary data.
+`sign` and `unsign` are low level and work primarily with strings.
 
 .Unsigning previously signed data
 [source,clojure]
@@ -126,19 +122,19 @@ strings as primary data.
 ;; Sign data
 (def signed-data (sign "mystring" "my-secret-key"))
 
-;; signed-data should contain string similtar to:
+;; signed-data should contain a string similar to:
 ;; "mystring:f08dd937a438f43639d34a345910148cb933ea8ea0c2c306e8733e0255677e3d:MTM..."
 
 ;; Unsign previosly signed data
 (def unsigned-data (unsign signed-data "my-secret-key"))
 
-;; unsigned-data should contain a original string: "mystring"
+;; unsigned-data should contain the original string: "mystring"
 ----
 
-Signing process consists on concat signature on the end of the original string,
-separating the signature with predefined separator (default ":" char). Signature
-consists on timestamped hmac signature. *Timestamp* can be used for invalidate by
-time some signed data.
+The signing process consists of append signatures to the original
+string, separating the signature with a predefined separator (default
+":" char). The signature is timestamped hmac. *Timestamp* can be used
+to invalidate some signed data by time.
 
 .Invalidate signed data using timestamp
 [source,clojure]
@@ -146,17 +142,18 @@ time some signed data.
 ;; Unsign with maxago (15min)
 (def unsigned-data (unsign signed-data "my-secret-key" {:maxago (* 60 15 1000)}))
 
-;; unsigned-data should contain nil value if a signed date is older than 15 min.
-----
+;; unsigned-data should contain a nil value if the signing date is
+;; older than 15 min.
 
 Protecting complex data structures
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-If you wish to protect a clojure native data structure (hash-map, hash-set, list, vector, etc...)
-you can do so using the signing *`dumps`* and *`loads`* functions. Them accepts same parameters that
-their friends (`sign` and `unsign`) but also can sign more complex data.
+If you wish to protect a native data structure (hash-map, hash-set,
+list, vector, etc...)  you can do so using the signing *`dumps`* and
+*`loads`* functions. They accept the same parameters as their friends
+(`sign` and `unsign`), but can also sign more complex data.
 
-.Sign/Unsign clojure hash-map
+.Sign/Unsign Clojure hash-map
 [source,clojure]
 ----
 (require '[buddy.sign.generic :refer [dumps loads]])
@@ -164,35 +161,38 @@ their friends (`sign` and `unsign`) but also can sign more complex data.
 ;; Sign data
 (def signed-data (dumps {:userid 1} "my-secret-key"))
 
-;; signed-data should contain string similar to:
+;; signed-data should contain a string similar to:
 ;; "TlBZARlgGwAAAAIOAAAABnVzZXJpZCsAAAAAAAAAAQ:59d9e8063ad80f6abd3092b45857810b10f5..."
 
-;; Unsign previosly signed data
+;; Unsign previously signed data
 (def unsigned-data (loads signed-data "my-secret-key"))
 
 ;; unsigned-data should contain a original map: {:userid 1}
 ----
 
-NOTE: it uses a clojure serialization library link:https://github.com/ptaoussanis/nippy[Nippy]
+NOTE: it uses a Clojure serialization library link:https://github.com/ptaoussanis/nippy[Nippy]
 
-INFO: at this moment only generic sign method is available, but I am workin on jwt (json web token)
-implementation for buddy and it will be available on next releases
-
+INFO: Currently only a generic sign method is available, but I am
+working on a jwt (json web token) implementation for buddy. It will be
+available in future releases.
 
 Hashers
 ~~~~~~~
 
-An other main part of good authentication/authorization library is give you some facilities
-for generate secure passwords. _buddy_ comes with few functions for generate and verify passwords
-using widely used password derivation algorithms like bcrypt and pbkdf2(with sha256).
+Another important part of a good authentication/authorization library
+is providing some facilities for generating secure passwords. _buddy_
+comes with a few functions for generating and verifying passwords like
+the widely used password derivation algorithms bcrypt and pbkdf2 (with
+sha256).
 
-_buddy_ hashers lives on `buddy.hashers.*` namespace and usually consists on two functions:
-`make-password` and `check-password`.
+_buddy_ hashers live in `buddy.hashers.*` and usually consist
+of `make-password` and `check-password`.
 
-The purpose of these functions is obvious: creating new password, and verify incoming plain text
-password with previously created hash.
+The purpose of these functions is obvious: creating a new password,
+and verifying incoming plain text password with previously created
+hash.
 
-.Example create new hash and verify it
+.Example of creating and verifying a new hash
 [source,clojure]
 ----
 (require '[buddy.hashers.bcrypt :as hs])
@@ -221,11 +221,12 @@ This is a complete list of implemented hashers:
 Authentication
 ~~~~~~~~~~~~~~
 
-_buddy_ comes with authentication system. It is implemented with protocols, that can be used for
-implement own authentication backend if one of the now supported backends by buddy does not satisfy
+_buddy_ comes with an authentication system. It is implemented with
+protocols that can be used to implement your own authentication
+backend if one of the now supported backends by buddy does not satisfy
 your needs.
 
-There a list of builtin authentication backends:
+Here is a list of built-in authentication backends:
 
 - Http Basic
 - Session
@@ -233,14 +234,12 @@ There a list of builtin authentication backends:
 - SignedToken (using previously explained signing framework).
 
 
-Http Basic
+HTTP Basic
 ^^^^^^^^^^
 
-Http Basic authentication backend is one of the simplest/unsecure authentication system, but works
-well as first introduction of how authentication works with _buddy_.
-
-The main goal of _buddy_ is not depending on any high level framework like (compojure, caribou, pedestal)
-and it works directly as ring middleware.
+The HTTP Basic authentication backend is one of the simplest/insecure
+authentication systems, but it works well as a first introduction of
+authentication with _buddy_.
 
 .Simple handler definition
 [source,clojure]
@@ -248,8 +247,8 @@ and it works directly as ring middleware.
 (require '[buddy.auth :refer (authenticated?)])
 (require '[ring.util.response :refer (response)])
 
-;; Simple ring handler. This also, can be a compojure routes handler
-;; or any other while it be compatible with ring middlewares.
+;; Simple ring handler. This can also be a compojure routes handler
+;; or anything else compatible with ring middlewares.
 (defn handler
   [request]
   (if (authenticated? request)
@@ -257,7 +256,7 @@ and it works directly as ring middleware.
     (response "Hello Anonymous")))
 ----
 
-.Middlware usage example
+.Middleware usage example
 [source,clojure]
 ----
 ;; Import middleware function and backend constructor
@@ -267,11 +266,11 @@ and it works directly as ring middleware.
 
 ;; This function always receives request and authdata, authdata
 ;; can vary with other backends. For http basic backend, authdata
-;; parameter has this form: {:username xxxx :password yyyy}
+;; parameter has the form {:username xxxx :password yyyy}
 ;;
-;; This function should return some not nil value that
-;; are automatically stored on :identity key on request
-;; If it return nil, a request is considered unautenticated.
+;; This function should return a non-nil value that
+;; is automatically stored on :identity key on request
+;; If it returns nil, a request is considered unauthenticated.
 
 (defn my-authfn
   [request, authdata]
@@ -291,12 +290,14 @@ and it works directly as ring middleware.
 Session
 ^^^^^^^
 
-Session authenticated backend has the simplest implementation comparing it with
-others, but it requires session middleware for properly work.
+A session-authenticated backend has the simplest implementation
+comparing it with others, but it requires session middleware to
+properly work.
 
-Unlike the previous auth backend, this does not requires authfn, because it relies on
-`:identity` key on session  and trust it. If a session contains the `:identity` key with
-logical true value it identifies the current request as authenticated and put `:identity`
+Unlike the previous auth backend, this does not requires authfn,
+because it relies on `:identity` key on session and trust it. If a
+session contains the `:identity` key with logical true value it
+identifies the current request as authenticated and put `:identity`
 key on request map.
 
 See xref:examples[examples section] for complete examples for this backend.
@@ -345,13 +346,15 @@ not authorized request is detected.
 Like authentication system, authorization is also implemented using protocols. Taking advantage of
 it, all builtin authentication backends also implements this authorization protocol (`IAuthorization`).
 
-Some authentication backends requires specific behavior on authorization layer (like http-basic
-that should return `WWW-Authenticate` header when request is unauthorized) and by default, all
-backends comes with default implementation. You can overwrite the default behavior, passing your
-own exception handler function as `:unauthorized-handler` keyword parameter to backend constructor.
+Some authentication backends require specific behavior in the
+authorization layer (like http-basic which should return
+`WWW-Authenticate` header when request is unauthorized) and by
+default, all backends come with an implementation. You can overwrite
+the default behavior by passing your own exception handler through the
+`:unauthorized-handler` keyword parameter in the backend constructor.
 
-Below, a complete example of how to setup a basic/generic authorization system
-on your ring compatible web application:
+Below is a complete example setting up a basic/generic authorization
+system for your ring compatible web application:
 
 
 .Defining uathorized handler
@@ -441,15 +444,18 @@ Having the `admin-access` function like this:
         (boolean (roles :admin))))))
 ----
 
-The handler function should receive a request and return: true, false or throw unauthorized
-exception. Throwing unauthorized exception is a fast return method and no other handler
-is excetured before it (only if handler is wraped with `wrap-authorization` middleware).
+The handler function should receive a request and return true, false
+or throw unauthorized exception. Throwing unauthorized exception is a
+fast return method and no other handler is executed before it (only if
+handler is wrapped with `wrap-authorization` middleware).
 
-In previous example we have seen a simple handler associated with one regular expression, but
-_buddy_ access rules system allows combine more handlers using logical `:and` & `:or` combinators
-with nesting support.
+In the previous example we have seen a simple handler associated with
+one regular expression, but _buddy_ access rules system allows combine
+more handlers using logical `:and` & `:or` combinators with nesting
+support.
 
-Imagine the scenario when you want allow access to a set of urls to operators or administrators:
+For example, suppose you want to allow access to a set of urls only to
+operators or administrators:
 
 [source,clojure]
 ----
@@ -457,7 +463,7 @@ Imagine the scenario when you want allow access to a set of urls to operators or
  :handler {:or [admin-access operator-access]}}
 ----
 
-Or, allow only when a user has both roles, operator and administrator:
+Or allow only when a user has both roles, operator and administrator:
 
 [source,clojure]
 ----
@@ -465,8 +471,8 @@ Or, allow only when a user has both roles, operator and administrator:
  :handler {:and [admin-access operator-access]}}
 ----
 
-Even more, you want allow readwrite access to administrators and operators, and
-readonly access to any authenticated user:
+Even more, you want to only allow read-write access to administrators
+and operators, and read-only access to any authenticated user:
 
 [source,clojure]
 ----
@@ -479,12 +485,13 @@ readonly access to any authenticated user:
 How to use it?
 ++++++++++++++
 
-Access rules system is still flexible and adapt it for a lot of case uses is very
-simple.
+Access rules system is flexible and adapting it is very simple for
+many use cases.
 
-The simplest way to use access rules, is using `wrap-access-rules` middleware
-passing to it an ordered vector of rules. Important: rules are evaluated in order,
-therefore, put less restrictive regular expression on the end.
+The simplest way to use access rules is by using the
+`wrap-access-rules` middleware with an ordered vector of
+rules. *Important:* rules are evaluated in order, therefore, put less
+restrictive regular expression at the end.
 
 .Define a list of rules
 [source,clojure]
@@ -568,14 +575,14 @@ How It Works
 
 Each backend implements two protocols: `IAuthentication` and `IAuthorization`.
 
-*IAuthentication* provides two functions: `parse` and `authenticate` and is automaticaly
-handled with `wrap-authentication` ring middleware. This is a example flow of http basic
-backend:
+*IAuthentication* provides two functions: `parse` and `authenticate`
+and is automatically handled with `wrap-authentication` ring
+middleware. This is an example flow for the http basic backend:
 
-1. Received request, is passed to `parse` function. This function, extracts +Authorization+
-   header, decode a base64 encoded string and return clojure map with `:username` and `:password`
-   keys. If parse error is ocurred, it returns nil.
-2. If previous step parses token successfully, `authenticate` function is called with current
+1. Received request is passed to `parse` function. This function extracts the +Authorization+
+   header, decodes a base64 encoded string and returns Clojure map with `:username` and `:password`
+   keys. If a parse error occured, it returns nil.
+2. If the previous step parsed the token successfully, `authenticate` is called with current
    request and parsed data from previous step. `authenticate` can delegate authentication
    to user defined function passed as `:authfn` parameter to backend constructor.
    `authenticate` should return a request with `:identity` key assigned to nil or any other
@@ -610,7 +617,7 @@ This is a flow that follows authorization middleware:
 Core library
 ------------
 
-buddy, behind the scene uses internal library exposed in `buddy.core` namespace that exposes
+Behind the scenes buddy, behind the scene uses internal library exposed in `buddy.core` namespace that exposes
 more low level access over hash, hmac, coding functions that are used by other parts of buddy.
 
 
@@ -620,12 +627,12 @@ Cryptographic hash algorithms
 All implementation is found on `buddy.core.hash` namespace and exposes functions for access
 to sha-2/md hash algorithms with two ways to work with them:
 
-This is a basic pattern followed by buddy:
+This is buddy's naming convention:
 
 - *make-<hashalgo>*: functions that matches this pattern always return byte array.
 - *<hashalgo>*: functions that always return string that in almost all cases hex encoded.
 
-This is a list of available hash algorithms:
+*Available hash algorithms:*
 
 - *sha256*
 - *sha384*
@@ -655,9 +662,9 @@ Basic usage
 Advanced usage
 ^^^^^^^^^^^^^^
 
-Hash functions are implemented using clojure protocols. In previous example we have
-seen how make hash of a string, but the default implementation is also available 
-for: *File*, *URL*, *URI* and *InputStream*.
+Hash functions are implemented using protocols.  We have seen how to
+hash strings, but note that the same function works for *File*, *URL*,
+*URI* and *InputStream*.
 
 .Make hash of file example:
 [source, clojure]
@@ -669,8 +676,8 @@ for: *File*, *URL*, *URI* and *InputStream*.
 ;; -> "bba878639499c8449f69efbfc699413eebfaf41d4b7a7faa560bfaf7e93a43dd"
 ----
 
-You can extend it for your own types using *buddy.core.hash/Digest* protocol that
-looks like this:
+You can extend it for your own types by using the
+*buddy.core.hash/Digest* protocol:
 
 [source,clojure]
 ----
@@ -686,9 +693,9 @@ functions: *digest*  and *make-digest*.
 Hash-based message authentication
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-buddy comes with two varians of *hmac*: standard and salted. Bot are available on 
-`buddy.core.hmac` namespace. Like previously explained hash functions, them follows
-the `make-<algo>` signature.
+buddy comes with two variants of *hmac*: standard and salted. Both are
+available in `buddy.core.hmac` namespace. They also follow the
+`make-<algo>` naming convention.
 
 Basic usage
 ^^^^^^^^^^^
@@ -713,16 +720,17 @@ Basic usage
 ;; -> "bd5f7a0040430a73f4845bac8f980c6398b4baae8a22efcc22038be0f4dd9678"
 ----
 
-NOTE: The key parameter can be any type that implements now undocumented
-*buddy.core.keys/ISecretKey* protocol (buddy comes with default implementations
-for String and byte[])
+NOTE: The key parameter can be any type that implements the currently
+undocumented *buddy.core.keys/ISecretKey* protocol (buddy comes with
+default implementations for String and byte[])
 
 
 Advanced usage
 ^^^^^^^^^^^^^^
 
-Like hash functions, hmac is also implemented using clojure protocols and exposes
-implementation for: String, byte[], *File*, *URL*, *URI* and *InputStream*.
+Like the other hash functions, hmac is implemented using Clojure
+protocols and is implementated for: String, byte[], *File*, *URL*,
+*URI* and *InputStream*.
 
 
 .Make hmac of file
@@ -759,34 +767,34 @@ TODO
 Examples
 --------
 
-_buddy_ comes with some examples for facilitate a new user understand how it works. All
-examples are available on `examples/` directory on root project.
+_buddy_ comes with some examples for helping a new user understand how
+it works. All examples are available in the `examples/` directory.
 
-At this momment two examples are available:
+At the moment, two examples are available:
 
 - link:https://github.com/niwibe/buddy/tree/master/examples/sessionexample[Use session backend as authentication and authorization.]
 - link:https://github.com/niwibe/buddy/tree/master/examples/oauthexample[Use session backend with oauth2 using Github api.]
 
 
-For run examples, you should be at project root directory and execute `lein with-profile examplename run` where
-examplename can be `sessionexample` or `oauthexample` for this moment.
+To run examples, you should be in the project's root directory.
+Execute `lein with-profile examplename run` where examplename can be
+`sessionexample` or `oauthexample`.
 
 
 How to contribute
 -----------------
 
-_buddy_ unlike clojure and other clojure contrib libs, does not have much restrictions for contribute. Just
-follow the following steps depending on the situation:
+_buddy_ does not have many restrictions for contributing.
 
-*Bugfix*:
+*For Bugfix*:
 
 - Fork github repo.
 - Fix a bug/typo on new branch.
 - Make a pull-request to master.
 
-*New feature*:
+*For New feature*:
 
-- Open new issue with new feature purpose.
+- Open a new issue with new feature purpose.
 - If it is accepted, follow same steps as "bugfix".
 
 
