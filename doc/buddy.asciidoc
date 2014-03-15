@@ -419,9 +419,10 @@ Access Rules System
 Introduction
 ++++++++++++
 
-Access rules is an other part of authorization system, and it consists on setting a list
-of rules for a one or a set of uri's using regular expressions. One rule consists in one regular
-expression with associated handler (function) with authorization logic.
+The access rules are another part of the authorization system, and
+consist of a list of rules for one or more uri's using regular
+expressions. One rule consists of a regular expression with its
+associated handler (function) for authorization logic.
 
 .Simple rule example
 [source,clojure]
