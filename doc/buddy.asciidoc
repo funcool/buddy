@@ -358,7 +358,7 @@ Below is a complete example setting up a basic/generic authorization
 system for your ring compatible web application:
 
 
-.Defining uathorized handler
+.Defining unauthorized handler
 [source,clojure]
 ----
 (require '[buddy.auth :refer [authenticated? throw-unauthorized]])
