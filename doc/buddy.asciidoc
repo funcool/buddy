@@ -144,6 +144,7 @@ to invalidate some signed data by time.
 
 ;; unsigned-data should contain a nil value if the signing date is
 ;; older than 15 min.
+----
 
 Protecting complex data structures
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
