@@ -144,6 +144,7 @@ to invalidate some signed data by time.
 
 ;; unsigned-data should contain a nil value if the signing date is
 ;; older than 15 min.
+----
 
 Protecting complex data structures
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
@@ -290,9 +291,8 @@ authentication with _buddy_.
 Session
 ^^^^^^^
 
-A session-authenticated backend has the simplest implementation
-comparing it with others, but it requires session middleware to
-properly work.
+The session-authenticated backend has the simplest implementation, but
+requires session middleware to work properly.
 
 Unlike the previous auth backend, this does not requires authfn,
 because it relies on `:identity` key on session and trust it. If a
@@ -325,7 +325,7 @@ See xref:examples[examples section] for complete examples for this backend.
 Authorization
 ~~~~~~~~~~~~~
 
-_buddy_ also comes with authorization system.
+_buddy_ also comes with an authorization system.
 
 The authorization system is splited in two parts:
 
@@ -357,7 +357,7 @@ Below is a complete example setting up a basic/generic authorization
 system for your ring compatible web application:
 
 
-.Defining uathorized handler
+.Defining unauthorized handler
 [source,clojure]
 ----
 (require '[buddy.auth :refer [authenticated? throw-unauthorized]])
@@ -418,9 +418,10 @@ Access Rules System
 Introduction
 ++++++++++++
 
-Access rules is an other part of authorization system, and it consists on setting a list
-of rules for a one or a set of uri's using regular expressions. One rule consists in one regular
-expression with associated handler (function) with authorization logic.
+The access rules are another part of the authorization system, and
+consist of a list of rules for one or more uri's using regular
+expressions. One rule consists of a regular expression with its
+associated handler (function) for authorization logic.
 
 .Simple rule example
 [source,clojure]
@@ -482,10 +483,10 @@ and operators, and read-only access to any authenticated user:
 ----
 
 
-How to use it?
-++++++++++++++
+Usage
++++++
 
-Access rules system is flexible and adapting it is very simple for
+The access rules system is flexible and adapting it is very simple for
 many use cases.
 
 The simplest way to use access rules is by using the
@@ -532,8 +533,9 @@ restrictive regular expression at the end.
     (run-jetty app {:port 9090}))
 ----
 
-If no reject handler is specified, unauthorized exception is raised. These exception
-can be captured by generic authorization middleware.
+An unauthorized exception is raised if no reject handler is
+specified. These exceptions can be captured by generic authorization
+middleware.
 
 
 [NOTE]
@@ -546,7 +548,7 @@ An other way to use access rules is using `buddy.auth.accessrules/restrict`
 handler decorator that allows assign some rules to concrete handlers omiting
 any url matching.
 
-The usage of it can be easy show using compojure routes:
+The usage of it can be easy, as shown with Compojure routes:
 
 [source,clojure]
 ----
@@ -617,15 +619,17 @@ This is a flow that follows authorization middleware:
 Core library
 ------------
 
-Behind the scenes buddy, behind the scene uses internal library exposed in `buddy.core` namespace that exposes
-more low level access over hash, hmac, coding functions that are used by other parts of buddy.
+Behind the scenes, _buddy_ uses an internal library exposed in the
+`buddy.core` namespace.  There are more low level functions here for
+hash, hmac and coding that are used by other parts of _buddy_.
 
 
 Cryptographic hash algorithms
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-All implementation is found on `buddy.core.hash` namespace and exposes functions for access
-to sha-2/md hash algorithms with two ways to work with them:
+All hash algorithm implementations are found in the namespace
+`buddy.core.hash`. There are two ways to work with the sha-2/md hash
+functions.
 
 This is buddy's naming convention:
 
@@ -649,7 +653,7 @@ Basic usage
 (require '[buddy.core.hash :refer [make-sha256, sha256]])
 ----
 
-.How to use examples:
+.Usage examples:
 [source, clojure]
 ----
 (sha256 "foo bar")
@@ -686,8 +690,8 @@ You can extend it for your own types by using the
 ----
 
 [NOTE]
-Functions like *sha256*/*make-sha256* are partials that works as alias for more generic
-functions: *digest*  and *make-digest*.
+Functions like *sha256*/*make-sha256* are aliases for the more generic
+functions *digest*  and *make-digest*.
 
 
 Hash-based message authentication
@@ -744,8 +748,7 @@ protocols and is implementated for: String, byte[], *File*, *URL*,
 ----
 
 
-You can extend it for your own types using *buddy.core.hmac/HMac* protocol that
-looks like this:
+You can extend it for your own types using the protocol *buddy.core.hmac/HMac*:
 
 [source,clojure]
 ----
@@ -754,7 +757,7 @@ looks like this:
 ----
 
 [NOTE]
-Functions like *hmac-sha256* are just alias for more generic functions: 
+Functions like *hmac-sha256* just alias the more generic functions 
 *hmac* and *salted-hmac*.
 
 
@@ -801,19 +804,14 @@ _buddy_ does not have many restrictions for contributing.
 FAQ
 ---
 
-*How can use _buddy_ with link:http://clojure-liberator.github.io/liberator/[liberator]?*
+*How can I use _buddy_ with link:http://clojure-liberator.github.io/liberator/[liberator]?*
 
-_buddy_ by design, has authorization and authentication concepts well separated. This
-helps a lot if you want use some one part of it (ex: authentencation only) without including
-other parts.
+By design, _buddy_ has authorization and authentication well
+separated. This helps a lot if you want use only one part of it (ex:
+authentication only) without including the other.
 
-This makes, integration with liberator very simple, because liberator comes with good
-decision handlers for authorization and by normally usage, you should use it instead
-of integrate other third party authorization system to liberator.
-
-The best combination is use _buddy_ authentication middleware with liberator (using it
-authorization system).
-
+The best combination is to use _buddy_'s authentication middleware
+with liberator as the authorization system.
 
 License
 -------
