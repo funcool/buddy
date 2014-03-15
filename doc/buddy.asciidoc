@@ -618,8 +618,9 @@ This is a flow that follows authorization middleware:
 Core library
 ------------
 
-Behind the scenes buddy, behind the scene uses internal library exposed in `buddy.core` namespace that exposes
-more low level access over hash, hmac, coding functions that are used by other parts of buddy.
+Behind the scenes, _buddy_ uses an internal library exposed in the
+`buddy.core` namespace.  There are more low level functions here for
+hash, hmac and coding that are used by other parts of _buddy_.
 
 
 Cryptographic hash algorithms
