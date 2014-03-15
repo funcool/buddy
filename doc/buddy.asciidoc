@@ -807,7 +807,7 @@ FAQ
 
 By design, _buddy_ has authorization and authentication well
 separated. This helps a lot if you want use only one part of it (ex:
-authentencation only) without including the other.
+authentication only) without including the other.
 
 The best combination is to use _buddy_'s authentication middleware
 with liberator as the authorization system.
