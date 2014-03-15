@@ -291,9 +291,8 @@ authentication with _buddy_.
 Session
 ^^^^^^^
 
-A session-authenticated backend has the simplest implementation
-comparing it with others, but it requires session middleware to
-properly work.
+The session-authenticated backend has the simplest implementation, but
+requires session middleware to work properly.
 
 Unlike the previous auth backend, this does not requires authfn,
 because it relies on `:identity` key on session and trust it. If a
