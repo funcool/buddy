@@ -484,7 +484,7 @@ and operators, and read-only access to any authenticated user:
 
 
 Usage
-++++++++++++++
++++++
 
 The access rules system is flexible and adapting it is very simple for
 many use cases.
