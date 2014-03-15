@@ -745,8 +745,7 @@ protocols and is implementated for: String, byte[], *File*, *URL*,
 ----
 
 
-You can extend it for your own types using *buddy.core.hmac/HMac* protocol that
-looks like this:
+You can extend it for your own types using the protocol *buddy.core.hmac/HMac*:
 
 [source,clojure]
 ----
