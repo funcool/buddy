@@ -625,8 +625,9 @@ more low level access over hash, hmac, coding functions that are used by other p
 Cryptographic hash algorithms
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-All implementation is found on `buddy.core.hash` namespace and exposes functions for access
-to sha-2/md hash algorithms with two ways to work with them:
+All hash algorithm implementations are found in the namespace
+`buddy.core.hash`. There are two ways to work with the sha-2/md hash
+functions.
 
 This is buddy's naming convention:
 
