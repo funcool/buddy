@@ -533,8 +533,9 @@ restrictive regular expression at the end.
     (run-jetty app {:port 9090}))
 ----
 
-If no reject handler is specified, unauthorized exception is raised. These exception
-can be captured by generic authorization middleware.
+An unauthorized exception is raised if no reject handler is
+specified. These exceptions can be captured by generic authorization
+middleware.
 
 
 [NOTE]
