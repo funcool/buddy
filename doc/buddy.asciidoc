@@ -326,7 +326,7 @@ See xref:examples[examples section] for complete examples for this backend.
 Authorization
 ~~~~~~~~~~~~~
 
-_buddy_ also comes with authorization system.
+_buddy_ also comes with an authorization system.
 
 The authorization system is splited in two parts:
 
