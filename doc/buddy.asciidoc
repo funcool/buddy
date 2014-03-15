@@ -755,7 +755,7 @@ looks like this:
 ----
 
 [NOTE]
-Functions like *hmac-sha256* are just alias for more generic functions: 
+Functions like *hmac-sha256* just alias the more generic functions 
 *hmac* and *salted-hmac*.
 
 
