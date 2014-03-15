@@ -547,7 +547,7 @@ An other way to use access rules is using `buddy.auth.accessrules/restrict`
 handler decorator that allows assign some rules to concrete handlers omiting
 any url matching.
 
-The usage of it can be easy show using compojure routes:
+The usage of it can be easy, as shown with Compojure routes:
 
 [source,clojure]
 ----
