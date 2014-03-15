@@ -687,8 +687,8 @@ You can extend it for your own types by using the
 ----
 
 [NOTE]
-Functions like *sha256*/*make-sha256* are partials that works as alias for more generic
-functions: *digest*  and *make-digest*.
+Functions like *sha256*/*make-sha256* are aliases for the more generic
+functions *digest*  and *make-digest*.
 
 
 Hash-based message authentication
