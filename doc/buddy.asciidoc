@@ -653,7 +653,7 @@ Basic usage
 (require '[buddy.core.hash :refer [make-sha256, sha256]])
 ----
 
-.How to use examples:
+.Usage examples:
 [source, clojure]
 ----
 (sha256 "foo bar")
