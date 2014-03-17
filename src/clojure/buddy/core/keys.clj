@@ -18,6 +18,10 @@
   (:import [org.bouncycastle.openssl PasswordFinder PEMReader]
            [java.io StringReader]))
 
+;; TODO: upgrade to bcprov 1.50 and remove usage of deprecated
+;; PEMReader. For more information of how new PEMParser works
+;; see: http://mail-archives.apache.org/mod_mbox/camel-commits/201312.mbox/%3C383957136d2d46d38de7b51ca5030eaf@git.apache.org%3E
+
 (java.security.Security/addProvider
  (org.bouncycastle.jce.provider.BouncyCastleProvider.))
 
