@@ -1,9 +1,37 @@
 (ns buddy.test_buddy_sign
   (:require [clojure.test :refer :all]
             [buddy.core.codecs :refer :all]
-            [buddy.sign.generic :as gsign]))
+            [buddy.sign.generic :as gsign]
+            [buddy.core.keys :refer :all]))
 
 (def secret "test")
+
+(deftest rsa-dsa-keys-test
+  (testing "Read rsa priv key"
+    (let [pkey (private-key "test/_files/privkey.3des.rsa.pem" "secret")]
+      (is (= (type pkey) org.bouncycastle.jce.provider.JCERSAPrivateCrtKey))))
+  (testing "Read dsa priv key"
+    (let [pkey (private-key "test/_files/privkey.3des.dsa.pem" "secret")]
+      (is (= (type pkey) org.bouncycastle.jce.provider.JDKDSAPrivateKey))))
+  (testing "Read rsa priv key with bad password"
+    (is (thrown? org.bouncycastle.openssl.EncryptionException
+                (private-key "test/_files/privkey.3des.rsa.pem" "secret2"))))
+  (testing "Read dsa priv key with bad password"
+    (is (thrown? org.bouncycastle.openssl.EncryptionException
+                (private-key "test/_files/privkey.3des.dsa.pem" "secret2"))))
+  (testing "Read ecdsa priv key"
+    (let [pkey (private-key "test/_files/privkey.ecdsa.pem" "secret")]
+      (is (= (type pkey) org.bouncycastle.jce.provider.JCEECPrivateKey))))
+  (testing "Read rsa pub key"
+    (let [pkey (public-key "test/_files/pubkey.3des.rsa.pem" "secret")]
+      (is (= (type pkey) org.bouncycastle.jce.provider.JCERSAPublicKey))))
+  (testing "Read dsa pub key"
+    (let [pkey (public-key "test/_files/pubkey.3des.dsa.pem" "secret")]
+      (is (= (type pkey) org.bouncycastle.jce.provider.JDKDSAPublicKey))))
+  (testing "Read ec pub key"
+    (let [pkey (public-key "test/_files/pubkey.ecdsa.pem")]
+      (is (= (type pkey) org.bouncycastle.jce.provider.JCEECPublicKey)))))
+
 
 (deftest high-level-sign-tests
   (testing "Signing/Unsigning with default keys"

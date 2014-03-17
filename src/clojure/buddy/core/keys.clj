@@ -13,7 +13,13 @@
 ;; limitations under the License.
 
 (ns buddy.core.keys
-  (:require [buddy.core.codecs :refer [str->bytes bytes->hex]]))
+  (:require [buddy.core.codecs :refer [str->bytes bytes->hex]]
+            [clojure.java.io :as io])
+  (:import [org.bouncycastle.openssl PasswordFinder PEMReader]
+           [java.io StringReader]))
+
+(java.security.Security/addProvider
+ (org.bouncycastle.jce.provider.BouncyCastleProvider.))
 
 (defprotocol ISecretKey
   (key->bytes [key] "Normalize key to byte array")
@@ -27,3 +33,37 @@
   String
   (key->bytes [key] (str->bytes key))
   (key->str [key] key))
+
+(defn read-pem->key
+  [reader passphrase]
+  (if passphrase
+    (let [password-finder (reify PasswordFinder
+                            (getPassword [this] (.toCharArray passphrase)))]
+      (.readObject (PEMReader. reader password-finder)))
+    (.readObject (PEMReader. reader))))
+
+(defn private-key
+  [^String path & [passphrase]]
+  (with-open [reader (io/reader path)]
+    (.getPrivate
+      (read-pem->key reader passphrase))))
+
+(defn public-key? [k]
+  (let [t (type k)]
+    (or (= org.bouncycastle.jce.provider.JCERSAPublicKey t)
+        (= org.bouncycastle.jce.provider.JDKDSAPublicKey t)
+        (= org.bouncycastle.jce.provider.JCEECPublicKey t))))
+
+(defn public-key
+  [^String path & [passphrase]]
+  (with-open [reader (io/reader path)]
+    (let [res (read-pem->key reader passphrase)]
+      (if (public-key? res) res
+        (.getPublic res)))))
+
+(defn str->public-key
+  [^String keydata & [passphrase]]
+  (with-open [reader (StringReader. keydata)]
+    (let [res (read-pem->key reader passphrase)]
+      (if (public-key? res) res
+        (.getPublic res)))))
