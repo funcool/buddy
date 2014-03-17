@@ -32,4 +32,4 @@
                              :resource-paths ["example/oauthexample/resources"]
                              :target-path "examples/oauthexample/target/%s"
                              :main ^:skip-aot oauthexample.core}]
-             :1.6 {:dependencies [[org.clojure/clojure "1.6.0-beta2"]]}})
+             :1.6 {:dependencies [[org.clojure/clojure "1.6.0-RC1"]]}})
