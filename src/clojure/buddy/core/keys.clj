@@ -15,12 +15,9 @@
 (ns buddy.core.keys
   (:require [buddy.core.codecs :refer [str->bytes bytes->hex]]
             [clojure.java.io :as io])
-  (:import [org.bouncycastle.openssl PasswordFinder PEMReader]
+  (:import [org.bouncycastle.openssl PEMParser PEMEncryptedKeyPair PEMKeyPair]
+           [org.bouncycastle.openssl.jcajce JcePEMDecryptorProviderBuilder JcaPEMKeyConverter]
            [java.io StringReader]))
-
-;; TODO: upgrade to bcprov 1.50 and remove usage of deprecated
-;; PEMReader. For more information of how new PEMParser works
-;; see: http://mail-archives.apache.org/mod_mbox/camel-commits/201312.mbox/%3C383957136d2d46d38de7b51ca5030eaf@git.apache.org%3E
 
 (java.security.Security/addProvider
  (org.bouncycastle.jce.provider.BouncyCastleProvider.))
@@ -38,36 +35,45 @@
   (key->bytes [key] (str->bytes key))
   (key->str [key] key))
 
-(defn read-pem->key
+(defn read-pem->privkey
   [reader passphrase]
-  (if passphrase
-    (let [password-finder (reify PasswordFinder
-                            (getPassword [this] (.toCharArray passphrase)))]
-      (.readObject (PEMReader. reader password-finder)))
-    (.readObject (PEMReader. reader))))
+  (let [parser    (PEMParser. reader)
+        keypair   (.readObject parser)
+        converter (doto (JcaPEMKeyConverter.)
+                    (.setProvider "BC"))]
+    (if (instance? PEMEncryptedKeyPair keypair)
+      (let [builder   (JcePEMDecryptorProviderBuilder.)
+            decryptor (.build builder (.toCharArray passphrase))]
+        (->> (.decryptKeyPair keypair decryptor)
+             (.getKeyPair converter)))
+      (.getKeyPair converter keypair))))
+
+(defn read-pem->pubkey
+  [reader]
+  (let [parser    (PEMParser. reader)
+        keyinfo   (.readObject parser)
+        converter (doto (JcaPEMKeyConverter.)
+                    (.setProvider "BC"))]
+    (.getPublicKey converter keyinfo)))
 
 (defn private-key
   [^String path & [passphrase]]
   (with-open [reader (io/reader path)]
     (.getPrivate
-      (read-pem->key reader passphrase))))
+      (read-pem->privkey reader passphrase))))
 
 (defn public-key? [k]
   (let [t (type k)]
-    (or (= org.bouncycastle.jce.provider.JCERSAPublicKey t)
-        (= org.bouncycastle.jce.provider.JDKDSAPublicKey t)
-        (= org.bouncycastle.jce.provider.JCEECPublicKey t))))
+    (or (= org.bouncycastle.jcajce.provider.asymmetric.rsa.BCRSAPublicKey t)
+        (= org.bouncycastle.jcajce.provider.asymmetric.dsa.BCDSAPublicKey t)
+        (= org.bouncycastle.jcajce.provider.asymmetric.ec.BCECPublicKey t))))
 
 (defn public-key
-  [^String path & [passphrase]]
+  [^String path]
   (with-open [reader (io/reader path)]
-    (let [res (read-pem->key reader passphrase)]
-      (if (public-key? res) res
-        (.getPublic res)))))
+    (read-pem->pubkey reader)))
 
 (defn str->public-key
-  [^String keydata & [passphrase]]
+  [^String keydata]
   (with-open [reader (StringReader. keydata)]
-    (let [res (read-pem->key reader passphrase)]
-      (if (public-key? res) res
-        (.getPublic res)))))
+    (read-pem->pubkey reader)))
