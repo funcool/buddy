@@ -17,7 +17,6 @@
   (:require [buddy.core.codecs :refer :all]
             [buddy.core.util :refer [concat-byte-arrays]]
             [buddy.core.hash :refer [make-sha512]]
-            [buddy.core.keys :as keys]
             [clojure.java.io :as io])
   (:import (javax.crypto Mac)
            (javax.crypto.spec SecretKeySpec)
@@ -33,7 +32,7 @@ InputStream, File, URL and URI."
 (extend-protocol HMac
   (Class/forName "[B")
   (make-hmac [data key algorithm]
-    (let [bkey (keys/key->bytes key)
+    (let [bkey (->byte-array key)
           sks  (SecretKeySpec. bkey algorithm)
           mac  (Mac/getInstance algorithm)]
       (.init mac sks)
@@ -45,7 +44,7 @@ InputStream, File, URL and URI."
 
   java.io.InputStream
   (make-hmac [data key algorithm]
-    (let [bkey (keys/key->bytes key)
+    (let [bkey (->byte-array key)
           sks  (SecretKeySpec. bkey algorithm)
           bfr  (byte-array 5120)
           mac  (Mac/getInstance algorithm)]
@@ -74,7 +73,7 @@ InputStream, File, URL and URI."
 of keyed-hash message authentication code (hmac).
 This is a low level function and always return bytes."
   [data key salt algorithm]
-  (let [key (concat-byte-arrays (keys/key->bytes key)
+  (let [key (concat-byte-arrays (->byte-array key)
                                 (->byte-array salt))]
     (make-hmac data (make-sha512 key) algorithm)))
 

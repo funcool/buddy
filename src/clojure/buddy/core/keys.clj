@@ -22,19 +22,6 @@
 (java.security.Security/addProvider
  (org.bouncycastle.jce.provider.BouncyCastleProvider.))
 
-(defprotocol ISecretKey
-  (key->bytes [key] "Normalize key to byte array")
-  (key->str [key] "Normalize key String"))
-
-(extend-protocol ISecretKey
-  (Class/forName "[B")
-  (key->bytes [it] it)
-  (key->str [it] (bytes->hex it))
-
-  String
-  (key->bytes [key] (str->bytes key))
-  (key->str [key] key))
-
 (defn read-pem->privkey
   [reader passphrase]
   (let [parser    (PEMParser. reader)
