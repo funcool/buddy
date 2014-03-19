@@ -1,8 +1,10 @@
 (ns buddy.test_buddy_sign
   (:require [clojure.test :refer :all]
             [buddy.core.codecs :refer :all]
+            [buddy.core.sign :as sign]
             [buddy.sign.generic :as gsign]
-            [buddy.core.keys :refer :all]))
+            [buddy.core.keys :refer :all])
+  (:import java.util.Arrays))
 
 (def secret "test")
 
@@ -31,6 +33,31 @@
   (testing "Read ec pub key"
     (let [pkey (public-key "test/_files/pubkey.ecdsa.pem")]
       (is (= (type pkey) org.bouncycastle.jcajce.provider.asymmetric.ec.BCECPublicKey)))))
+
+
+(deftest low-level-sign-tests
+  (let [rsa-privkey (private-key "test/_files/privkey.3des.rsa.pem" "secret")
+        rsa-pubkey  (public-key "test/_files/pubkey.3des.rsa.pem")
+        ec-privkey  (private-key "test/_files/privkey.ecdsa.pem")
+        ec-pubkey   (public-key "test/_files/pubkey.ecdsa.pem")]
+    (testing "Multiple sign using rsassa-pkcs"
+      (is (Arrays/equals (sign/rsassa-pkcs-sha256 "foobar" rsa-privkey)
+                         (sign/rsassa-pkcs-sha256 "foobar" rsa-privkey))))
+    (testing "Sign/Verify using rsassa-pkcs"
+      (let [signature (sign/rsassa-pkcs-sha256 "foobar" rsa-privkey)]
+        (is (true? (sign/rsassa-pkcs-verify-sha256 "foobar" signature rsa-pubkey)))))
+    (testing "Multiple sign using rsassa-pss"
+      (is (false? (Arrays/equals (sign/rsassa-pss-sha256 "foobar" rsa-privkey)
+                                 (sign/rsassa-pss-sha256 "foobar" rsa-privkey)))))
+    (testing "Sign/Verify using rsassa-pss"
+      (let [signature (sign/rsassa-pss-sha256 "foobar" rsa-privkey)]
+        (is (true? (sign/rsassa-pss-verify-sha256 "foobar" signature rsa-pubkey)))))
+    (testing "Multiple sign using ecdsa"
+      (is (false? (Arrays/equals (sign/ecdsa-sha256 "foobar" ec-privkey)
+                                 (sign/ecdsa-sha256 "foobar" ec-privkey)))))
+    (testing "Sign/Verify using ecdsa"
+      (let [signature (sign/ecdsa-sha256 "foobar" ec-privkey)]
+        (is (true? (sign/ecdsa-verify-sha256 "foobar" signature ec-pubkey)))))))
 
 
 (deftest high-level-sign-tests
