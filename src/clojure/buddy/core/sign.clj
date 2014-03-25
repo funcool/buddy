@@ -13,9 +13,10 @@
 ;; limitations under the License.
 
 ;; Links to rfcs:
-;; - http://tools.ietf.org/html/draft-ietf-jose-json-web-encryption-24
 ;; - http://tools.ietf.org/html/draft-ietf-oauth-json-web-token-19
 ;; - http://tools.ietf.org/html/draft-ietf-jose-json-web-algorithms-24
+;; - http://tools.ietf.org/html/draft-ietf-jose-json-web-signature-24
+;; - http://tools.ietf.org/html/draft-ietf-jose-json-web-encryption-24
 
 (ns buddy.core.sign
   "Basic crypto primitives that used for more high
