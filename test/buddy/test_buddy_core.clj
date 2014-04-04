@@ -1,7 +1,7 @@
 (ns buddy.test_buddy_core
   (:require [clojure.test :refer :all]
             [buddy.core.codecs :refer :all]
-            [buddy.core.hash :refer [sha256]]
+            [buddy.core.hash :refer [sha256 sha3-256]]
             [buddy.core.hmac :refer [salted-hmac-sha256]]
             [buddy.hashers.pbkdf2 :as pbkdf2]
             [buddy.hashers.bcrypt :as bcrypt]
@@ -36,7 +36,7 @@
           data "bar"]
       (is (= (salted-hmac-sha256 data "" key)
              "58f125164e3664184898939740cd369130bca60e1f66a4dbe241f494b6403a5f")))))
- 
+
 (deftest hashers-pbkdf2-tests
   (testing "Test low level api for encrypt/verify"
     (let [plain-password      "my-test-password"
@@ -67,3 +67,8 @@
           encrypted-password  (scrypt/make-password plain-password)]
       (is (scrypt/check-password plain-password encrypted-password)))))
 
+(deftest core-hash-tests
+  (testing "SHA3 support test"
+    (let [plain-text "FooBar"
+          hashed     (sha3-256 plain-text)]
+      (is (= hashed "0a3c119a02a37e50fbaf8a3776559c76de7a969097c05bd0f41f60cf25210745")))))

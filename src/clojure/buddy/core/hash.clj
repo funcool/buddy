@@ -5,6 +5,9 @@
             [clojure.java.io :as io])
   (:import (java.security MessageDigest)))
 
+(java.security.Security/addProvider
+ (org.bouncycastle.jce.provider.BouncyCastleProvider.))
+
 (defprotocol Digest
   (make-digest [data algorithm] "Low level interface, always returns bytes"))
 
@@ -55,6 +58,9 @@ hash result."
 (def make-sha256 #(make-digest % "SHA-256"))
 (def make-sha384 #(make-digest % "SHA-384"))
 (def make-sha512 #(make-digest % "SHA-512"))
+(def make-sha3-256 #(make-digest % "SHA3-256"))
+(def make-sha3-384 #(make-digest % "SHA3-384"))
+(def make-sha3-512 #(make-digest % "SHA3-256"))
 (def make-sha1 #(make-digest % "SHA-1"))
 (def make-md5 #(make-digest % "MD5"))
 
@@ -63,6 +69,9 @@ hash result."
 (def sha256 #(digest % "SHA-256"))
 (def sha384 #(digest % "SHA-384"))
 (def sha512 #(digest % "SHA-512"))
+(def sha3-256 #(digest % "SHA3-256"))
+(def sha3-384 #(digest % "SHA3-384"))
+(def sha3-512 #(digest % "SHA3-256"))
 (def sha1 #(digest % "SHA-1"))
 (def md5 #(digest % "MD5"))
 
