@@ -29,6 +29,7 @@
       (is (= (type pkey) org.bouncycastle.jcajce.provider.asymmetric.rsa.BCRSAPublicKey))))
   (testing "Read dsa pub key"
     (let [pkey (public-key "test/_files/pubkey.3des.dsa.pem")]
+      (is (public-key? pkey))
       (is (= (type pkey) org.bouncycastle.jcajce.provider.asymmetric.dsa.BCDSAPublicKey))))
   (testing "Read ec pub key"
     (let [pkey (public-key "test/_files/pubkey.ecdsa.pem")]

@@ -1,13 +1,14 @@
 (ns buddy.test_buddy_core
   (:require [clojure.test :refer :all]
             [buddy.core.codecs :refer :all]
-            [buddy.core.hash :refer [sha256 sha3-256]]
+            [buddy.core.hash :as hash]
             [buddy.core.hmac :refer [salted-hmac-sha256]]
             [buddy.hashers.pbkdf2 :as pbkdf2]
             [buddy.hashers.bcrypt :as bcrypt]
             [buddy.hashers.sha256 :as sha256]
             [buddy.hashers.md5 :as md5]
-            [buddy.hashers.scrypt :as scrypt])
+            [buddy.hashers.scrypt :as scrypt]
+            [clojure.java.io :as io])
   (:import (java.util Arrays)))
 
 (deftest codecs-test
@@ -27,7 +28,7 @@
 (deftest crypto-tests
   (testing "Sha256 digest"
     (let [bt (byte-array 0)
-          dg (sha256 bt)]
+          dg (hash/sha256 bt)]
       (is (= dg "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855")))))
 
 (deftest hmac-tests
@@ -70,5 +71,9 @@
 (deftest core-hash-tests
   (testing "SHA3 support test"
     (let [plain-text "FooBar"
-          hashed     (sha3-256 plain-text)]
-      (is (= hashed "0a3c119a02a37e50fbaf8a3776559c76de7a969097c05bd0f41f60cf25210745")))))
+          hashed     (hash/sha3-256 plain-text)]
+      (is (= hashed "0a3c119a02a37e50fbaf8a3776559c76de7a969097c05bd0f41f60cf25210745"))))
+  (testing "File hashing"
+    (let [path       "test/_files/pubkey.ecdsa.pem"
+          valid-hash "7aa01e35e65701c9a9d8f71c4cbf056acddc9be17fdff06b4c7af1b0b34ddc29"]
+      (is (= (hash/sha256 (io/input-stream path)) valid-hash)))))
