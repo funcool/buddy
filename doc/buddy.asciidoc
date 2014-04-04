@@ -74,7 +74,7 @@ Also, you can use it with maven. First, add the clojars repository:
 </repository>
 ----
 
-Then for buddy: 
+Then for buddy:
 
 [source,xml]
 ----
@@ -85,6 +85,17 @@ Then for buddy:
 </dependency>
 ----
 
+Get the Code
+~~~~~~~~~~~~
+
+_buddy_ is opensource and is entirelly developed on link:https://github.com/niwibe/buddy[github].
+
+You can clone the public repository with this command:
+
+[source,text]
+----
+git clone https://github.com/niwibe/buddy
+----
 
 User guide
 ----------
@@ -544,7 +555,7 @@ action. The default policy in _buddy_ is `:allow` but you can change it to `:rej
 using keyword `:policy` on wrap-access-rules middleware.
 
 
-An other way to use access rules is using `buddy.auth.accessrules/restrict` 
+An other way to use access rules is using `buddy.auth.accessrules/restrict`
 handler decorator that allows assign some rules to concrete handlers omiting
 any url matching.
 
@@ -559,8 +570,8 @@ The usage of it can be easy, as shown with Compojure routes:
                         ;; Mandatory parameter
                         :rule user-access
                         ;; Optional parameter, in case if not passed
-                        ;; default is used (defined by `wrap-access-rules` 
-                        ;; middleware) or `throw-unauthorized` is raised 
+                        ;; default is used (defined by `wrap-access-rules`
+                        ;; middleware) or `throw-unauthorized` is raised
                         ;; if default isn't available
                         :reject-handler reject-handler))
   (GET "/admin" (restrict my-admin-ctrl
@@ -757,7 +768,7 @@ You can extend it for your own types using the protocol *buddy.core.hmac/HMac*:
 ----
 
 [NOTE]
-Functions like *hmac-sha256* just alias the more generic functions 
+Functions like *hmac-sha256* just alias the more generic functions
 *hmac* and *salted-hmac*.
 
 
