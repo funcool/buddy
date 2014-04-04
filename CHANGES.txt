@@ -7,6 +7,8 @@ Version 0.1.1
 - Reimplemented hmac and hash functions as protocols for easy extensibility.
 - Make some core functions as public api (documenting them).
 - Add ECDSA, RSASSA-PKCS1-V1_5 RSASSA-PSS signature algorithms.
+- Add private/publik key reader util functions on buddy.core.keys namespace.
+- Add SHA3 digest function utilities on buddy.core.hash namespace.
 
 Version 0.1.0-beta4
 -------------------
