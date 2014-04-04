@@ -13,7 +13,8 @@
                  [org.bouncycastle/bcpkix-jdk15on "1.50"]]
   :source-paths ["src/clojure"]
   :java-source-paths ["src/java"]
-  :plugins [[codox "0.6.6"]]
+  :plugins [[codox "0.6.6"]
+            [lein-cloverage "1.0.2"]]
   :codox {:output-dir "doc/api"
           :src-dir-uri "http://github.com/niwibe/buddy/blob/master/"
           :src-linenum-anchor-prefix "L"}
