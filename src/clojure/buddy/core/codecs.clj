@@ -1,7 +1,7 @@
 (ns buddy.core.codecs
   "Util functions for make conversion between string, bytes
 and encode them to base64 ot hex format."
-  (:require [clojure.string :refer [trim]])
+  (:require [clojure.string :as str]))
   (:import (org.apache.commons.codec.binary Base64 Hex)))
 
 (defn bytes?
@@ -59,12 +59,33 @@ return bytearray."
   [^String s]
   (-> (str->bytes s)
       (Base64/encodeBase64URLSafeString)
-      (trim)))
+      (str/trim)))
 
 (defn base64->str
   "Decode from base64 to string."
   [^String s]
   (String. (base64->bytes s) "UTF8"))
+
+(defn str->sefebase64
+  "Given a string, convert it to completely
+urlsafe base64 version."
+  [^String s]
+  (-> (str->base64 s)
+      (str/replace #"\s" "")
+      (str/replace "=" "")
+      (str/replace "+" "-")
+      (str/replace "/" "_")))
+
+(defn safebase64->str
+  "Given urlsafe base64 string decode it to string."
+  [^Strung s]
+  (-> (case (mod (count s) 4)
+        2 (str s "==")
+        3 (str s "=")
+        s)
+      (str/replace "-" "+")
+      (str/replace "_" "/")
+      (base64->str)))
 
 (defprotocol ByteArray
   "Facility for convert input parameters
