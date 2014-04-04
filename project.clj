@@ -3,7 +3,7 @@
   :url "https://github.com/niwibe/buddy"
   :license {:name "Apache 2.0"
             :url "http://www.apache.org/licenses/LICENSE-2.0.txt"}
-  :dependencies [[org.clojure/clojure "1.5.1"]
+  :dependencies [[org.clojure/clojure "1.6.0"]
                  [org.clojure/algo.monads "0.1.4"]
                  [ring/ring-core "1.2.1"]
                  [commons-codec/commons-codec "1.8"]
@@ -32,5 +32,4 @@
                              :source-paths ["examples/oauthexample/src"]
                              :resource-paths ["example/oauthexample/resources"]
                              :target-path "examples/oauthexample/target/%s"
-                             :main ^:skip-aot oauthexample.core}]
-             :1.6 {:dependencies [[org.clojure/clojure "1.6.0"]]}})
+                             :main ^:skip-aot oauthexample.core}]})
