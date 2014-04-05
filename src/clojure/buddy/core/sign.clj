@@ -21,115 +21,138 @@
 (ns buddy.core.sign
   "Basic crypto primitives that used for more high
   level abstractions."
-  (:require [buddy.core.codecs :refer :all])
-  (:import (java.security Signature SecureRandom PublicKey PrivateKey)))
+  (:require [buddy.core.codecs :refer :all]
+            [clojure.java.io :as io])
+  (:import (java.security PublicKey PrivateKey)))
 
 (java.security.Security/addProvider
  (org.bouncycastle.jce.provider.BouncyCastleProvider.))
 
-(def ^:private ^:static
-  rsassa-pss-algorithms ["SHA256withRSAandMGF1"
-                         "SHA384withRSAandMGF1"
-                         "SHA512withRSAandMGF1"
-                         "SHA1withRSAandMGF1"])
+(def ^{:doc "Default buffer size for make signature of stream."
+       :dynamic true}
+  *default-buffer-size* 5120)
 
-(def ^:private ^:static
-  rsassa-pkcs-algorithms ["SHA256withRSA"
+(def ^{:doc "List of officially supported algorithms by buddy."
+       :dynamic true}
+  *supported-algorithms* ["SHA256withRSAandMGF1" ;; rsassa-pss
+                          "SHA384withRSAandMGF1"
+                          "SHA512withRSAandMGF1"
+                          "SHA1withRSAandMGF1"
+                          "SHA256withRSA"        ;; rsassa-pkcs
                           "SHA384withRSA"
-                          "SHA512withRSA"])
+                          "SHA512withRSA"
+                          "SHA256withECDSA"      ;; ecdsa
+                          "SHA384withECDSA"
+                          "SHA512withECDSA"])
 
-(def ^:private ^:static
-  ecdsa-algorithms ["SHA256withECDSA"
-                    "SHA384withECDSA"
-                    "SHA512withECDSA"])
+;; (defn seq-contains?
+;;   [coll target]
+;;   (some #(= target %) coll))
 
-(defn seq-contains?
-  [coll target]
-  (some #(= target %) coll))
+;; (def ^{:doc "Dynamic var with secure random instance."
+;;        :static true :dynamic true}
+;;   *secure-random* (doto (java.security.SecureRandom.)
+;;                     (.nextBytes (byte-array 0))))
 
-(defn rsassa-pkcs
-  "This section defines the implementation of the RSASSA-PKCS1-V1_5 digital
-signature algorithm as defined in Section 8.2 of RFC 3447 [RFC3447]
-commonly known as PKCS #1, using SHA-2 hash functions."
-  [^String algorithm, value, ^PrivateKey pkey]
-  {:pre [(seq-contains? rsassa-pkcs-algorithms algorithm)]}
-  (let [sig (doto (Signature/getInstance algorithm "BC")
+(defn- make-signature-for-plain-data
+  [^bytes data, pkey, ^String algorithm]
+  (let [sig (doto (java.security.Signature/getInstance algorithm "BC")
               (.initSign pkey (java.security.SecureRandom.))
-              (.update (->byte-array value)))]
+              (.update data))]
     (.sign sig)))
 
-(defn rsassa-pkcs-verify
-  "Function that provides a signature verification  for the RSASSA-PKCS1-V1_5
-digital signature algorithm."
-  [^String algorithm, value, ^bytes signature, ^PublicKey pkey]
-  {:pre [(seq-contains? rsassa-pkcs-algorithms algorithm)]}
-  (let [sig (doto (Signature/getInstance algorithm "BC")
+(defn- verify-signature-for-plain-data
+  [^bytes data, ^bytes signature, pkey, ^String algorithm]
+  (let [sig (doto (java.security.Signature/getInstance algorithm "BC")
               (.initVerify pkey)
-              (.update (->byte-array value)))]
+              (.update data))]
     (.verify sig signature)))
 
-(defn ecdsa
-  "This function implements the Elliptic Curve Digital Signature Algorithm
-(ECDSA) interface. ECDSA provides equivalent security to RSA cryptography
-but using shorter key sizes and with greater processing speed."
-  [^String algorithm, value pkey]
-  {:pre [(seq-contains? ecdsa-algorithms algorithm)]}
-  (let [sig (doto (Signature/getInstance algorithm "BC")
-              (.initSign pkey)
-              (.update (->byte-array value)))]
+(defn- make-signature-for-stream
+  [^java.io.InputStream stream, pkey, ^String algorithm]
+  (let [sig  (doto (java.security.Signature/getInstance algorithm "BC")
+               (.initSign pkey (java.security.SecureRandom.)))
+        buff (byte-array *default-buffer-size*)]
+    (loop []
+      (let [readed (.read stream buff 0 *default-buffer-size*)]
+        (when-not (= readed -1)
+          (.update sig buff 0 readed)
+          (recur))))
     (.sign sig)))
 
-(defn ecdsa-verify
-  "Function that provides a signature verification for Elliptic Curve
-Digital Signature Algorithm (ECDSA)"
-  [^String algorithm, value, ^bytes signature, pkey]
-  {:pre [(seq-contains? ecdsa-algorithms algorithm)]}
-  (let [sig (doto (Signature/getInstance algorithm "BC")
-              (.initVerify pkey)
-              (.update (->byte-array value)))]
+(defn- verify-signature-for-stream
+  [^java.io.InputStream stream, ^bytes signature, pkey, ^String algorithm]
+  (let [sig  (doto (java.security.Signature/getInstance algorithm "BC")
+               (.initVerify pkey))
+        buff (byte-array *default-buffer-size*)]
+    (loop []
+      (let [readed (.read stream buff 0 *default-buffer-size*)]
+        (when-not (= readed -1)
+          (.update sig buff 0 readed)
+          (recur))))
     (.verify sig signature)))
 
-(defn rsassa-pss
-  "This section implements the RSASSA-PSS digital signature
-algorithm interface as defined in Section 8.1 of RFC 3447 with
-MGF1 mark generation function and SHA-2 hash functions."
-  [^String algorithm, value pkey]
-  {:pre [(seq-contains? rsassa-pss-algorithms algorithm)]}
-  (let [sig (doto (Signature/getInstance algorithm "BC")
-              (.initSign pkey)
-              (.update (->byte-array value)))]
-    (.sign sig)))
+(defprotocol Signature
+  (make-signature [data key algorithm] "")
+  (verify-signature [data signature key algorithm] ""))
 
-(defn rsassa-pss-verify
-  "Function that provides a signature verification for Elliptic Curve
-Digital Signature Algorithm (ECDSA)"
-  [^String algorithm, value, ^bytes signature, pkey]
-  {:pre [(seq-contains? rsassa-pss-algorithms algorithm)]}
-  (let [sig (doto (Signature/getInstance algorithm "BC")
-              (.initVerify pkey)
-              (.update (->byte-array value)))]
-    (.verify sig signature)))
+(extend-protocol Signature
+  (Class/forName "[B")
+  (make-signature [^bytes data, pkey, ^String algorithm]
+    (make-signature-for-plain-data data pkey algorithm))
+  (verify-signature [^bytes data, ^bytes signature, pkey, ^String algorithm]
+    (verify-signature-for-plain-data data signature pkey algorithm))
+
+  java.lang.String
+  (make-signature [^String data, pkey, ^String algorithm]
+    (make-signature-for-plain-data (->byte-array data) pkey algorithm))
+  (verify-signature [^String data, ^bytes signature, pkey, ^String algorithm]
+    (verify-signature-for-plain-data (->byte-array data) signature pkey algorithm))
+
+  java.io.InputStream
+  (make-signature [^java.io.InputStream stream, pkey, ^String algorithm]
+    (make-signature-for-stream stream pkey algorithm))
+  (verify-signature [^java.io.InputStream stream, ^bytes signature, pkey, ^String algorithm]
+    (verify-signature-for-stream stream signature pkey algorithm))
+
+  java.io.File
+  (make-signature [^java.io.File stream, pkey, ^String algorithm]
+    (make-signature-for-stream (io/input-stream stream) pkey algorithm))
+  (verify-signature [^java.io.File stream, ^bytes signature, pkey, ^String algorithm]
+    (verify-signature-for-stream (io/input-stream stream) signature pkey algorithm))
+
+  java.net.URL
+  (make-signature [^java.net.URL stream, pkey, ^String algorithm]
+    (make-signature-for-stream (io/input-stream stream) pkey algorithm))
+  (verify-signature [^java.net.URL stream, ^bytes signature, pkey, ^String algorithm]
+    (verify-signature-for-stream (io/input-stream stream) signature pkey algorithm))
+
+  java.net.URI
+  (make-signature [^java.net.URI stream, pkey, ^String algorithm]
+    (make-signature-for-stream (io/input-stream stream) pkey algorithm))
+  (verify-signature [^java.net.URI stream, ^bytes signature, pkey, ^String algorithm]
+    (verify-signature-for-stream (io/input-stream stream) signature pkey algorithm)))
 
 ;; RSASSA-PKCS1-V1_5 + sha2 aliases
-(def rsassa-pkcs-sha256 (partial rsassa-pkcs "SHA256withRSA"))
-(def rsassa-pkcs-sha384 (partial rsassa-pkcs "SHA384withRSA"))
-(def rsassa-pkcs-sha512 (partial rsassa-pkcs "SHA512withRSA"))
-(def rsassa-pkcs-verify-sha256 (partial rsassa-pkcs-verify "SHA256withRSA"))
-(def rsassa-pkcs-verify-sha384 (partial rsassa-pkcs-verify "SHA384withRSA"))
-(def rsassa-pkcs-verify-sha512 (partial rsassa-pkcs-verify "SHA512withRSA"))
+(def rsassa-pkcs-sha256 #(make-signature %1 %2 "SHA256withRSA"))
+(def rsassa-pkcs-sha384 #(make-signature %1 %2 "SHA384withRSA"))
+(def rsassa-pkcs-sha512 #(make-signature %1 %2 "SHA512withRSA"))
+(def rsassa-pkcs-sha256-verify #(verify-signature %1 %2 %3 "SHA256withRSA"))
+(def rsassa-pkcs-sha384-verify #(verify-signature %1 %2 %3 "SHA384withRSA"))
+(def rsassa-pkcs-sha512-verify #(verify-signature %1 %2 %3 "SHA512withRSA"))
 
 ;; RSASSA-PSS (With MGF1)
-(def rsassa-pss-sha256 (partial rsassa-pss "SHA256withRSAandMGF1"))
-(def rsassa-pss-sha384 (partial rsassa-pss "SHA384withRSAandMGF1"))
-(def rsassa-pss-sha512 (partial rsassa-pss "SHA512withRSAandMGF1"))
-(def rsassa-pss-verify-sha256 (partial rsassa-pss-verify "SHA256withRSAandMGF1"))
-(def rsassa-pss-verify-sha384 (partial rsassa-pss-verify "SHA384withRSAandMGF1"))
-(def rsassa-pss-verify-sha512 (partial rsassa-pss-verify "SHA512withRSAandMGF1"))
+(def rsassa-pss-sha256 #(make-signature %1 %2 "SHA256withRSAandMGF1"))
+(def rsassa-pss-sha384 #(make-signature %1 %2 "SHA384withRSAandMGF1"))
+(def rsassa-pss-sha512 #(make-signature %1 %2 "SHA512withRSAandMGF1"))
+(def rsassa-pss-sha256-verify #(verify-signature %1 %2 %3 "SHA256withRSAandMGF1"))
+(def rsassa-pss-sha384-verify #(verify-signature %1 %2 %3 "SHA384withRSAandMGF1"))
+(def rsassa-pss-sha512-verify #(verify-signature %1 %2 %3 "SHA512withRSAandMGF1"))
 
 ;; ECDSA + sha2 aliases
-(def ecdsa-sha256 (partial ecdsa "SHA256withECDSA"))
-(def ecdsa-sha384 (partial ecdsa "SHA384withECDSA"))
-(def ecdsa-sha512 (partial ecdsa "SHA512withECDSA"))
-(def ecdsa-verify-sha256 (partial ecdsa-verify "SHA256withECDSA"))
-(def ecdsa-verify-sha384 (partial ecdsa-verify "SHA384withECDSA"))
-(def ecdsa-verify-sha512 (partial ecdsa-verify "SHA512withECDSA"))
+(def ecdsa-sha256 #(make-signature %1 %2 "SHA256withECDSA"))
+(def ecdsa-sha384 #(make-signature %1 %2 "SHA384withECDSA"))
+(def ecdsa-sha512 #(make-signature %1 %2 "SHA512withECDSA"))
+(def ecdsa-sha256-verify #(verify-signature %1 %2 %3 "SHA256withECDSA"))
+(def ecdsa-sha384-verify #(verify-signature %1 %2 %3 "SHA384withECDSA"))
+(def ecdsa-sha512-verify #(verify-signature %1 %2 %3 "SHA512withECDSA"))
