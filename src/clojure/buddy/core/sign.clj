@@ -12,12 +12,6 @@
 ;; See the License for the specific language governing permissions and
 ;; limitations under the License.
 
-;; Links to rfcs:
-;; - http://tools.ietf.org/html/draft-ietf-oauth-json-web-token-19
-;; - http://tools.ietf.org/html/draft-ietf-jose-json-web-algorithms-24
-;; - http://tools.ietf.org/html/draft-ietf-jose-json-web-signature-24
-;; - http://tools.ietf.org/html/draft-ietf-jose-json-web-encryption-24
-
 (ns buddy.core.sign
   "Basic crypto primitives that used for more high
   level abstractions."
@@ -44,15 +38,6 @@
                           "SHA256withECDSA"      ;; ecdsa
                           "SHA384withECDSA"
                           "SHA512withECDSA"])
-
-;; (defn seq-contains?
-;;   [coll target]
-;;   (some #(= target %) coll))
-
-;; (def ^{:doc "Dynamic var with secure random instance."
-;;        :static true :dynamic true}
-;;   *secure-random* (doto (java.security.SecureRandom.)
-;;                     (.nextBytes (byte-array 0))))
 
 (defn- make-signature-for-plain-data
   [^bytes data, pkey, ^String algorithm]
