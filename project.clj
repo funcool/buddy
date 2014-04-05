@@ -4,23 +4,23 @@
   :license {:name "Apache 2.0"
             :url "http://www.apache.org/licenses/LICENSE-2.0.txt"}
   :dependencies [[org.clojure/clojure "1.6.0"]
-                 [org.clojure/algo.monads "0.1.4"]
-                 [ring/ring-core "1.2.1"]
-                 [commons-codec/commons-codec "1.8"]
-                 [com.taoensso/nippy "2.4.1"]
+                 [org.clojure/algo.monads "0.1.5"]
+                 [ring/ring-core "1.2.2"]
+                 [commons-codec/commons-codec "1.9"]
+                 [com.taoensso/nippy "2.6.0"]
                  [clojurewerkz/scrypt "1.1.0"]
                  [org.bouncycastle/bcprov-jdk15on "1.50"]
                  [org.bouncycastle/bcpkix-jdk15on "1.50"]]
   :source-paths ["src/clojure"]
   :java-source-paths ["src/java"]
-  :plugins [[codox "0.6.6"]
+  :plugins [[codox "0.6.7"]
             [lein-cloverage "1.0.2"]]
   :codox {:output-dir "doc/api"
           :src-dir-uri "http://github.com/niwibe/buddy/blob/master/"
           :src-linenum-anchor-prefix "L"}
   :profiles {:uberjar {:aot :all}
              :example {:dependencies [[compojure "1.1.6"]
-                                      [ring "1.2.1"]]}
+                                      [ring "1.2.2"]]}
              :sessionexample [:example
                               {:source-paths ["examples/sessionexample/src"]
                                :resource-paths ["examples/sessionexample/resources"]
