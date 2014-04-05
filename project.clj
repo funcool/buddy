@@ -19,6 +19,9 @@
           :src-dir-uri "http://github.com/niwibe/buddy/blob/master/"
           :src-linenum-anchor-prefix "L"}
   :profiles {:uberjar {:aot :all}
+             :bench {:dependencies [[criterium "0.4.3"]]
+                     :source-paths ["benchmarks/"]
+                     :main ^:skip-aot buddy.benchmarks}
              :example {:dependencies [[compojure "1.1.6"]
                                       [ring "1.2.2"]]}
              :sessionexample [:example
