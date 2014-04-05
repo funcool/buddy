@@ -1,7 +1,7 @@
 (ns buddy.core.codecs
   "Util functions for make conversion between string, bytes
 and encode them to base64 ot hex format."
-  (:require [clojure.string :as str]))
+  (:require [clojure.string :as str])
   (:import (org.apache.commons.codec.binary Base64 Hex)))
 
 (defn bytes?
@@ -78,7 +78,7 @@ urlsafe base64 version."
 
 (defn safebase64->str
   "Given urlsafe base64 string decode it to string."
-  [^Strung s]
+  [^String s]
   (-> (case (mod (count s) 4)
         2 (str s "==")
         3 (str s "=")
@@ -89,7 +89,7 @@ urlsafe base64 version."
 
 (defprotocol ByteArray
   "Facility for convert input parameters
-to bytes array with default implementation 
+to bytes array with default implementation
 for string an bytes array itself."
   (->byte-array [this] "Represent this as byte array."))
 
