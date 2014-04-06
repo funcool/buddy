@@ -14,45 +14,81 @@
 
 (ns buddy.sign.generic
   (:require [buddy.core.codecs :refer :all]
-            [buddy.core.hmac :refer [salted-hmac-sha256]]
+            [buddy.core.hmac :refer [hmac-sha256]]
+            [buddy.core.hmac :as hmac]
+            [buddy.core.sign :as sign]
             [buddy.core.util :refer [timestamp]]
-            [clojure.string :refer [split]]
+            [clojure.string :as str]
             [taoensso.nippy :as nippy]))
 
+(def ^{:doc "List of supported signing algorithms"
+       :static true}
+  signers-map {:hs256 {:signer hmac/hmac-sha256
+                       :verifier hmac/hmac-sha256-verify}
+               :hs512 {:signer hmac/hmac-sha512
+                       :verifier hmac/hmac-sha512-verify}
+               :rs256 {:signer (comp bytes->hex sign/rsassa-pkcs-sha256)
+                       :verifier #(sign/rsassa-pkcs-sha256-verify %1 (hex->bytes %2) %3)}
+               :rs512 {:signer (comp bytes->hex sign/rsassa-pkcs-sha512)
+                       :verifier #(sign/rsassa-pkcs-sha512-verify %1 (hex->bytes %2) %3)}
+               :ps256 {:signer (comp bytes->hex sign/rsassa-pss-sha256)
+                       :verifier #(sign/rsassa-pss-sha256-verify %1 (hex->bytes %2) %3)}
+               :ps512 {:signer (comp bytes->hex sign/rsassa-pss-sha512)
+                       :verifier #(sign/rsassa-pss-sha512-verify %1 (hex->bytes %2) %3)}
+               :es256 {:signer (comp bytes->hex sign/ecdsa-sha256)
+                       :verifier #(sign/ecdsa-sha256-verify %1 (hex->bytes %2) %3)}
+               :es512 {:signer (comp bytes->hex sign/ecdsa-sha512)
+                       :verifier #(sign/ecdsa-sha512-verify %1 (hex->bytes %2) %3)}})
+
+(defn timestamp-millis
+  "Get current timestamp in millis."
+  []
+  (System/currentTimeMillis))
+
 (defn- make-signature
-  [s pkey salt]
-  (salted-hmac-sha256 s pkey salt))
+  [s pkey alg]
+  (let [signer (get-in signers-map [alg :signer])]
+    (when-not signer
+      (throw (RuntimeException. (str "No signer found for algorithm: " (name alg)))))
+    (signer s pkey)))
+
+(defn- verify-signature
+  [s signature pkey alg]
+  (let [verifier (get-in signers-map [alg :verifier])]
+    (when-not verifier
+      (throw (RuntimeException. (str "No verifier found for algorithm: " (name alg)))))
+    (verifier s signature pkey)))
 
 (defn- make-stamped-signature
-  [s pkey salt sep stamp]
+  [s pkey alg sep stamp]
   (let [candidate (str s stamp)
-        signature (make-signature candidate pkey salt)]
-    (format "%s%s%s" signature sep stamp)))
+        signature (make-signature candidate pkey alg)]
+    (str/join sep [signature stamp])))
 
 (defn sign
   "Given a string and secret key,
   return a signed and prefixed string."
-  ([s, pkey & [{:keys [sep salt]
-                :or {sep ":" salt "clj"}
+  ([s, pkey & [{:keys [sep alg]
+                :or {sep ":" alg :hs256}
                 :as opts}]]
-   (let [stamp     (str->base64 (str (timestamp)))
-         signature (make-stamped-signature s pkey salt sep stamp)]
-     (format "%s%s%s" s sep signature))))
+   (let [stamp     (str->safebase64 (str (timestamp-millis)))
+         signature (make-stamped-signature s pkey alg sep stamp)]
+     (str/join sep [s signature (name alg)]))))
 
 (defn unsign
   "Given a signed string and private key with string
   was preoviously signed and return unsigned value
   if the signature is valed else nil."
-  ([s pkey & [{:keys [sep salt max-age]
-               :or {sep ":" salt "clj" max-age nil}}]]
-   (let [[value sig stamp] (split s (re-pattern sep))
-         candidate (str value stamp)]
-     (when (= sig (make-signature candidate pkey salt))
-       (if-not (nil? max-age)
-         (let [old-stamp-value (Integer/parseInt (base64->str stamp))
-               age             (- (timestamp) old-stamp-value)]
-           (if (> age max-age) nil value))
-        value)))))
+  [s pkey & [{:keys [sep max-age alg]
+               :or {sep ":" max-age nil alg :hs256}}]]
+  (let [[value sig stamp] (str/split s (re-pattern sep))
+        candidate (str value stamp)]
+    (when (verify-signature candidate sig pkey alg)
+      (if-not (nil? max-age)
+        (let [old-stamp-value (Long/parseLong (safebase64->str stamp))
+              age             (- (timestamp-millis) old-stamp-value)]
+          (if (> age (* max-age 1000)) nil value))
+        value))))
 
 (defn dumps
   "Sign a complex data strucutres using

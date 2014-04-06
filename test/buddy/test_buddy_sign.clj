@@ -106,6 +106,19 @@
       (Thread/sleep 700)
       (is (nil? (gsign/unsign signed secret {:max-age -1})))))
 
+  (testing "Try sing with invalid alg"
+    (is (thrown? RuntimeException (gsign/sign "foo" secret {:alg :invalid}))))
+
+  (testing "Use custom algorithm for sign/unsign"
+    (let [rsa-privkey (private-key "test/_files/privkey.3des.rsa.pem" "secret")
+          rsa-pubkey  (public-key "test/_files/pubkey.3des.rsa.pem")
+          signed      (gsign/sign "foo" rsa-privkey {:alg :rs256})]
+      (Thread/sleep 20)
+      (is (not= (gsign/sign "foo" rsa-privkey {:alg :rs256}) signed))
+      (is (= "foo" (gsign/unsign signed rsa-pubkey {:alg :rs256})))
+      (Thread/sleep 1000)
+      (is (= nil (gsign/unsign signed rsa-pubkey {:alg :rs256 :max-age 1})))))
+
   (testing "Signing/Unsigning complex clojure data"
     (let [signed (gsign/dumps {:foo 2 :bar 1} secret)]
       (is (= {:foo 2 :bar 1} (gsign/loads signed secret))))))
