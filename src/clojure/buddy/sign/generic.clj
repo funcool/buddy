@@ -23,22 +23,22 @@
 
 (def ^{:doc "List of supported signing algorithms"
        :static true}
-  signers-map {:hs256 {:signer hmac/hmac-sha256
-                       :verifier hmac/hmac-sha256-verify}
-               :hs512 {:signer hmac/hmac-sha512
-                       :verifier hmac/hmac-sha512-verify}
-               :rs256 {:signer (comp bytes->hex sign/rsassa-pkcs-sha256)
-                       :verifier #(sign/rsassa-pkcs-sha256-verify %1 (hex->bytes %2) %3)}
-               :rs512 {:signer (comp bytes->hex sign/rsassa-pkcs-sha512)
-                       :verifier #(sign/rsassa-pkcs-sha512-verify %1 (hex->bytes %2) %3)}
-               :ps256 {:signer (comp bytes->hex sign/rsassa-pss-sha256)
-                       :verifier #(sign/rsassa-pss-sha256-verify %1 (hex->bytes %2) %3)}
-               :ps512 {:signer (comp bytes->hex sign/rsassa-pss-sha512)
-                       :verifier #(sign/rsassa-pss-sha512-verify %1 (hex->bytes %2) %3)}
-               :es256 {:signer (comp bytes->hex sign/ecdsa-sha256)
-                       :verifier #(sign/ecdsa-sha256-verify %1 (hex->bytes %2) %3)}
-               :es512 {:signer (comp bytes->hex sign/ecdsa-sha512)
-                       :verifier #(sign/ecdsa-sha512-verify %1 (hex->bytes %2) %3)}})
+  signers-map {:hs256 {:signer (comp bytes->safebase64 hmac/hmac-sha256)
+                       :verifier #(hmac/hmac-sha256-verify %1 (safebase64->bytes %2) %3)}
+               :hs512 {:signer (comp bytes->safebase64 hmac/hmac-sha512)
+                       :verifier #(hmac/hmac-sha512-verify %1 (safebase64->bytes %2) %3)}
+               :rs256 {:signer (comp bytes->safebase64 sign/rsassa-pkcs-sha256)
+                       :verifier #(sign/rsassa-pkcs-sha256-verify %1 (safebase64->bytes %2) %3)}
+               :rs512 {:signer (comp bytes->safebase64 sign/rsassa-pkcs-sha512)
+                       :verifier #(sign/rsassa-pkcs-sha512-verify %1 (safebase64->bytes %2) %3)}
+               :ps256 {:signer (comp bytes->safebase64 sign/rsassa-pss-sha256)
+                       :verifier #(sign/rsassa-pss-sha256-verify %1 (safebase64->bytes %2) %3)}
+               :ps512 {:signer (comp bytes->safebase64 sign/rsassa-pss-sha512)
+                       :verifier #(sign/rsassa-pss-sha512-verify %1 (safebase64->bytes %2) %3)}
+               :es256 {:signer (comp bytes->safebase64 sign/ecdsa-sha256)
+                       :verifier #(sign/ecdsa-sha256-verify %1 (safebase64->bytes %2) %3)}
+               :es512 {:signer (comp bytes->safebase64 sign/ecdsa-sha512)
+                       :verifier #(sign/ecdsa-sha512-verify %1 (safebase64->bytes %2) %3)}})
 
 (defn timestamp-millis
   "Get current timestamp in millis."
