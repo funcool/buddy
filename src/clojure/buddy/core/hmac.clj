@@ -60,16 +60,15 @@
   (let [sig (make-hmac-for-stream stream pkey algorithm)]
     (Arrays/equals sig signature)))
 
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;; Low level public interface. Works with bytes.
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-
 (defprotocol HMac
   "Unified protocol for calculate a keyed-hash message.
 It comes with default implementations for bytes, String,
 InputStream, File, URL and URI."
   (make-hmac [data key algorithm] "Calculate hmac for data using key and algorithm.")
   (verify-hmac [data signature key algorithm] "Verify hmac for data using key and algorithm."))
+
+(alter-meta! #'make-hmac assoc :no-doc true :private true)
+(alter-meta! #'verify-hmac assoc :no-doc true :private true)
 
 (extend-protocol HMac
   (Class/forName "[B")
@@ -108,7 +107,7 @@ InputStream, File, URL and URI."
   (verify-hmac [^java.net.URI data ^bytes signature ^String key ^String algorithm]
     (verify-hmac-for-stream data signature key algorithm)))
 
-(defn make-salted-hmac
+(defn- make-salted-hmac
   "Generic function that implement salted variant
 of keyed-hash message authentication code (hmac).
 This is a low level function and always return bytes."
@@ -117,45 +116,37 @@ This is a low level function and always return bytes."
                                 (->byte-array salt))]
     (make-hmac data (make-sha512 key) algorithm)))
 
-(defn verify-salted-hmac
+(defn- verify-salted-hmac
   [data ^bytes signature ^String key salt ^String algorithm]
   (let [key (concat-byte-arrays (->byte-array key)
                                 (->byte-array salt))]
     (verify-hmac data signature (make-sha512 key) algorithm)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;; High level interface. Works with strings.
+;; High level interface
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (defn hmac
-  "Generic function that exposes a high level
-interface for keyed-hash message authentication
-code algorithm."
   [data ^String key ^String algorithm]
-  (-> (make-hmac data key algorithm)
-      (bytes->hex)))
+  (make-hmac data key algorithm))
 
 (defn hmac-verify
-  "Generic function that exposes a high level
-interface for keyed-hash message authentication
-code verification algorithm."
-  [data ^String signature ^String key ^String algorithm]
-  (verify-hmac data (hex->bytes signature) key algorithm))
+  [data ^bytes signature ^String key ^String algorithm]
+  (verify-hmac data signature key algorithm))
 
-(defn salted-hmac
+(defn shmac
   "Generic function that exposes a high level
 interface for salted variant of keyed-hash message
 authentication code algorithm."
   [data, key, salt, ^String algorithm]
-  (-> (make-salted-hmac data key salt algorithm)
-      (bytes->hex)))
+  (make-salted-hmac data key salt algorithm))
 
-(defn salted-hmac-verify
+(defn shmac-verify
   "Generic function that exposes a high level
 interface for salted variant of keyed-hash message
 authentication code verification algorithm."
-  [data ^String signature ^String key ^String salt ^String algorithm]
-  (verify-salted-hmac data signature (hex->bytes signature) key algorithm))
+  [data ^bytes signature ^String key ^String salt ^String algorithm]
+  (verify-salted-hmac data signature signature key algorithm))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Most used aliases
@@ -170,9 +161,9 @@ authentication code verification algorithm."
 (def hmac-sha512-verify #(hmac-verify %1 %2 %3 "HmacSHA512"))
 
 ;; Alias for salted hmac + sha2 hash algorithms
-(def salted-hmac-sha256 #(salted-hmac %1 %2 %3 "HmacSHA256"))
-(def salted-hmac-sha384 #(salted-hmac %1 %2 %3 "HmacSHA384"))
-(def salted-hmac-sha512 #(salted-hmac %1 %2 %3 "HmacSHA512"))
-(def salted-hmac-sha256-verify #(salted-hmac-verify %1 %2 %3 %4 "HmacSHA256"))
-(def salted-hmac-sha384-verify #(salted-hmac-verify %1 %2 %3 %4 "HmacSHA384"))
-(def salted-hmac-sha512-verify #(salted-hmac-verify %1 %2 %3 %4 "HmacSHA512"))
+(def shmac-sha256 #(shmac %1 %2 %3 "HmacSHA256"))
+(def shmac-sha384 #(shmac %1 %2 %3 "HmacSHA384"))
+(def shmac-sha512 #(shmac %1 %2 %3 "HmacSHA512"))
+(def shmac-sha256-verify #(shmac-verify %1 %2 %3 %4 "HmacSHA256"))
+(def shmac-sha384-verify #(shmac-verify %1 %2 %3 %4 "HmacSHA384"))
+(def shmac-sha512-verify #(shmac-verify %1 %2 %3 %4 "HmacSHA512"))

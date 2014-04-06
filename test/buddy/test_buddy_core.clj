@@ -2,7 +2,7 @@
   (:require [clojure.test :refer :all]
             [buddy.core.codecs :refer :all]
             [buddy.core.hash :as hash]
-            [buddy.core.hmac :refer [salted-hmac-sha256]]
+            [buddy.core.hmac :refer [shmac-sha256]]
             [buddy.hashers.pbkdf2 :as pbkdf2]
             [buddy.hashers.bcrypt :as bcrypt]
             [buddy.hashers.sha256 :as sha256]
@@ -56,7 +56,7 @@
   (testing "hmac-sha256 tests"
     (let [key  "foo"
           data "bar"]
-      (is (= (salted-hmac-sha256 data "" key)
+      (is (= (bytes->hex (shmac-sha256 data "" key))
              "58f125164e3664184898939740cd369130bca60e1f66a4dbe241f494b6403a5f")))))
 
 (deftest core-hash-tests
