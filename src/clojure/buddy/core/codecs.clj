@@ -22,13 +22,13 @@ and encode them to base64 ot hex format."
   "Convert octets to String."
   ([data]
    (bytes->str data "UTF-8"))
-  ([#^bytes data, ^String encoding]
+  ([^bytes data, ^String encoding]
    (String. data encoding)))
 
 (defn bytes->hex
   "Convert a byte array to hex
   encoded string."
-  [#^bytes data]
+  [^bytes data]
   (Hex/encodeHexString data))
 
 (defn hex->bytes
@@ -40,18 +40,18 @@ and encode them to base64 ot hex format."
 (defn bytes->base64
   "Encode a bytes array to base64
 and return utf8 string."
-  [#^bytes data]
+  [^bytes data]
   (Base64/encodeBase64URLSafeString data))
 
 (defn bytes->bbase64
   "Encode a bytes array to base64 and
 return bytearray."
-  [#^bytes data]
+  [^bytes data]
   (Base64/encodeBase64URLSafe data))
 
 (defn base64->bytes
   "Decode from base64 to bytes."
-  [s]
+  [^String s]
   (Base64/decodeBase64 s))
 
 (defn str->base64
@@ -66,11 +66,21 @@ return bytearray."
   [^String s]
   (String. (base64->bytes s) "UTF8"))
 
-(defn str->sefebase64
+(defn str->safebase64
   "Given a string, convert it to completely
 urlsafe base64 version."
   [^String s]
   (-> (str->base64 s)
+      (str/replace #"\s" "")
+      (str/replace "=" "")
+      (str/replace "+" "-")
+      (str/replace "/" "_")))
+
+(defn bytes->safebase64
+  "Given a string, convert it to completely
+urlsafe base64 version."
+  [^bytes s]
+  (-> (bytes->base64 s)
       (str/replace #"\s" "")
       (str/replace "=" "")
       (str/replace "+" "-")
@@ -86,6 +96,17 @@ urlsafe base64 version."
       (str/replace "-" "+")
       (str/replace "_" "/")
       (base64->str)))
+
+(defn safebase64->bytes
+  "Given urlsafe base64 string decode it to bytes."
+  [^String s]
+  (-> (case (mod (count s) 4)
+        2 (str s "==")
+        3 (str s "=")
+        s)
+      (str/replace "-" "+")
+      (str/replace "_" "/")
+      (base64->bytes)))
 
 (defprotocol ByteArray
   "Facility for convert input parameters
