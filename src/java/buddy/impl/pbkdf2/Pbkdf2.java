@@ -22,14 +22,14 @@ import javax.crypto.SecretKeyFactory;
 public class Pbkdf2 {
     public static String defaultAlgorithm = "HmacSHA256";
 
-    public static byte[] deriveKey(final byte[] password, final byte[] salt, 
-                                   final int iterations, final int keyLength) 
+    public static byte[] deriveKey(final byte[] password, final byte[] salt,
+                                   final int iterations, final int keyLength)
         throws java.security.NoSuchAlgorithmException, java.security.InvalidKeyException
     {
         return deriveKey(defaultAlgorithm, password, salt, iterations, keyLength);
     }
 
-    public static byte[] deriveKey(final String algorithm, final byte[] password, 
+    public static byte[] deriveKey(final String algorithm, final byte[] password,
                                    final byte[] salt, final int iterations, final int keyLength)
         throws java.security.NoSuchAlgorithmException, java.security.InvalidKeyException
     {
