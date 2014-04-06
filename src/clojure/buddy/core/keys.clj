@@ -23,7 +23,7 @@
  (org.bouncycastle.jce.provider.BouncyCastleProvider.))
 
 (defn read-pem->privkey
-  [reader passphrase]
+  [reader ^String passphrase]
   (let [parser    (PEMParser. reader)
         keypair   (.readObject parser)
         converter (doto (JcaPEMKeyConverter.)
@@ -44,7 +44,7 @@
     (.getPublicKey converter keyinfo)))
 
 (defn private-key
-  [^String path & [passphrase]]
+  [^String path & [^String passphrase]]
   (with-open [reader (io/reader path)]
     (.getPrivate
       (read-pem->privkey reader passphrase))))
