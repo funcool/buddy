@@ -280,7 +280,7 @@ with the widely used password derivation algorithms bcrypt and pbkdf2.
 [options="header"]
 |=====================================================================================
 | Hash algorithm name  | Namespace              | Observations
-| Pbkdf2 (with sha256) | `buddy.hashers.pbkdf2` | Recommended
+| Pbkdf2               | `buddy.hashers.pbkdf2` | Recommended
 | Bcrypt               | `byddy.hashers.bcrypt` | Recommended
 | Scrypt               | `buddy.hashers.scrypt` | Recommended
 | sha256               | `buddy.hashers.sha256` | Not recommended
