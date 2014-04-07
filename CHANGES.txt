@@ -11,6 +11,7 @@ Data: unreleased
 - Add ECDSA, RSASSA-PKCS1-V1_5 RSASSA-PSS signature algorithms.
 - Add private/public key reader util functions on buddy.core.keys namespace.
 - Add SHA3 digest function utilities on buddy.core.hash namespace.
+- Unify buddy.core.{hash,sign,hmac} api.
 
 Version 0.1.0-beta4
 -------------------
