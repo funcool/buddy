@@ -24,7 +24,8 @@
   [password salt]
   (-> (concat-byte-arrays (->byte-array password)
                           (->byte-array salt))
-      (sha256)))
+      (sha256)
+      (bytes->hex)))
 
 (defn make-password
   "Encrypts a raw string password using

@@ -62,9 +62,10 @@
 (deftest core-hash-tests
   (testing "SHA3 support test"
     (let [plain-text "FooBar"
-          hashed     (hash/sha3-256 plain-text)]
+          hashed     (-> (hash/sha3-256 plain-text)
+                         (bytes->hex))]
       (is (= hashed "0a3c119a02a37e50fbaf8a3776559c76de7a969097c05bd0f41f60cf25210745"))))
   (testing "File hashing"
     (let [path       "test/_files/pubkey.ecdsa.pem"
           valid-hash "7aa01e35e65701c9a9d8f71c4cbf056acddc9be17fdff06b4c7af1b0b34ddc29"]
-      (is (= (hash/sha256 (io/input-stream path)) valid-hash)))))
+      (is (= (bytes->hex (hash/sha256 (io/input-stream path))) valid-hash)))))

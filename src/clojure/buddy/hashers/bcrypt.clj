@@ -23,6 +23,7 @@
   [password log-rouds]
   (let [salt (BCrypt/gensalt log-rouds)]
     (-> (sha512 password)
+        (bytes->hex)
         (BCrypt/hashpw salt))))
 
 (defn make-password
@@ -30,7 +31,7 @@
   pbkdf2_sha1 algorithm and return formatted
   string."
   [pw & [{:keys [salt rounds] :or {rounds 12}}]]
-  (let [salt   (if (nil? salt) 
+  (let [salt   (if (nil? salt)
                  (bytes->hex (random-bytes 12))
                  (bytes->hex (->byte-array salt)))
         passwd (-> (str salt pw salt)
@@ -49,5 +50,6 @@ hashed password."
       (let [hashed  (-> (hex->bytes p)
                         (bytes->str))
             attempt (-> (str s attempt s)
-                        (sha512))]
+                        (sha512)
+                        (bytes->hex))]
         (BCrypt/checkpw attempt hashed)))))

@@ -16,7 +16,7 @@
   "Hash-based Message Authentication Codes (HMACs)"
   (:require [buddy.core.codecs :refer :all]
             [buddy.core.util :refer [concat-byte-arrays]]
-            [buddy.core.hash :refer [make-sha512]]
+            [buddy.core.hash :refer [sha512]]
             [clojure.java.io :as io])
   (:import javax.crypto.Mac
            javax.crypto.spec.SecretKeySpec
@@ -114,13 +114,13 @@ This is a low level function and always return bytes."
   [data ^String key salt ^String algorithm]
   (let [key (concat-byte-arrays (->byte-array key)
                                 (->byte-array salt))]
-    (make-hmac data (make-sha512 key) algorithm)))
+    (make-hmac data (sha512 key) algorithm)))
 
 (defn- verify-salted-hmac
   [data ^bytes signature ^String key salt ^String algorithm]
   (let [key (concat-byte-arrays (->byte-array key)
                                 (->byte-array salt))]
-    (verify-hmac data signature (make-sha512 key) algorithm)))
+    (verify-hmac data signature (sha512 key) algorithm)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; High level interface
