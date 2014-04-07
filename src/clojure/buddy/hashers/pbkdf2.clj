@@ -15,13 +15,23 @@
 (ns buddy.hashers.pbkdf2
   (:require [buddy.core.codecs :refer :all]
             [buddy.core.util :refer :all]
-            [clojure.string :refer [split]]))
+            [clojure.string :refer [split]])
+  (:import javax.crypto.spec.PBEKeySpec
+           javax.crypto.SecretKeyFactory))
+
+(java.security.Security/addProvider
+ (org.bouncycastle.jce.provider.BouncyCastleProvider.))
 
 (defn make-pbkdf2
   [password salt iterations]
-  (let [bpasswd (->byte-array password)
-        bsalt   (->byte-array salt)]
-    (-> (buddy.impl.pbkdf2.Pbkdf2/deriveKey "HmacSHA256" bpasswd bsalt iterations 32)
+  (let [skf   (SecretKeyFactory/getInstance "PBKDF2WithHmacSHA1" "BC")
+        dkl   256
+        spec  (PBEKeySpec. (.toCharArray password)
+                           (->byte-array salt)
+                           iterations
+                           dkl)
+        key   (.generateSecret skf spec)]
+    (-> (.getEncoded key)
         (bytes->hex))))
 
 (defn make-password
