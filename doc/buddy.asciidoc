@@ -717,16 +717,9 @@ hash, hmac, sign and coding that are used by other parts of _buddy_.
 Cryptographic hash algorithms
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-All hash algorithm implementations are found in the namespace
-`buddy.core.hash`. There are two ways to work with the sha-2/md hash
-functions.
+All hash algorithms interface is located on the `buddy.core.hash` namespace.
 
-This is buddy's naming convention:
-
-- *make-<hashalgo>*: functions that matches this pattern always return byte array.
-- *<hashalgo>*: functions that always return string that in almost all cases hex encoded.
-
-*Available hash algorithms:*
+Available hash algorithms:
 
 - *sha256*
 - *sha384*
@@ -740,17 +733,19 @@ Basic usage
 .Import namespace example:
 [source, clojure]
 ----
-(require '[buddy.core.hash :refer [make-sha256, sha256]])
+(require '[buddy.core.hash :as hash])
+(require '[buddy.core.codecs :refer :all])
 ----
 
 .Usage examples:
 [source, clojure]
 ----
-(sha256 "foo bar")
-;; -> "fbc1a9f858ea9e177916964bd88c3d37b91a1e84412765e29950777f265c4b75"
-
-(make-sha256 "foo bar")
+(hash/sha256 "foo bar")
 ;; -> #<byte[] [B@162a657e>
+
+(-> (hash/sha256 "foo bar")
+    (bytes->hex))
+;; -> "fbc1a9f858ea9e177916964bd88c3d37b91a1e84412765e29950777f265c4b75"
 ----
 
 Advanced usage
@@ -766,11 +761,12 @@ hash strings, but note that the same function works for *File*, *URL*,
 ;; Additional import for easy open files
 (require '[clojure.java.io :as io])
 
-(sha256 (io/input-stream "/tmp/some-file"))
+(-> (hash/sha256 (io/input-stream "/tmp/some-file"))
+    (bytes->hex))
 ;; -> "bba878639499c8449f69efbfc699413eebfaf41d4b7a7faa560bfaf7e93a43dd"
 ----
 
-You can extend it for your own types by using the
+You can extend it for your own types using the
 *buddy.core.hash/Digest* protocol:
 
 [source,clojure]
@@ -780,8 +776,8 @@ You can extend it for your own types by using the
 ----
 
 [NOTE]
-Functions like *sha256*/*make-sha256* are aliases for the more generic
-functions *digest*  and *make-digest*.
+Functions like *sha256* are aliases for the more generic
+function *digest*.
 
 Hash-based message authentication
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -852,6 +848,7 @@ Functions like *hmac-sha256* just alias the more generic functions
 Codecs (binary -> string conversion)
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
+No documentation found for this part.
 
 Examples
 --------
@@ -892,7 +889,7 @@ FAQ
 
 *Buddy is a security library/framework?*
 
-Yes and No. I don't like call "security" library because securty as concept represents a very generic
+Yes and No. I don't like call "security" library because security represents a very generic
 concepts and can contain a lot of things. Buddy is target to authentication, authorization and signing.
 
 *How can I use _buddy_ with link:http://clojure-liberator.github.io/liberator/[liberator]?*
