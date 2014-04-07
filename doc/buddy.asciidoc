@@ -1,7 +1,7 @@
 buddy documentation
 ===================
 Andrey Antukh, <niwi@niwi.be>
-0.1.0, 2014-04-04
+0.1.1, 2014-04-07
 
 :toc:
 :numbered:
@@ -17,11 +17,12 @@ ring.
 
 Features/Libraries:
 
-- Modular Authentication (implemented using protocols)
-- Modular Generic Authorization
-- Regular expression based access rules system
-- Signing library
-- Password hashing library
+- Modular Authentication library.
+- Modular Authorization library.
+- Regex/decorator based composable access rules system.
+- Signing library.
+- Password hashing library.
+- Minor utils for bytes, string, hex, base64 conversions.
 
 link:api/index.html[API reference documentation.]
 
@@ -57,7 +58,7 @@ it as a dependency in your *_project.clj_*:
 ._in project.clj_
 [source,clojure]
 ----
-[buddy "0.1.0-beta4"]
+[buddy "0.1.1"]
 ----
 
 
@@ -81,7 +82,7 @@ Then for buddy:
 <dependency>
     <groupId>buddy</groupId>
     <artifactId>buddy</artifactId>
-    <version>0.1.0-beta4</version>
+    <version>0.1.1</version>
 </dependency>
 ----
 
@@ -105,7 +106,7 @@ Signing
 
 The "signing framework" of _buddy_ is mainly based on django's
 link:https://docs.djangoproject.com/en/1.6/topics/signing/[Cryptographic
-signing] library.
+signing] library but extended with various signing algorithms.
 
 It can be used for several purposes:
 
@@ -114,13 +115,32 @@ It can be used for several purposes:
 
 NOTE: this library is used by one of authentication backends for implement token based stateless authentication.
 
-NOTE: hmac+sha256 is used for sign all data.
+.Supported Algorithms
+[options="header"]
+|=====================================================================================
+|Algorithm name     | Hash algorithms   | Keywords           |  Priv/Pub Key?
+|Elliptic Curve DSA | sha256, sha512    | `:es256`, `:es512` | Yes
+|RSASSA PSS         | sha256, sha512    | `:ps256`, `:ps512` | Yes
+|RSASSA PKCS1 v1_5  | sha256, sha512    | `:rs256`, `:rs256` | Yes
+|HMAC               | sha256*, sha512   | `:hs256`, `:hs256` | No
+|=====================================================================================
 
++++*+++ indicates the default value.
+
+
+[NOTE]
+====
+sha384 version is available for each algorithm internally, but is not exposed on public api.
+
+Only HMAC based algorithm supports plain text secret keys, If you want use
+more Digital Signature instead of hmac, you must have a key pair (public and private).
+
+====
 
 Using low level api
 ^^^^^^^^^^^^^^^^^^^
 
-There are four signing functions in *`buddy.crypto.signing`*: `sign`,
+There are four signing functions in *`buddy.sign.generic`* namespace: `sign`,
 `unsign`, `loads` and `dumps`.
 
 `sign` and `unsign` are low level and work primarily with strings.
@@ -144,8 +164,10 @@ There are four signing functions in *`buddy.crypto.signing`*: `sign`,
 
 The signing process consists of append signatures to the original
 string, separating the signature with a predefined separator (default
-":" char). The signature is timestamped hmac. *Timestamp* can be used
-to invalidate some signed data by time.
+":" char).
+
+Each signature have attached a timestamp (with millisecond of accuracy) and you can
+invalidate signed messages based on their age.
 
 .Invalidate signed data using timestamp
 [source,clojure]
@@ -161,9 +183,11 @@ Protecting complex data structures
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
 If you wish to protect a native data structure (hash-map, hash-set,
-list, vector, etc...)  you can do so using the signing *`dumps`* and
-*`loads`* functions. They accept the same parameters as their friends
-(`sign` and `unsign`), but can also sign more complex data.
+list, vector, etc...)  you can do so using the signing `dumps` and
+`loads` functions.
+
+They accept the same parameters as their low level friends, but can also sign
+more complex data.
 
 .Sign/Unsign Clojure hash-map
 [source,clojure]
@@ -184,21 +208,87 @@ list, vector, etc...)  you can do so using the signing *`dumps`* and
 
 NOTE: it uses a Clojure serialization library link:https://github.com/ptaoussanis/nippy[Nippy]
 
-INFO: Currently only a generic sign method is available, but I am
-working on a jwt (json web token) implementation for buddy. It will be
-available in future releases.
+Using Digital Signature algorithms
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+For use anyone of digital signature algorithms you must have a private/public key. If you
+don't have one, don't worry, generate one it's very easy (using *openssl*).
+
+Elliptic Curve DSA
+++++++++++++++++++
+
+[source, bash]
+----
+# Generating params file
+openssl ecparam -name prime256v1 -out ecparams.pem
+
+# Generate a private key from params file
+openssl ecparam -in ecparams.pem -genkey -noout -out ecprivkey.pem
+
+# Generate a public key from private key
+openssl ec -in ecprivkey.pem -pubout -out ecpubkey.pem
+----
+
+
+RSA based signatures
+++++++++++++++++++++
+
+[source, bash]
+----
+# Generate aes256 encrypted private key
+openssl genrsa -aes256 -out privkey.pem 2048
+
+# Generate public key from previously created private key.
+openssl rsa -pubout -in privkey.pem -out pubkey.pem
+----
+
+
+Using Digital Signature Keys for signing
+++++++++++++++++++++++++++++++++++++++++
+
+Now, having generated key pair, you can sign your messages with Digital
+Signature algorithms also previously mentioned.
+
+[source, clojure]
+----
+(require '[buddy.sign.generic :refer [sign unsign]])
+
+;; Import namespace for managing/reading keys
+(require '[buddy.core.keys :as keys])
+
+;; Create keys instances
+(def ec-privkey (keys/private-key "ecprivkey.pem"))
+(def ec-pubkey (keys/public-key "ecpubkey.pem"))
+
+;; Use them like plain secret password with hmac algorithms for sign
+(def signed-data (sign "mystring" ec-privkey {:alg :ec256}))
+
+;; And unsign
+(def unsigned-data (unsign signed-data ec-pubkey {:alg :ec256}))
+----
 
 Hashers
 ~~~~~~~
 
 Another important part of a good authentication/authorization library
-is providing some facilities for generating secure passwords. _buddy_
-comes with a few functions for generating and verifying passwords like
-the widely used password derivation algorithms bcrypt and pbkdf2 (with
-sha256).
+is providing some facilities for generating secure passwords.
 
-_buddy_ hashers live in `buddy.hashers.*` and usually consist
-of `make-password` and `check-password`.
+_buddy_ comes with a few functions for generating and verifying passwords
+with the widely used password derivation algorithms bcrypt and pbkdf2.
+
+.Supported password hash algorithms
+[options="header"]
+|=====================================================================================
+| Hash algorithm name  | Namespace              | Observations
+| Pbkdf2 (with sha256) | `buddy.hashers.pbkdf2` | Recommended
+| Bcrypt               | `byddy.hashers.bcrypt` | Recommended
+| Scrypt               | `buddy.hashers.scrypt` | Recommended
+| sha256               | `buddy.hashers.sha256` | Not recommended
+| md5                  | `buddy.hashers.md5`    | Broken! Not Recommended
+|=====================================================================================
+
+
+The hashers  consist in two functions: `make-password` and `check-password`.
 
 The purpose of these functions is obvious: creating a new password,
 and verifying incoming plain text password with previously created
@@ -216,18 +306,9 @@ hash.
 ----
 
 [NOTE]
+====
 `make-password` accept distinct parameters depending on hasher implementation.
-
-In previous example we use *bcrypt* hasher but _buddy_ also support many other
-hasher algorithm by default.
-
-This is a complete list of implemented hashers:
-
-- `buddy.hashers.pbkdf2` (implements pbkdf2 with sha256)
-- `byddy.hashers.bcrypt`
-- `buddy.hashers.sha256`
-- `buddy.hashers.md5`
-- `buddy.hashers.scrypt`
+====
 
 
 Authentication
@@ -319,6 +400,7 @@ Token
 
 It works as expected, parses token and call function for authenticate the token. Nothing
 more.
+
 
 Signed Token
 ^^^^^^^^^^^^
@@ -548,12 +630,10 @@ An unauthorized exception is raised if no reject handler is
 specified. These exceptions can be captured by generic authorization
 middleware.
 
-
 [NOTE]
 The current request uri not match any regular expresion, the default policy enter in
 action. The default policy in _buddy_ is `:allow` but you can change it to `:reject`
 using keyword `:policy` on wrap-access-rules middleware.
-
 
 An other way to use access rules is using `buddy.auth.accessrules/restrict`
 handler decorator that allows assign some rules to concrete handlers omiting
@@ -632,8 +712,7 @@ Core library
 
 Behind the scenes, _buddy_ uses an internal library exposed in the
 `buddy.core` namespace.  There are more low level functions here for
-hash, hmac and coding that are used by other parts of _buddy_.
-
+hash, hmac, sign and coding that are used by other parts of _buddy_.
 
 Cryptographic hash algorithms
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -704,40 +783,38 @@ You can extend it for your own types by using the
 Functions like *sha256*/*make-sha256* are aliases for the more generic
 functions *digest*  and *make-digest*.
 
-
 Hash-based message authentication
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 buddy comes with two variants of *hmac*: standard and salted. Both are
-available in `buddy.core.hmac` namespace. They also follow the
-`make-<algo>` naming convention.
+available in `buddy.core.hmac` namespace.
 
 Basic usage
 ^^^^^^^^^^^
 
-.Import namespace
 [source, clojure]
 ----
+;; Import required namespaces
 (require '[buddy.core.hmac :as hmac])
-----
+(require '[buddy.core.codecs :refer :all])
 
-.How to use standard hmac with string
-[source, clojure]
-----
-(hmac/hmac-sha256 "foo bar" "mysecretkey")
+;; Generate sha256 hmac over string
+(-> (hmac/hmac-sha256 "foo bar" "mysecretkey")
+    (bytes->hex))
 ;; -> "61849448bdbb67b39d609471eead667e65b0d1b9e01b1c3bf7aa56b83e9c8083"
-----
 
-.How to use salted variant of hmac with string
-[source, clojure]
-----
-(hmac/salted-hmac-sha256 "foo bar" "salt" "mysecretkey")
+;; Same example but using salted variant
+(-> (hmac/salted-hmac-sha256 "foo bar" "salt" "mysecretkey")
+    (bytes->hex))
 ;; -> "bd5f7a0040430a73f4845bac8f980c6398b4baae8a22efcc22038be0f4dd9678"
 ----
 
-NOTE: The key parameter can be any type that implements the currently
-undocumented *buddy.core.keys/ISecretKey* protocol (buddy comes with
-default implementations for String and byte[])
+[NOTE]
+====
+The key parameter can be any type that implements the *ByteArray* protocol
+defined on `buddy.core.codecs` namespace. It comes with default implementation for
+`byte[]` and `java.lang.String`.
+====
 
 
 Advanced usage
@@ -747,19 +824,19 @@ Like the other hash functions, hmac is implemented using Clojure
 protocols and is implementated for: String, byte[], *File*, *URL*,
 *URI* and *InputStream*.
 
-
-.Make hmac of file
 [source,clojure]
 ----
 ;; Additional import for easy open files
 (require '[clojure.java.io :as io])
 
-(hmac/hmac-sha256 (io/input-stream "/tmp/somefile") "mysecretkey")
-;; ->"4cb793e600848da2053238003fce4c010233c49df3e6a04119b4287eb464c27e"
+;; Generate hmac for file
+(-> (io/input-stream "/tmp/somefile")
+    (hmac/hmac-sha256 "mysecretkey")
+    (bytes->hex))
+;; -> "4cb793e600848da2053238003fce4c010233c49df3e6a04119b4287eb464c27e"
 ----
 
-
-You can extend it for your own types using the protocol *buddy.core.hmac/HMac*:
+You can extend it for your own types using `buddy.core.hmac/HMac` protocol:
 
 [source,clojure]
 ----
@@ -774,8 +851,6 @@ Functions like *hmac-sha256* just alias the more generic functions
 
 Codecs (binary -> string conversion)
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-
-TODO
 
 
 Examples
@@ -814,6 +889,11 @@ _buddy_ does not have many restrictions for contributing.
 
 FAQ
 ---
+
+*Buddy is a security library/framework?*
+
+Yes and No. I don't like call "security" library because securty as concept represents a very generic
+concepts and can contain a lot of things. Buddy is target to authentication, authorization and signing.
 
 *How can I use _buddy_ with link:http://clojure-liberator.github.io/liberator/[liberator]?*
 
