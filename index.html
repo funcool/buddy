@@ -21,8 +21,8 @@ asciidoc.install(2);
 <h1>buddy documentation</h1>
 <span id="author">Andrey Antukh,</span><br>
 <span id="email" class="monospaced">&lt;<a href="mailto:niwi@niwi.be">niwi@niwi.be</a>&gt;</span><br>
-<span id="revnumber">version 0.1.0,</span>
-<span id="revdate">2014-04-04</span>
+<span id="revnumber">version 0.1.1,</span>
+<span id="revdate">2014-04-07</span>
 <div id="toc">
   <div id="toctitle">Table of Contents</div>
   <noscript><p><b>JavaScript must be enabled in your browser to display the table of contents.</b></p></noscript>
@@ -39,27 +39,32 @@ ring.</p></div>
 <div class="ulist"><ul>
 <li>
 <p>
-Modular Authentication (implemented using protocols)
+Modular Authentication library.
 </p>
 </li>
 <li>
 <p>
-Modular Generic Authorization
+Modular Authorization library.
 </p>
 </li>
 <li>
 <p>
-Regular expression based access rules system
+Regex/decorator based composable access rules system.
 </p>
 </li>
 <li>
 <p>
-Signing library
+Signing library.
 </p>
 </li>
 <li>
 <p>
-Password hashing library
+Password hashing library.
+</p>
+</li>
+<li>
+<p>
+Minor utils for bytes, string, hex, base64 conversions.
 </p>
 </li>
 </ul></div>
@@ -108,7 +113,7 @@ Readability counts
 it as a dependency in your <strong><em>project.clj</em></strong>:</p></div>
 <div class="listingblock">
 <div class="title"><em>in project.clj</em></div>
-<div class="content"><div class="highlight"><pre><span class="p">[</span><span class="nv">buddy</span> <span class="s">&quot;0.1.0-beta4&quot;</span><span class="p">]</span>
+<div class="content"><div class="highlight"><pre><span class="p">[</span><span class="nv">buddy</span> <span class="s">&quot;0.1.1&quot;</span><span class="p">]</span>
 </pre></div></div></div>
 </div>
 <div class="sect2">
@@ -125,7 +130,7 @@ it as a dependency in your <strong><em>project.clj</em></strong>:</p></div>
 <div class="content"><div class="highlight"><pre><span class="nt">&lt;dependency&gt;</span>
     <span class="nt">&lt;groupId&gt;</span>buddy<span class="nt">&lt;/groupId&gt;</span>
     <span class="nt">&lt;artifactId&gt;</span>buddy<span class="nt">&lt;/artifactId&gt;</span>
-    <span class="nt">&lt;version&gt;</span>0.1.0-beta4<span class="nt">&lt;/version&gt;</span>
+    <span class="nt">&lt;version&gt;</span>0.1.1<span class="nt">&lt;/version&gt;</span>
 <span class="nt">&lt;/dependency&gt;</span>
 </pre></div></div></div>
 </div>
@@ -146,7 +151,7 @@ it as a dependency in your <strong><em>project.clj</em></strong>:</p></div>
 <h3 id="_signing">4.1. Signing</h3>
 <div class="paragraph"><p>The "signing framework" of <em>buddy</em> is mainly based on django&#8217;s
 <a href="https://docs.djangoproject.com/en/1.6/topics/signing/">Cryptographic
-signing</a> library.</p></div>
+signing</a> library but extended with various signing algorithms.</p></div>
 <div class="paragraph"><p>It can be used for several purposes:</p></div>
 <div class="ulist"><ul>
 <li>
@@ -168,17 +173,66 @@ Self contained token generation for use it on completely stateless token based a
 <td class="content">this library is used by one of authentication backends for implement token based stateless authentication.</td>
 </tr></table>
 </div>
+<table class="tableblock frame-all grid-all"
+style="
+width:100%;
+">
+<caption class="title">Table 1. Supported Algorithms</caption>
+<col style="width:25%;">
+<col style="width:25%;">
+<col style="width:25%;">
+<col style="width:25%;">
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top" >Algorithm name     </th>
+<th class="tableblock halign-left valign-top" > Hash algorithms   </th>
+<th class="tableblock halign-left valign-top" > Keywords           </th>
+<th class="tableblock halign-left valign-top" >  Priv/Pub Key?</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top" ><p class="tableblock">Elliptic Curve DSA</p></td>
+<td class="tableblock halign-left valign-top" ><p class="tableblock">sha256, sha512</p></td>
+<td class="tableblock halign-left valign-top" ><p class="tableblock"><span class="monospaced">:es256</span>, <span class="monospaced">:es512</span></p></td>
+<td class="tableblock halign-left valign-top" ><p class="tableblock">Yes</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top" ><p class="tableblock">RSASSA PSS</p></td>
+<td class="tableblock halign-left valign-top" ><p class="tableblock">sha256, sha512</p></td>
+<td class="tableblock halign-left valign-top" ><p class="tableblock"><span class="monospaced">:ps256</span>, <span class="monospaced">:ps512</span></p></td>
+<td class="tableblock halign-left valign-top" ><p class="tableblock">Yes</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top" ><p class="tableblock">RSASSA PKCS1 v1_5</p></td>
+<td class="tableblock halign-left valign-top" ><p class="tableblock">sha256, sha512</p></td>
+<td class="tableblock halign-left valign-top" ><p class="tableblock"><span class="monospaced">:rs256</span>, <span class="monospaced">:rs256</span></p></td>
+<td class="tableblock halign-left valign-top" ><p class="tableblock">Yes</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top" ><p class="tableblock">HMAC</p></td>
+<td class="tableblock halign-left valign-top" ><p class="tableblock">sha256*, sha512</p></td>
+<td class="tableblock halign-left valign-top" ><p class="tableblock"><span class="monospaced">:hs256</span>, <span class="monospaced">:hs256</span></p></td>
+<td class="tableblock halign-left valign-top" ><p class="tableblock">No</p></td>
+</tr>
+</tbody>
+</table>
+<div class="paragraph"><p>* indicates the default value.</p></div>
 <div class="admonitionblock">
 <table><tr>
 <td class="icon">
 <div class="title">Note</div>
 </td>
-<td class="content">hmac+sha256 is used for sign all data.</td>
+<td class="content">
+<div class="paragraph"><p>sha384 version is available for each algorithm internally, but is not exposed on public api.</p></div>
+<div class="paragraph"><p>Only HMAC based algorithm supports plain text secret keys, If you want use
+more Digital Signature instead of hmac, you must have a key pair (public and private).</p></div>
+</td>
 </tr></table>
 </div>
 <div class="sect3">
 <h4 id="_using_low_level_api">4.1.1. Using low level api</h4>
-<div class="paragraph"><p>There are four signing functions in <strong><span class="monospaced">buddy.crypto.signing</span></strong>: <span class="monospaced">sign</span>,
+<div class="paragraph"><p>There are four signing functions in <strong><span class="monospaced">buddy.sign.generic</span></strong> namespace: <span class="monospaced">sign</span>,
 <span class="monospaced">unsign</span>, <span class="monospaced">loads</span> and <span class="monospaced">dumps</span>.</p></div>
 <div class="paragraph"><p><span class="monospaced">sign</span> and <span class="monospaced">unsign</span> are low level and work primarily with strings.</p></div>
 <div class="listingblock">
@@ -198,8 +252,9 @@ Self contained token generation for use it on completely stateless token based a
 </pre></div></div></div>
 <div class="paragraph"><p>The signing process consists of append signatures to the original
 string, separating the signature with a predefined separator (default
-":" char). The signature is timestamped hmac. <strong>Timestamp</strong> can be used
-to invalidate some signed data by time.</p></div>
+":" char).</p></div>
+<div class="paragraph"><p>Each signature have attached a timestamp (with millisecond of accuracy) and you can
+invalidate signed messages based on their age.</p></div>
 <div class="listingblock">
 <div class="title">Invalidate signed data using timestamp</div>
 <div class="content"><div class="highlight"><pre><span class="c1">;; Unsign with maxago (15min)</span>
@@ -212,9 +267,10 @@ to invalidate some signed data by time.</p></div>
 <div class="sect3">
 <h4 id="_protecting_complex_data_structures">4.1.2. Protecting complex data structures</h4>
 <div class="paragraph"><p>If you wish to protect a native data structure (hash-map, hash-set,
-list, vector, etc&#8230;)  you can do so using the signing <strong><span class="monospaced">dumps</span></strong> and
-<strong><span class="monospaced">loads</span></strong> functions. They accept the same parameters as their friends
-(<span class="monospaced">sign</span> and <span class="monospaced">unsign</span>), but can also sign more complex data.</p></div>
+list, vector, etc&#8230;)  you can do so using the signing <span class="monospaced">dumps</span> and
+<span class="monospaced">loads</span> functions.</p></div>
+<div class="paragraph"><p>They accept the same parameters as their low level friends, but can also sign
+more complex data.</p></div>
 <div class="listingblock">
 <div class="title">Sign/Unsign Clojure hash-map</div>
 <div class="content"><div class="highlight"><pre><span class="p">(</span><span class="nf">require</span> <span class="o">&#39;</span><span class="p">[</span><span class="nv">buddy.sign.generic</span> <span class="ss">:refer</span> <span class="p">[</span><span class="nv">dumps</span> <span class="nv">loads</span><span class="p">]])</span>
@@ -238,20 +294,107 @@ list, vector, etc&#8230;)  you can do so using the signing <strong><span class="
 <td class="content">it uses a Clojure serialization library <a href="https://github.com/ptaoussanis/nippy">Nippy</a></td>
 </tr></table>
 </div>
-<div class="paragraph"><p>INFO: Currently only a generic sign method is available, but I am
-working on a jwt (json web token) implementation for buddy. It will be
-available in future releases.</p></div>
+</div>
+<div class="sect3">
+<h4 id="_using_digital_signature_algorithms">4.1.3. Using Digital Signature algorithms</h4>
+<div class="paragraph"><p>For use anyone of digital signature algorithms you must have a private/public key. If you
+don&#8217;t have one, don&#8217;t worry, generate one it&#8217;s very easy (using <strong>openssl</strong>).</p></div>
+<div class="sect4">
+<h5 id="_elliptic_curve_dsa">Elliptic Curve DSA</h5>
+<div class="listingblock">
+<div class="content"><div class="highlight"><pre><span class="c"># Generating params file</span>
+openssl ecparam -name prime256v1 -out ecparams.pem
+
+<span class="c"># Generate a private key from params file</span>
+openssl ecparam -in ecparams.pem -genkey -noout -out ecprivkey.pem
+
+<span class="c"># Generate a public key from private key</span>
+openssl ec -in ecprivkey.pem -pubout -out ecpubkey.pem
+</pre></div></div></div>
+</div>
+<div class="sect4">
+<h5 id="_rsa_based_signatures">RSA based signatures</h5>
+<div class="listingblock">
+<div class="content"><div class="highlight"><pre><span class="c"># Generate aes256 encrypted private key</span>
+openssl genrsa -aes256 -out privkey.pem 2048
+
+<span class="c"># Generate public key from previously created private key.</span>
+openssl rsa -pubout -in privkey.pem -out pubkey.pem
+</pre></div></div></div>
+</div>
+<div class="sect4">
+<h5 id="_using_digital_signature_keys_for_signing">Using Digital Signature Keys for signing</h5>
+<div class="paragraph"><p>Now, having generated key pair, you can sign your messages with Digital
+Signature algorithms also previously mentioned.</p></div>
+<div class="listingblock">
+<div class="content"><div class="highlight"><pre><span class="p">(</span><span class="nf">require</span> <span class="o">&#39;</span><span class="p">[</span><span class="nv">buddy.sign.generic</span> <span class="ss">:refer</span> <span class="p">[</span><span class="nv">sign</span> <span class="nv">unsign</span><span class="p">]])</span>
+
+<span class="c1">;; Import namespace for managing/reading keys</span>
+<span class="p">(</span><span class="nf">require</span> <span class="o">&#39;</span><span class="p">[</span><span class="nv">buddy.core.keys</span> <span class="ss">:as</span> <span class="nv">keys</span><span class="p">])</span>
+
+<span class="c1">;; Create keys instances</span>
+<span class="p">(</span><span class="k">def </span><span class="nv">ec-privkey</span> <span class="p">(</span><span class="nf">keys/private-key</span> <span class="s">&quot;ecprivkey.pem&quot;</span><span class="p">))</span>
+<span class="p">(</span><span class="k">def </span><span class="nv">ec-pubkey</span> <span class="p">(</span><span class="nf">keys/public-key</span> <span class="s">&quot;ecpubkey.pem&quot;</span><span class="p">))</span>
+
+<span class="c1">;; Use them like plain secret password with hmac algorithms for sign</span>
+<span class="p">(</span><span class="k">def </span><span class="nv">signed-data</span> <span class="p">(</span><span class="nf">sign</span> <span class="s">&quot;mystring&quot;</span> <span class="nv">ec-privkey</span> <span class="p">{</span><span class="ss">:alg</span> <span class="ss">:ec256</span><span class="p">}))</span>
+
+<span class="c1">;; And unsign</span>
+<span class="p">(</span><span class="k">def </span><span class="nv">unsigned-data</span> <span class="p">(</span><span class="nf">unsign</span> <span class="nv">signed-data</span> <span class="nv">ec-pubkey</span> <span class="p">{</span><span class="ss">:alg</span> <span class="ss">:ec256</span><span class="p">}))</span>
+</pre></div></div></div>
+</div>
 </div>
 </div>
 <div class="sect2">
 <h3 id="_hashers">4.2. Hashers</h3>
 <div class="paragraph"><p>Another important part of a good authentication/authorization library
-is providing some facilities for generating secure passwords. <em>buddy</em>
-comes with a few functions for generating and verifying passwords like
-the widely used password derivation algorithms bcrypt and pbkdf2 (with
-sha256).</p></div>
-<div class="paragraph"><p><em>buddy</em> hashers live in <span class="monospaced">buddy.hashers.*</span> and usually consist
-of <span class="monospaced">make-password</span> and <span class="monospaced">check-password</span>.</p></div>
+is providing some facilities for generating secure passwords.</p></div>
+<div class="paragraph"><p><em>buddy</em> comes with a few functions for generating and verifying passwords
+with the widely used password derivation algorithms bcrypt and pbkdf2.</p></div>
+<table class="tableblock frame-all grid-all"
+style="
+width:100%;
+">
+<caption class="title">Table 2. Supported password hash algorithms</caption>
+<col style="width:33%;">
+<col style="width:33%;">
+<col style="width:33%;">
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top" > Hash algorithm name  </th>
+<th class="tableblock halign-left valign-top" > Namespace              </th>
+<th class="tableblock halign-left valign-top" > Observations</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top" ><p class="tableblock">Pbkdf2</p></td>
+<td class="tableblock halign-left valign-top" ><p class="tableblock"><span class="monospaced">buddy.hashers.pbkdf2</span></p></td>
+<td class="tableblock halign-left valign-top" ><p class="tableblock">Recommended</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top" ><p class="tableblock">Bcrypt</p></td>
+<td class="tableblock halign-left valign-top" ><p class="tableblock"><span class="monospaced">byddy.hashers.bcrypt</span></p></td>
+<td class="tableblock halign-left valign-top" ><p class="tableblock">Recommended</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top" ><p class="tableblock">Scrypt</p></td>
+<td class="tableblock halign-left valign-top" ><p class="tableblock"><span class="monospaced">buddy.hashers.scrypt</span></p></td>
+<td class="tableblock halign-left valign-top" ><p class="tableblock">Recommended</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top" ><p class="tableblock">sha256</p></td>
+<td class="tableblock halign-left valign-top" ><p class="tableblock"><span class="monospaced">buddy.hashers.sha256</span></p></td>
+<td class="tableblock halign-left valign-top" ><p class="tableblock">Not recommended</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top" ><p class="tableblock">md5</p></td>
+<td class="tableblock halign-left valign-top" ><p class="tableblock"><span class="monospaced">buddy.hashers.md5</span></p></td>
+<td class="tableblock halign-left valign-top" ><p class="tableblock">Broken! Not Recommended</p></td>
+</tr>
+</tbody>
+</table>
+<div class="paragraph"><p>The hashers  consist in two functions: <span class="monospaced">make-password</span> and <span class="monospaced">check-password</span>.</p></div>
 <div class="paragraph"><p>The purpose of these functions is obvious: creating a new password,
 and verifying incoming plain text password with previously created
 hash.</p></div>
@@ -269,39 +412,11 @@ hash.</p></div>
 <td class="icon">
 <div class="title">Note</div>
 </td>
-<td class="content"><span class="monospaced">make-password</span> accept distinct parameters depending on hasher implementation.</td>
+<td class="content">
+<div class="paragraph"><p><span class="monospaced">make-password</span> accept distinct parameters depending on hasher implementation.</p></div>
+</td>
 </tr></table>
 </div>
-<div class="paragraph"><p>In previous example we use <strong>bcrypt</strong> hasher but <em>buddy</em> also support many other
-hasher algorithm by default.</p></div>
-<div class="paragraph"><p>This is a complete list of implemented hashers:</p></div>
-<div class="ulist"><ul>
-<li>
-<p>
-<span class="monospaced">buddy.hashers.pbkdf2</span> (implements pbkdf2 with sha256)
-</p>
-</li>
-<li>
-<p>
-<span class="monospaced">byddy.hashers.bcrypt</span>
-</p>
-</li>
-<li>
-<p>
-<span class="monospaced">buddy.hashers.sha256</span>
-</p>
-</li>
-<li>
-<p>
-<span class="monospaced">buddy.hashers.md5</span>
-</p>
-</li>
-<li>
-<p>
-<span class="monospaced">buddy.hashers.scrypt</span>
-</p>
-</li>
-</ul></div>
 </div>
 <div class="sect2">
 <h3 id="_authentication">4.3. Authentication</h3>
@@ -716,26 +831,11 @@ handle-unauthorized is executed of your backend, if user has specified it own fu
 <div class="sectionbody">
 <div class="paragraph"><p>Behind the scenes, <em>buddy</em> uses an internal library exposed in the
 <span class="monospaced">buddy.core</span> namespace.  There are more low level functions here for
-hash, hmac and coding that are used by other parts of <em>buddy</em>.</p></div>
+hash, hmac, sign and coding that are used by other parts of <em>buddy</em>.</p></div>
 <div class="sect2">
 <h3 id="_cryptographic_hash_algorithms">6.1. Cryptographic hash algorithms</h3>
-<div class="paragraph"><p>All hash algorithm implementations are found in the namespace
-<span class="monospaced">buddy.core.hash</span>. There are two ways to work with the sha-2/md hash
-functions.</p></div>
-<div class="paragraph"><p>This is buddy&#8217;s naming convention:</p></div>
-<div class="ulist"><ul>
-<li>
-<p>
-<strong>make-&lt;hashalgo&gt;</strong>: functions that matches this pattern always return byte array.
-</p>
-</li>
-<li>
-<p>
-<strong>&lt;hashalgo&gt;</strong>: functions that always return string that in almost all cases hex encoded.
-</p>
-</li>
-</ul></div>
-<div class="paragraph"><p><strong>Available hash algorithms:</strong></p></div>
+<div class="paragraph"><p>All hash algorithms interface is located on the <span class="monospaced">buddy.core.hash</span> namespace.</p></div>
+<div class="paragraph"><p>Available hash algorithms:</p></div>
 <div class="ulist"><ul>
 <li>
 <p>
@@ -767,15 +867,17 @@ functions.</p></div>
 <h4 id="_basic_usage">6.1.1. Basic usage</h4>
 <div class="listingblock">
 <div class="title">Import namespace example:</div>
-<div class="content"><div class="highlight"><pre><span class="p">(</span><span class="nf">require</span> <span class="o">&#39;</span><span class="p">[</span><span class="nv">buddy.core.hash</span> <span class="ss">:refer</span> <span class="p">[</span><span class="nv">make-sha256</span>, <span class="nv">sha256</span><span class="p">]])</span>
+<div class="content"><div class="highlight"><pre><span class="p">(</span><span class="nf">require</span> <span class="o">&#39;</span><span class="p">[</span><span class="nv">buddy.core.hash</span> <span class="ss">:as</span> <span class="nv">hash</span><span class="p">])</span>
+<span class="p">(</span><span class="nf">require</span> <span class="o">&#39;</span><span class="p">[</span><span class="nv">buddy.core.codecs</span> <span class="ss">:refer</span> <span class="ss">:all</span><span class="p">])</span>
 </pre></div></div></div>
 <div class="listingblock">
 <div class="title">Usage examples:</div>
-<div class="content"><div class="highlight"><pre><span class="p">(</span><span class="nf">sha256</span> <span class="s">&quot;foo bar&quot;</span><span class="p">)</span>
-<span class="c1">;; -&gt; &quot;fbc1a9f858ea9e177916964bd88c3d37b91a1e84412765e29950777f265c4b75&quot;</span>
-
-<span class="p">(</span><span class="nf">make-sha256</span> <span class="s">&quot;foo bar&quot;</span><span class="p">)</span>
+<div class="content"><div class="highlight"><pre><span class="p">(</span><span class="nf">hash/sha256</span> <span class="s">&quot;foo bar&quot;</span><span class="p">)</span>
 <span class="c1">;; -&gt; #&lt;byte[] [B@162a657e&gt;</span>
+
+<span class="p">(</span><span class="nb">-&gt; </span><span class="p">(</span><span class="nf">hash/sha256</span> <span class="s">&quot;foo bar&quot;</span><span class="p">)</span>
+    <span class="p">(</span><span class="nf">bytes-&gt;hex</span><span class="p">))</span>
+<span class="c1">;; -&gt; &quot;fbc1a9f858ea9e177916964bd88c3d37b91a1e84412765e29950777f265c4b75&quot;</span>
 </pre></div></div></div>
 </div>
 <div class="sect3">
@@ -788,10 +890,11 @@ hash strings, but note that the same function works for <strong>File</strong>, <
 <div class="content"><div class="highlight"><pre><span class="c1">;; Additional import for easy open files</span>
 <span class="p">(</span><span class="nf">require</span> <span class="o">&#39;</span><span class="p">[</span><span class="nv">clojure.java.io</span> <span class="ss">:as</span> <span class="nv">io</span><span class="p">])</span>
 
-<span class="p">(</span><span class="nf">sha256</span> <span class="p">(</span><span class="nf">io/input-stream</span> <span class="s">&quot;/tmp/some-file&quot;</span><span class="p">))</span>
+<span class="p">(</span><span class="nb">-&gt; </span><span class="p">(</span><span class="nf">hash/sha256</span> <span class="p">(</span><span class="nf">io/input-stream</span> <span class="s">&quot;/tmp/some-file&quot;</span><span class="p">))</span>
+    <span class="p">(</span><span class="nf">bytes-&gt;hex</span><span class="p">))</span>
 <span class="c1">;; -&gt; &quot;bba878639499c8449f69efbfc699413eebfaf41d4b7a7faa560bfaf7e93a43dd&quot;</span>
 </pre></div></div></div>
-<div class="paragraph"><p>You can extend it for your own types by using the
+<div class="paragraph"><p>You can extend it for your own types using the
 <strong>buddy.core.hash/Digest</strong> protocol:</p></div>
 <div class="listingblock">
 <div class="content"><div class="highlight"><pre><span class="p">(</span><span class="kd">defprotocol </span><span class="nv">Digest</span>
@@ -802,8 +905,8 @@ hash strings, but note that the same function works for <strong>File</strong>, <
 <td class="icon">
 <div class="title">Note</div>
 </td>
-<td class="content">Functions like <strong>sha256</strong>/<strong>make-sha256</strong> are aliases for the more generic
-functions <strong>digest</strong>  and <strong>make-digest</strong>.</td>
+<td class="content">Functions like <strong>sha256</strong> are aliases for the more generic
+function <strong>digest</strong>.</td>
 </tr></table>
 </div>
 </div>
@@ -811,22 +914,22 @@ functions <strong>digest</strong>  and <strong>make-digest</strong>.</td>
 <div class="sect2">
 <h3 id="_hash_based_message_authentication">6.2. Hash-based message authentication</h3>
 <div class="paragraph"><p>buddy comes with two variants of <strong>hmac</strong>: standard and salted. Both are
-available in <span class="monospaced">buddy.core.hmac</span> namespace. They also follow the
-<span class="monospaced">make-&lt;algo&gt;</span> naming convention.</p></div>
+available in <span class="monospaced">buddy.core.hmac</span> namespace.</p></div>
 <div class="sect3">
 <h4 id="_basic_usage_2">6.2.1. Basic usage</h4>
 <div class="listingblock">
-<div class="title">Import namespace</div>
-<div class="content"><div class="highlight"><pre><span class="p">(</span><span class="nf">require</span> <span class="o">&#39;</span><span class="p">[</span><span class="nv">buddy.core.hmac</span> <span class="ss">:as</span> <span class="nv">hmac</span><span class="p">])</span>
-</pre></div></div></div>
-<div class="listingblock">
-<div class="title">How to use standard hmac with string</div>
-<div class="content"><div class="highlight"><pre><span class="p">(</span><span class="nf">hmac/hmac-sha256</span> <span class="s">&quot;foo bar&quot;</span> <span class="s">&quot;mysecretkey&quot;</span><span class="p">)</span>
+<div class="content"><div class="highlight"><pre><span class="c1">;; Import required namespaces</span>
+<span class="p">(</span><span class="nf">require</span> <span class="o">&#39;</span><span class="p">[</span><span class="nv">buddy.core.hmac</span> <span class="ss">:as</span> <span class="nv">hmac</span><span class="p">])</span>
+<span class="p">(</span><span class="nf">require</span> <span class="o">&#39;</span><span class="p">[</span><span class="nv">buddy.core.codecs</span> <span class="ss">:refer</span> <span class="ss">:all</span><span class="p">])</span>
+
+<span class="c1">;; Generate sha256 hmac over string</span>
+<span class="p">(</span><span class="nb">-&gt; </span><span class="p">(</span><span class="nf">hmac/hmac-sha256</span> <span class="s">&quot;foo bar&quot;</span> <span class="s">&quot;mysecretkey&quot;</span><span class="p">)</span>
+    <span class="p">(</span><span class="nf">bytes-&gt;hex</span><span class="p">))</span>
 <span class="c1">;; -&gt; &quot;61849448bdbb67b39d609471eead667e65b0d1b9e01b1c3bf7aa56b83e9c8083&quot;</span>
-</pre></div></div></div>
-<div class="listingblock">
-<div class="title">How to use salted variant of hmac with string</div>
-<div class="content"><div class="highlight"><pre><span class="p">(</span><span class="nf">hmac/salted-hmac-sha256</span> <span class="s">&quot;foo bar&quot;</span> <span class="s">&quot;salt&quot;</span> <span class="s">&quot;mysecretkey&quot;</span><span class="p">)</span>
+
+<span class="c1">;; Same example but using salted variant</span>
+<span class="p">(</span><span class="nb">-&gt; </span><span class="p">(</span><span class="nf">hmac/salted-hmac-sha256</span> <span class="s">&quot;foo bar&quot;</span> <span class="s">&quot;salt&quot;</span> <span class="s">&quot;mysecretkey&quot;</span><span class="p">)</span>
+    <span class="p">(</span><span class="nf">bytes-&gt;hex</span><span class="p">))</span>
 <span class="c1">;; -&gt; &quot;bd5f7a0040430a73f4845bac8f980c6398b4baae8a22efcc22038be0f4dd9678&quot;</span>
 </pre></div></div></div>
 <div class="admonitionblock">
@@ -834,9 +937,11 @@ available in <span class="monospaced">buddy.core.hmac</span> namespace. They als
 <td class="icon">
 <div class="title">Note</div>
 </td>
-<td class="content">The key parameter can be any type that implements the currently
-undocumented <strong>buddy.core.keys/ISecretKey</strong> protocol (buddy comes with
-default implementations for String and byte[])</td>
+<td class="content">
+<div class="paragraph"><p>The key parameter can be any type that implements the <strong>ByteArray</strong> protocol
+defined on <span class="monospaced">buddy.core.codecs</span> namespace. It comes with default implementation for
+<span class="monospaced">byte[]</span> and <span class="monospaced">java.lang.String</span>.</p></div>
+</td>
 </tr></table>
 </div>
 </div>
@@ -846,14 +951,16 @@ default implementations for String and byte[])</td>
 protocols and is implementated for: String, byte[], <strong>File</strong>, <strong>URL</strong>,
 <strong>URI</strong> and <strong>InputStream</strong>.</p></div>
 <div class="listingblock">
-<div class="title">Make hmac of file</div>
 <div class="content"><div class="highlight"><pre><span class="c1">;; Additional import for easy open files</span>
 <span class="p">(</span><span class="nf">require</span> <span class="o">&#39;</span><span class="p">[</span><span class="nv">clojure.java.io</span> <span class="ss">:as</span> <span class="nv">io</span><span class="p">])</span>
 
-<span class="p">(</span><span class="nf">hmac/hmac-sha256</span> <span class="p">(</span><span class="nf">io/input-stream</span> <span class="s">&quot;/tmp/somefile&quot;</span><span class="p">)</span> <span class="s">&quot;mysecretkey&quot;</span><span class="p">)</span>
-<span class="c1">;; -&gt;&quot;4cb793e600848da2053238003fce4c010233c49df3e6a04119b4287eb464c27e&quot;</span>
+<span class="c1">;; Generate hmac for file</span>
+<span class="p">(</span><span class="nb">-&gt; </span><span class="p">(</span><span class="nf">io/input-stream</span> <span class="s">&quot;/tmp/somefile&quot;</span><span class="p">)</span>
+    <span class="p">(</span><span class="nf">hmac/hmac-sha256</span> <span class="s">&quot;mysecretkey&quot;</span><span class="p">)</span>
+    <span class="p">(</span><span class="nf">bytes-&gt;hex</span><span class="p">))</span>
+<span class="c1">;; -&gt; &quot;4cb793e600848da2053238003fce4c010233c49df3e6a04119b4287eb464c27e&quot;</span>
 </pre></div></div></div>
-<div class="paragraph"><p>You can extend it for your own types using the protocol <strong>buddy.core.hmac/HMac</strong>:</p></div>
+<div class="paragraph"><p>You can extend it for your own types using <span class="monospaced">buddy.core.hmac/HMac</span> protocol:</p></div>
 <div class="listingblock">
 <div class="content"><div class="highlight"><pre><span class="p">(</span><span class="kd">defprotocol </span><span class="nv">HMac</span>
   <span class="p">(</span><span class="nf">make-hmac</span> <span class="p">[</span><span class="nv">data</span> <span class="nb">key </span><span class="nv">algorithm</span><span class="p">]))</span>
@@ -871,7 +978,7 @@ protocols and is implementated for: String, byte[], <strong>File</strong>, <stro
 </div>
 <div class="sect2">
 <h3 id="_codecs_binary_8594_string_conversion">6.3. Codecs (binary &#8594; string conversion)</h3>
-<div class="paragraph"><p>TODO</p></div>
+<div class="paragraph"><p>No documentation found for this part.</p></div>
 </div>
 </div>
 </div>
@@ -938,6 +1045,9 @@ If it is accepted, follow same steps as "bugfix".
 <div class="sect1">
 <h2 id="_faq">9. FAQ</h2>
 <div class="sectionbody">
+<div class="paragraph"><p><strong>Buddy is a security library/framework?</strong></p></div>
+<div class="paragraph"><p>Yes and No. I don&#8217;t like call "security" library because security represents a very generic
+concepts and can contain a lot of things. Buddy is target to authentication, authorization and signing.</p></div>
 <div class="paragraph"><p><strong>How can I use <em>buddy</em> with <a href="http://clojure-liberator.github.io/liberator/">liberator</a>?</strong></p></div>
 <div class="paragraph"><p>By design, <em>buddy</em> has authorization and authentication well
 separated. This helps a lot if you want use only one part of it (ex:
@@ -970,8 +1080,8 @@ limitations under the License.
 <div id="footnotes"><hr></div>
 <div id="footer">
 <div id="footer-text">
-Version 0.1.0<br>
-Last updated 2014-04-04 20:51:18 CEST
+Version 0.1.1<br>
+Last updated 2014-04-07 23:57:56 CEST
 </div>
 </div>
 </body>
