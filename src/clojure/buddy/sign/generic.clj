@@ -61,7 +61,7 @@
 
 (defn- make-stamped-signature
   [s pkey alg sep stamp]
-  (let [candidate (str s stamp)
+  (let [candidate (str s sep stamp)
         signature (make-signature candidate pkey alg)]
     (str/join sep [signature stamp])))
 
@@ -82,7 +82,7 @@
   [s pkey & [{:keys [sep max-age alg]
                :or {sep ":" max-age nil alg :hs256}}]]
   (let [[value sig stamp] (str/split s (re-pattern sep))
-        candidate (str value stamp)]
+        candidate (str value sep stamp)]
     (when (verify-signature candidate sig pkey alg)
       (if-not (nil? max-age)
         (let [old-stamp-value (Long/parseLong (safebase64->str stamp))
