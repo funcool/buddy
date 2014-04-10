@@ -93,19 +93,19 @@ InputStream, File, URL and URI."
   (make-hmac [^java.io.File data ^String key ^String algorithm]
     (make-hmac-for-stream (io/input-stream data) key algorithm))
   (verify-hmac [^java.io.File data ^bytes signature ^String key ^String algorithm]
-    (verify-hmac-for-stream data signature key algorithm))
+    (verify-hmac-for-stream (io/input-stream data) signature key algorithm))
 
   java.net.URL
   (make-hmac [^java.net.URL data ^String key ^String algorithm]
     (make-hmac-for-stream (io/input-stream data) key algorithm))
   (verify-hmac [^java.net.URL data ^bytes signature ^String key ^String algorithm]
-    (verify-hmac-for-stream data signature key algorithm))
+    (verify-hmac-for-stream (io/input-stream data) signature key algorithm))
 
   java.net.URI
   (make-hmac [^java.net.URI data ^String key ^String algorithm]
     (make-hmac-for-stream (io/input-stream data) key algorithm))
   (verify-hmac [^java.net.URI data ^bytes signature ^String key ^String algorithm]
-    (verify-hmac-for-stream data signature key algorithm)))
+    (verify-hmac-for-stream (io/input-stream data) signature key algorithm)))
 
 (defn- make-salted-hmac
   "Generic function that implement salted variant
@@ -146,7 +146,7 @@ authentication code algorithm."
 interface for salted variant of keyed-hash message
 authentication code verification algorithm."
   [data ^bytes signature ^String key ^String salt ^String algorithm]
-  (verify-salted-hmac data signature signature key algorithm))
+  (verify-salted-hmac data signature key salt algorithm))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Most used aliases
