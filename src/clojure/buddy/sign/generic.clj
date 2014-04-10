@@ -17,7 +17,6 @@
             [buddy.core.hmac :refer [hmac-sha256]]
             [buddy.core.hmac :as hmac]
             [buddy.core.sign :as sign]
-            [buddy.core.util :refer [timestamp]]
             [clojure.string :as str]
             [taoensso.nippy :as nippy]))
 

@@ -34,16 +34,3 @@ one unique byte array and return it."
         sr    (SecureRandom/getInstance "SHA1PRNG")]
     (.nextBytes sr data)
     data))
-
-(defn random-salt
-  "Generates a random salt using a secure
-  random number generator."
-  (^String [] (random-salt 8))
-  (^String [^long s]
-   (let [rbytes (random-bytes (long (/ s 2)))]
-     (bytes->hex rbytes))))
-
-(defn timestamp
-  "Get current timestamp."
-  []
-  (quot (System/currentTimeMillis) 1000))
