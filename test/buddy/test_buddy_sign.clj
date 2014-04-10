@@ -2,6 +2,7 @@
   (:require [clojure.test :refer :all]
             [buddy.core.codecs :refer :all]
             [buddy.core.sign :as sign]
+            [buddy.core.hmac :as hmac]
             [buddy.sign.generic :as gsign]
             [buddy.core.keys :refer :all]
             [clojure.java.io :as io])
@@ -49,6 +50,7 @@
         rsa-pubkey  (public-key "test/_files/pubkey.3des.rsa.pem")
         ec-privkey  (private-key "test/_files/privkey.ecdsa.pem")
         ec-pubkey   (public-key "test/_files/pubkey.ecdsa.pem")]
+
     (testing "Multiple sign using rsassa-pkcs"
       (is (Arrays/equals (sign/rsassa-pkcs-sha256 "foobar" rsa-privkey)
                          (sign/rsassa-pkcs-sha256 "foobar" rsa-privkey))))
@@ -92,6 +94,40 @@
       (let [path "test/_files/pubkey.ecdsa.pem"
             sig  (sign/ecdsa-sha256 (.toURI (java.io.File. path)) ec-privkey)]
         (is (true? (sign/ecdsa-sha256-verify (.toURI (java.io.File. path)) sig ec-pubkey)))))))
+
+(deftest low-level-hmac-tests
+  (let [secretkey "my.secret.key"
+        path      "test/_files/pubkey.ecdsa.pem"]
+
+    (testing "Multiple sign using hmac sha256"
+      (is (Arrays/equals (hmac/hmac-sha256 "foo" secretkey)
+                         (hmac/hmac-sha256 "foo" secretkey))))
+
+    (testing "Sign/Verify string"
+      (let [sig (hmac/hmac-sha384 "foo" secretkey)]
+        (is (true? (hmac/hmac-sha384-verify "foo" sig secretkey)))))
+
+    (testing "Sign/Verify input stream"
+      (let [sig (hmac/hmac-sha512 (io/input-stream path) secretkey)]
+        (is (true? (hmac/hmac-sha512-verify (io/input-stream path) sig secretkey)))))
+
+    (testing "Sign/Verify file"
+      (let [sig (hmac/hmac-sha512 (java.io.File. path) secretkey)]
+        (is (true? (hmac/hmac-sha512-verify (java.io.File. path) sig secretkey)))))
+
+    (testing "Sign/Verify url"
+      (let [sig (hmac/hmac-sha512 (.toURL (java.io.File. path)) secretkey)]
+        (is (true? (hmac/hmac-sha512-verify (.toURL (java.io.File. path)) sig secretkey)))))
+
+    (testing "Sign/Verify uri"
+      (let [sig (hmac/hmac-sha512 (.toURI (java.io.File. path)) secretkey)]
+        (is (true? (hmac/hmac-sha512-verify (.toURI (java.io.File. path)) sig secretkey)))))
+
+    (testing "Sign/Verify salted hmac with string"
+      (let [sig (hmac/shmac-sha256 "foo" secretkey "salt")]
+        (is (true? (hmac/shmac-sha256-verify "foo" sig secretkey "salt")))))
+
+))
 
 (deftest high-level-sign-tests
   (testing "Signing/Unsigning with default keys"

@@ -40,34 +40,102 @@
           parsed          (stoken/parse-authorization-header request)]
       (is (= parsed signed-data))))
 
-  (testing "Signed token backend authentication 01"
+  (testing "Signed token backend authentication"
     (let [signed-data     (s/dumps {:userid 1} secret-key)
           header-content  (format "Token %s" signed-data)
           request         {:headers {"authorization" header-content}}
           backend         (stoken/signed-token-backend secret-key)
-          handler         (fn [req] req)
-          handler         (wrap-authentication handler backend)
+          handler         (-> (fn [req] req)
+                              (wrap-authentication backend))
           resp            (handler request)]
       (is (= (:identity resp) {:userid 1}))))
-  (testing "Signed token backend authentication 02"
+
+  (testing "Signed token backend wrong authentication"
     (let [signed-data     (s/dumps {:userid 1} "wrong-key")
           header-content  (format "Token %s" signed-data)
           request         {:headers {"authorization" header-content}}
           backend         (stoken/signed-token-backend secret-key)
-          handler         (fn [req] req)
-          handler         (wrap-authentication handler backend)
+          handler         (-> (fn [req] req)
+                              (wrap-authentication backend))
           resp            (handler request)]
       (is (nil? (:identity resp)))))
-  (testing "Token backend authentication 01"
-    (let [authenticate-handler (fn [request token]
-                                 (get {:token1 {:userid 1}
-                                       :token2 {:userid 2}} (keyword token)))
-          request              {:headers {"authorization" "Token token1"}}
-          backend              (stoken/token-backend authenticate-handler)
-          handler              (-> (fn [request] (:identity request))
-                                   (wrap-authentication backend))
-          response             (handler request)]
-      (is (= response {:userid 1})))))
+
+  (testing "Signed token unathorized request 1"
+    (let [signed-data     (s/dumps {:userid 1} secret-key)
+          header-content  (format "Token %s" signed-data)
+          request         {:headers {"authorization" header-content}}
+          backend         (stoken/signed-token-backend secret-key)
+          handler         (-> (fn [req] (throw-unauthorized))
+                              (wrap-authorization backend)
+                              (wrap-authentication backend))
+          resp            (handler request)]
+      (is (= (:status resp) 403))))
+
+  (testing "Signed token unathorized request 2"
+    (let [signed-data     (s/dumps {:userid 1} "wrong-key")
+          header-content  (format "Token %s" signed-data)
+          request         {:headers {"authorization" header-content}}
+          backend         (stoken/signed-token-backend secret-key)
+          handler         (-> (fn [req] (throw-unauthorized))
+                              (wrap-authorization backend)
+                              (wrap-authentication backend))
+          resp            (handler request)]
+      (is (= (:status resp) 401))))
+
+  (testing "Signed token unathorized request 3"
+    (let [signed-data     (s/dumps {:userid 1} "wrong-key")
+          header-content  (format "Token %s" signed-data)
+          request         {:headers {"authorization" header-content}}
+          uhandler        (fn [_ _] {:status 3000})
+          backend         (stoken/signed-token-backend secret-key
+                                                       :unauthorized-handler uhandler)
+          handler         (-> (fn [req] (throw-unauthorized))
+                              (wrap-authorization backend)
+                              (wrap-authentication backend))
+          resp            (handler request)]
+      (is (= (:status resp) 3000))))
+
+  (let [authenticate-handler (fn [request token]
+                               (get {:token1 {:userid 1}
+                                     :token2 {:userid 2}} (keyword token)))]
+
+    (testing "Basic token backend authentication 01"
+      (let [request              {:headers {"authorization" "Token token1"}}
+            backend              (stoken/token-backend authenticate-handler)
+            handler              (-> (fn [request] (:identity request))
+                                     (wrap-authentication backend))
+            response             (handler request)]
+        (is (= response {:userid 1}))))
+
+    (testing "Token backend with unauthorized requests 1"
+      (let [request  {:headers {"authorization" "Token token1"}}
+            backend  (stoken/token-backend authenticate-handler)
+            handler  (-> (fn [request] (throw-unauthorized))
+                         (wrap-authorization backend)
+                         (wrap-authentication backend))
+            response (handler request)]
+        (is (= (:status response) 403))))
+
+    (testing "Token backend with unauthorized requests 2"
+      (let [request  {:headers {"authorization" "Token token3"}}
+            backend  (stoken/token-backend authenticate-handler)
+            handler  (-> (fn [request] (throw-unauthorized))
+                         (wrap-authorization backend)
+                         (wrap-authentication backend))
+            response (handler request)]
+        (is (= (:status response) 401))))
+
+    (testing "Token backend with unauthorized requests 3"
+      (let [request  {:headers {"authorization" "Token token3"}}
+            uhandler (fn [_ _] {:status 3000})
+            backend  (stoken/token-backend authenticate-handler
+                                           :unauthorized-handler uhandler)
+            handler  (-> (fn [request] (throw-unauthorized))
+                         (wrap-authorization backend)
+                         (wrap-authentication backend))
+            response (handler request)]
+        (is (= (:status response) 3000))))
+))
 
 (deftest session-auth-test
   (testing "Simple backend authentication 01"
@@ -77,13 +145,42 @@
           handler (wrap-authentication handler backend)
           resp    (handler request)]
       (is (= (:identity resp) {:userid 1}))))
-  (testing "Simple backend authentication 01"
+
+  (testing "Simple backend authentication 02"
     (let [request {:session {}}
           backend (session-backend)
-          handler (fn [req] req)
+          handler (fn [req] )
           handler (wrap-authentication handler backend)
           resp    (handler request)]
-      (is (nil? (:identity resp))))))
+      (is (nil? (:identity resp)))))
+
+  (testing "Handle unauthenticated unauthorized requests without specifying unauthorized handler"
+    (let [request {:session {}}
+          backend (session-backend)
+          handler (-> (fn [req] (throw-unauthorized "FooMsg"))
+                      (wrap-authorization backend)
+                      (wrap-authentication backend))
+          resp    (handler request)]
+      (is (= (:status resp) 401))))
+
+  (testing "Handle unauthorized requests specifying unauthorized handler"
+    (let [request {:session {}}
+          uhander (fn [request metadata] {:body "" :status 3000})
+          backend (session-backend :unauthorized-handler uhander)
+          handler (-> (fn [req] (throw-unauthorized "FooMsg"))
+                      (wrap-authorization backend)
+                      (wrap-authentication backend))
+          resp    (handler request)]
+      (is (= (:status resp) 3000))))
+
+  (testing "Handle authenticated unauthorized requests without specifying unauthorized handler"
+    (let [request {:session {:identity {:userid 1}}}
+          backend (session-backend)
+          handler (-> (fn [req] (throw-unauthorized "FooMsg"))
+                      (wrap-authorization backend)
+                      (wrap-authentication backend))
+          resp    (handler request)]
+      (is (= (:status resp) 403)))))
 
 (deftest authentication-middleware-test-with-httpbasic
   (testing "Auth middleware with http-basic backend 01"
