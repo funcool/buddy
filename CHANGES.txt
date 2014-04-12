@@ -4,7 +4,7 @@ Changelog
 Version 0.1.1
 -------------
 
-Data: unreleased
+Data: 2014-04-11
 
 - Reimplemented hmac and hash functions as protocols for easy extensibility.
 - Make some core functions as public api (documenting them).
