@@ -1,7 +1,7 @@
 buddy documentation
 ===================
 Andrey Antukh, <niwi@niwi.be>
-0.1.1, 2014-04-07
+0.1.2, 2014-04-07
 
 :toc:
 :numbered:
@@ -10,9 +10,8 @@ Andrey Antukh, <niwi@niwi.be>
 Introduction
 ------------
 
-_buddy_ is an authentication, authorization and signing library for
-Clojure.  It's designed with simplicity in mind and only depends on
-ring.
+_buddy_ is an authentication, authorization and cryptography/signing library for Clojure.
+It's designed with simplicity in mind.
 
 
 Features/Libraries:
@@ -20,9 +19,9 @@ Features/Libraries:
 - Modular Authentication library.
 - Modular Authorization library.
 - Regex/decorator based composable access rules system.
-- Signing library.
 - Password hashing library.
-- Minor utils for bytes, string, hex, base64 conversions.
+- Signing library.
+- Crypto library.
 
 link:api/index.html[API reference documentation.]
 
@@ -58,7 +57,7 @@ it as a dependency in your *_project.clj_*:
 ._in project.clj_
 [source,clojure]
 ----
-[buddy "0.1.1"]
+[buddy "0.1.2"]
 ----
 
 
@@ -82,7 +81,7 @@ Then for buddy:
 <dependency>
     <groupId>buddy</groupId>
     <artifactId>buddy</artifactId>
-    <version>0.1.1</version>
+    <version>0.1.2</version>
 </dependency>
 ----
 
@@ -106,10 +105,12 @@ Signing
 
 The "signing framework" of _buddy_ is mainly based on django's
 link:https://docs.djangoproject.com/en/1.6/topics/signing/[Cryptographic
-signing] library but extended with various signing algorithms.
+signing] library but extended with various signing algorithms and cryptography
+support.
 
 It can be used for several purposes:
 
+- Safety send/store signed or encrypted messages.
 - Safely storing session data in cookies instead of a database (It prevents others from changing session content)
 - Self contained token generation for use it on completely stateless token based authentication.
 
@@ -118,7 +119,7 @@ NOTE: this library is used by one of authentication backends for implement token
 .Supported Algorithms
 [options="header"]
 |=====================================================================================
-|Algorithm name     | Hash algorithms   | Keywords           |  Priv/Pub Key?
+|Algorithm name     | Hash algorithms   | Keywords           | Priv/Pub Key?
 |Elliptic Curve DSA | sha256, sha512    | `:es256`, `:es512` | Yes
 |RSASSA PSS         | sha256, sha512    | `:ps256`, `:ps512` | Yes
 |RSASSA PKCS1 v1_5  | sha256, sha512    | `:rs256`, `:rs256` | Yes
@@ -130,12 +131,10 @@ NOTE: this library is used by one of authentication backends for implement token
 
 [NOTE]
 ====
-sha384 version is available for each algorithm internally, but is not exposed on public api.
-
 Only HMAC based algorithm supports plain text secret keys, If you want use
 more Digital Signature instead of hmac, you must have a key pair (public and private).
-
 ====
+
 
 Using low level api
 ^^^^^^^^^^^^^^^^^^^
@@ -179,6 +178,7 @@ invalidate signed messages based on their age.
 ;; older than 15 min.
 ----
 
+
 Protecting complex data structures
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
@@ -208,11 +208,13 @@ more complex data.
 
 NOTE: it uses a Clojure serialization library link:https://github.com/ptaoussanis/nippy[Nippy]
 
+
 Using Digital Signature algorithms
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
 For use anyone of digital signature algorithms you must have a private/public key. If you
 don't have one, don't worry, generate one it's very easy (using *openssl*).
+
 
 Elliptic Curve DSA
 ++++++++++++++++++
@@ -267,6 +269,7 @@ Signature algorithms also previously mentioned.
 (def unsigned-data (unsign signed-data ec-pubkey {:alg :ec256}))
 ----
 
+
 Hashers
 ~~~~~~~
 
@@ -276,12 +279,12 @@ is providing some facilities for generating secure passwords.
 _buddy_ comes with a few functions for generating and verifying passwords
 with the widely used password derivation algorithms bcrypt and pbkdf2.
 
-.Supported password hash algorithms
+.Supported password hashers algorithms
 [options="header"]
 |=====================================================================================
 | Hash algorithm name  | Namespace              | Observations
-| Pbkdf2               | `buddy.hashers.pbkdf2` | Recommended
 | Bcrypt               | `byddy.hashers.bcrypt` | Recommended
+| Pbkdf2               | `buddy.hashers.pbkdf2` | Recommended
 | Scrypt               | `buddy.hashers.scrypt` | Recommended
 | sha256               | `buddy.hashers.sha256` | Not recommended
 | md5                  | `buddy.hashers.md5`    | Broken! Not Recommended
@@ -375,8 +378,9 @@ authentication with _buddy_.
 ;; with authentication middleware using an instance of
 ;; just created http-basic backend.
 
-(def app (let [backend (http-basic-backend :realm "MyApi" :authfn my-authfn)]
-           (wrap-authentication handler backend)))
+(def app
+  (let [backend (http-basic-backend :realm "MyApi" :authfn my-authfn)]
+    (wrap-authentication handler backend)))
 ----
 
 
@@ -492,13 +496,14 @@ system for your ring compatible web application:
 ;; the default unathorized request behavior with own, previously
 ;; defined function
 
-(def app (let [backend (http-basic-backend
-                         :realm "API"
-                         :authfn my-auth-fn
-                         :unauthorized-handler my-unauthorized-handler)]
-           (-> handler
-               (wrap-authentication backend)
-               (wrap-authorization backend))))
+(def app
+  (let [backend (http-basic-backend
+                 :realm "API"
+                 :authfn my-auth-fn
+                 :unauthorized-handler my-unauthorized-handler)]
+    (-> handler
+        (wrap-authentication backend)
+        (wrap-authorization backend))))
 ----
 
 NOTE: If you want know how it really works, see xref:how-it-works[How it works] section or
@@ -663,8 +668,8 @@ Advanced Usage
 --------------
 
 [[how-it-works]]
-How It Works
-~~~~~~~~~~~~
+How Auth Works
+~~~~~~~~~~~~~~
 
 Each backend implements two protocols: `IAuthentication` and `IAuthorization`.
 
@@ -681,6 +686,7 @@ middleware. This is an example flow for the http basic backend:
    `authenticate` should return a request with `:identity` key assigned to nil or any other
    value. All requests with `:identity` key with nil value are considered not authenticated.
 3. User handler is called.
+
 
 [NOTE]
 =========================
@@ -707,25 +713,35 @@ This is a flow that follows authorization middleware:
 3. handle-unauthorized is executed of your backend, if user has specified it own function,
    the user defined function is executed else, default behavior is executed.
 
+
 Core library
 ------------
 
-Behind the scenes, _buddy_ uses an internal library exposed in the
-`buddy.core` namespace.  There are more low level functions here for
-hash, hmac, sign and coding that are used by other parts of _buddy_.
+Behind the scenes, _buddy_ uses an low-level library exposed in the
+`buddy.core` namespace, that contains implementations for:
+
+- hash functions
+- crypt functions
+- mac functions
+- digital signature functions
+- encoding functions (base64, hex, ...)
+
 
 Cryptographic hash algorithms
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 All hash algorithms interface is located on the `buddy.core.hash` namespace.
 
-Available hash algorithms:
+.Available hash algorithms
+[options="header"]
+|===============================================
+| Hash algorithm name  | Digest size
+| SHA1                 | 160
+| SHA2                 | 256, 384, 512
+| SHA3                 | 256, 384, 512
+| MD5                  | 128
+|===============================================
 
-- *sha256*
-- *sha384*
-- *sha512*
-- *sha1*
-- *md5*
 
 Basic usage
 ^^^^^^^^^^^
@@ -748,12 +764,13 @@ Basic usage
 ;; -> "fbc1a9f858ea9e177916964bd88c3d37b91a1e84412765e29950777f265c4b75"
 ----
 
+
 Advanced usage
 ^^^^^^^^^^^^^^
 
-Hash functions are implemented using protocols.  We have seen how to
-hash strings, but note that the same function works for *File*, *URL*,
-*URI* and *InputStream*.
+Hash functions are implemented using protocols and it can be extended
+to other types. The default implementations also comes with implementation
+for file like objects (*File*, *URL*, URI* and *InputStream*).
 
 .Make hash of file example:
 [source, clojure]
@@ -778,6 +795,7 @@ You can extend it for your own types using the
 [NOTE]
 Functions like *sha256* are aliases for the more generic
 function *digest*.
+
 
 Hash-based message authentication
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -848,7 +866,12 @@ Functions like *hmac-sha256* just alias the more generic functions
 Codecs (binary -> string conversion)
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-No documentation found for this part.
+Implements some useful and widely used around all buddy library functions
+for make conversions between strings, bytes, hex encoded strings and base64
+encoded strings.
+
+No documentation found for this part, but you can view source code for it.
+
 
 Examples
 --------
@@ -899,7 +922,7 @@ separated. This helps a lot if you want use only one part of it (ex:
 authentication only) without including the other.
 
 The best combination is to use _buddy_'s authentication middleware
-with liberator as the authorization system.
+with liberator authorization endpoints.
 
 License
 -------
