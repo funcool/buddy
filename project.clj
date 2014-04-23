@@ -1,4 +1,4 @@
-(defproject buddy "0.1.1"
+(defproject buddy "0.1.2-SNAPSHOT"
   :description "Authentication, Authorization and Signing library."
   :url "https://github.com/niwibe/buddy"
   :license {:name "Apache 2.0"
