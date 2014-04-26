@@ -15,9 +15,12 @@
 (ns buddy.core.keys
   (:require [buddy.core.codecs :refer [str->bytes bytes->hex]]
             [clojure.java.io :as io])
-  (:import [org.bouncycastle.openssl PEMParser PEMEncryptedKeyPair PEMKeyPair]
-           [org.bouncycastle.openssl.jcajce JcePEMDecryptorProviderBuilder JcaPEMKeyConverter]
-           [java.io StringReader]))
+  (:import org.bouncycastle.openssl.PEMParser
+           org.bouncycastle.openssl.PEMEncryptedKeyPair
+           org.bouncycastle.openssl.PEMKeyPair
+           org.bouncycastle.openssl.jcajce.JcePEMDecryptorProviderBuilder
+           org.bouncycastle.openssl.jcajce.JcaPEMKeyConverter
+           java.io.StringReader))
 
 (java.security.Security/addProvider
  (org.bouncycastle.jce.provider.BouncyCastleProvider.))
@@ -64,3 +67,9 @@
   [^String keydata]
   (with-open [reader (StringReader. keydata)]
     (read-pem->pubkey reader)))
+
+;; Simple data structure for represent the buddy
+;; representation key container.
+(defrecord Key [key iv])
+(alter-meta! #'->Key assoc :no-doc true :private true)
+(alter-meta! #'map->Key assoc :no-doc true :private true)

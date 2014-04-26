@@ -16,7 +16,8 @@ guarantee."
            org.bouncycastle.crypto.params.ParametersWithIV
            org.bouncycastle.crypto.engines.AESFastEngine
            java.security.SecureRandom
-           java.util.Arrays)
+           java.util.Arrays
+           buddy.core.keys.Key)
   (:require [buddy.core.hash :refer [sha3-256]]
             [buddy.core.codecs :refer :all]
             [clojure.java.io :as io]))
@@ -31,14 +32,8 @@ guarantee."
 for easy extensibility for different types."
   (make-key [obj] "Build poly 1305 key instance from type."))
 
-;; Simple data structure for represent the buddy
-;; representation of poly 1305 key.
-(defrecord Key [key iv])
-
 (alter-meta! #'key->bytes assoc :no-doc true :private true)
 (alter-meta! #'key->iv assoc :no-doc true :private true)
-(alter-meta! #'->Key assoc :no-doc true :private true)
-(alter-meta! #'map->Key assoc :no-doc true :private true)
 
 ;; Constructor implementations
 
@@ -50,7 +45,7 @@ for easy extensibility for different types."
       (doto (SecureRandom.)
         (.nextBytes iv))
       (Poly1305KeyGenerator/clamp bkey)
-      (->Key bkey iv))))
+      (Key. bkey iv))))
 
 ;; Conversion implementations
 
