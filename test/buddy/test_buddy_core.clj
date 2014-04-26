@@ -8,6 +8,7 @@
             [buddy.hashers.sha256 :as sha256]
             [buddy.hashers.md5 :as md5]
             [buddy.hashers.scrypt :as scrypt]
+            [buddy.core.mac.poly1305 :as poly]
             [clojure.java.io :as io])
   (:import (java.util Arrays)))
 
@@ -62,3 +63,19 @@
     (let [path       "test/_files/pubkey.ecdsa.pem"
           valid-hash "7aa01e35e65701c9a9d8f71c4cbf056acddc9be17fdff06b4c7af1b0b34ddc29"]
       (is (= (bytes->hex (hash/sha256 (io/input-stream path))) valid-hash)))))
+
+(deftest poly1305-tests
+  (testing "Poly1305 encrypt/verify (using string key)"
+    (let [plain-text "text"
+          secretkey  "secret"
+          mac-bytes1  (poly/make-poly1305 (->byte-array plain-text) secretkey)
+          mac-bytes2  (poly/make-poly1305 (->byte-array plain-text) secretkey)]
+      (is (= (Arrays/equals mac-bytes1 mac-bytes2)))))
+
+  (testing "Poly1305 explicit encrypt/verify (using string key)"
+    (let [plain-text "text"
+          secretkey  "secret"
+          mac-bytes1  (poly/make-poly1305 (->byte-array plain-text) secretkey)]
+      (is (= (-> mac-bytes1 (bytes->hex)) "98a94ff88861bf9b96bcb7112b506579"))))
+)
+
