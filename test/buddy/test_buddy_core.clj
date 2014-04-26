@@ -52,13 +52,6 @@
           encrypted-password  (scrypt/make-password plain-password)]
       (is (scrypt/check-password plain-password encrypted-password)))))
 
-(deftest hmac-tests
-  (testing "hmac-sha256 tests"
-    (let [key  "foo"
-          data "bar"]
-      (is (= (bytes->hex (shmac-sha256 data "" key))
-             "58f125164e3664184898939740cd369130bca60e1f66a4dbe241f494b6403a5f")))))
-
 (deftest core-hash-tests
   (testing "SHA3 support test"
     (let [plain-text "FooBar"
