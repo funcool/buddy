@@ -73,9 +73,23 @@
       (is (= (Arrays/equals mac-bytes1 mac-bytes2)))))
 
   (testing "Poly1305 explicit encrypt/verify (using string key)"
-    (let [plain-text "text"
+    (let [plaintext  "text"
           secretkey  "secret"
-          mac-bytes1  (poly/make-poly1305 (->byte-array plain-text) secretkey)]
+          mac-bytes1 (poly/make-poly1305 (->byte-array plaintext) secretkey)]
       (is (= (-> mac-bytes1 (bytes->hex)) "98a94ff88861bf9b96bcb7112b506579"))))
+
+  (testing "Poly1305 key constructor"
+    (let [key1 (poly/make-key "secret")
+          key2 (poly/make-key "secret")]
+      (is (Arrays/equals (:key key1) (:key key2)))
+      (is (not (Arrays/equals (:iv key1) (:iv key2))))))
+
+  (testing "Poly1305 enc/verify using key with good iv"
+    (let [plaintext "text"
+          secret1   (poly/make-key "secret")
+          secret2   (poly/make-key "secret") ;; same as secret1 but with new iv
+          macbytes  (poly/make-poly1305 plaintext secret1)]
+      (is (poly/verify-poly1305 plaintext macbytes secret1))
+      (is (not (poly/verify-poly1305 plaintext macbytes secret2)))))
 )
 

@@ -86,7 +86,7 @@ for easy extensibility for different types."
 ;; Algorithm implementation
 
 (defn- make-poly1305-plain-impl
-  [data pkey]
+  [^bytes data pkey]
   (let [bkey (key->bytes pkey)
         iv   (key->iv pkey)
         mac  (Poly1305. (AESFastEngine.))
@@ -131,7 +131,7 @@ different types.
 It comes with default implementation for: string,
 bytes, input stream, file, url and uri."
   (make-poly1305 [obj key] "Calculate poly1305 mac for type.")
-  (verify-poly1305 [obj key] "Verify poly1305 mac for type."))
+  (verify-poly1305 [obj signature key] "Verify poly1305 mac for type."))
 
 (extend-protocol Poly1305Mac
   (Class/forName "[B")
