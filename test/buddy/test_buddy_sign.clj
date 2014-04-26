@@ -2,7 +2,7 @@
   (:require [clojure.test :refer :all]
             [buddy.core.codecs :refer :all]
             [buddy.core.sign :as sign]
-            [buddy.core.hmac :as hmac]
+            [buddy.core.mac.hmac :as hmac]
             [buddy.sign.generic :as gsign]
             [buddy.core.keys :refer :all]
             [clojure.java.io :as io])
@@ -125,9 +125,7 @@
 
     (testing "Sign/Verify salted hmac with string"
       (let [sig (hmac/shmac-sha256 "foo" secretkey "salt")]
-        (is (true? (hmac/shmac-sha256-verify "foo" sig secretkey "salt")))))
-
-))
+        (is (true? (hmac/shmac-sha256-verify "foo" sig secretkey "salt")))))))
 
 (deftest high-level-sign-tests
   (testing "Signing/Unsigning with default keys"
