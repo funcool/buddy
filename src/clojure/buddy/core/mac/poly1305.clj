@@ -15,11 +15,11 @@ guarantee."
            org.bouncycastle.crypto.params.KeyParameter
            org.bouncycastle.crypto.params.ParametersWithIV
            org.bouncycastle.crypto.engines.AESFastEngine
-           java.security.SecureRandom
            java.util.Arrays
            buddy.core.keys.Key)
   (:require [buddy.core.hash :refer [sha3-256]]
             [buddy.core.codecs :refer :all]
+            [buddy.core.keys :refer [make-random-bytes]]
             [clojure.java.io :as io]))
 
 (defprotocol Poly1305KeyType
@@ -41,9 +41,7 @@ for easy extensibility for different types."
   java.lang.String
   (make-key [self]
     (let [bkey (sha3-256 self)
-          iv   (byte-array 16)]
-      (doto (SecureRandom.)
-        (.nextBytes iv))
+          iv   (make-random-bytes 16)]
       (Poly1305KeyGenerator/clamp bkey)
       (Key. bkey iv))))
 

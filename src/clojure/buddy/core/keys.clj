@@ -20,6 +20,7 @@
            org.bouncycastle.openssl.PEMKeyPair
            org.bouncycastle.openssl.jcajce.JcePEMDecryptorProviderBuilder
            org.bouncycastle.openssl.jcajce.JcaPEMKeyConverter
+           java.security.SecureRandom
            java.io.StringReader))
 
 (java.security.Security/addProvider
@@ -73,3 +74,21 @@
 (defrecord Key [key iv])
 (alter-meta! #'->Key assoc :no-doc true :private true)
 (alter-meta! #'map->Key assoc :no-doc true :private true)
+
+(defn make-random-bytes
+  "Generate a byte array of scpecified length with random
+bytes taken from secure random number generator."
+  ([^Long numbytes]
+     (make-random-bytes numbytes (SecureRandom.)))
+  ([^Long numbytes ^SecureRandom sr]
+     (let [buffer (byte-array numbytes)]
+       (.nextBytes sr buffer)
+       buffer)))
+
+(defn make-random-key
+  "Generate Key instance with random bytes."
+  ([^Long keylength ^Long ivlength]
+     (make-random-key keylength ivlength (SecureRandom.)))
+  ([^Long keylength ^Long ivlength, ^SecureRandom sr]
+     (Key. (make-random-bytes keylength sr)
+           (make-random-bytes ivlength sr))))
