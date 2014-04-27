@@ -1,6 +1,7 @@
 (ns buddy.test_buddy_core
   (:require [clojure.test :refer :all]
             [buddy.core.codecs :refer :all]
+            [buddy.core.keys :refer :all]
             [buddy.core.hash :as hash]
             [buddy.core.hmac :refer [shmac-sha256]]
             [buddy.hashers.pbkdf2 :as pbkdf2]
@@ -10,7 +11,7 @@
             [buddy.hashers.scrypt :as scrypt]
             [buddy.core.mac.poly1305 :as poly]
             [clojure.java.io :as io])
-  (:import (java.util Arrays)))
+  (:import buddy.Arrays))
 
 (deftest codecs-test
   (testing "Hex encode/decode 01"
@@ -65,31 +66,35 @@
       (is (= (bytes->hex (hash/sha256 (io/input-stream path))) valid-hash)))))
 
 (deftest poly1305-tests
-  (testing "Poly1305 encrypt/verify (using string key)"
-    (let [plain-text "text"
-          secretkey  "secret"
-          mac-bytes1  (poly/make-poly1305 (->byte-array plain-text) secretkey)
-          mac-bytes2  (poly/make-poly1305 (->byte-array plain-text) secretkey)]
+  (let [iv        (byte-array 16) ;; 16 bytes array filled with 0
+        plaintext "text"
+        secretkey "secret"]
+    (testing "Poly1305 encrypt/verify (using string key)"
+      (let [mac-bytes1 (poly/poly1305 plaintext secretkey iv :aes)
+            mac-bytes2 (poly/poly1305 plaintext secretkey iv :aes)]
       (is (= (Arrays/equals mac-bytes1 mac-bytes2)))))
 
   (testing "Poly1305 explicit encrypt/verify (using string key)"
-    (let [plaintext  "text"
-          secretkey  "secret"
-          mac-bytes1 (poly/make-poly1305 (->byte-array plaintext) secretkey)]
+    (let [mac-bytes1 (poly/poly1305 plaintext secretkey iv :aes)]
       (is (= (-> mac-bytes1 (bytes->hex)) "98a94ff88861bf9b96bcb7112b506579"))))
 
-  (testing "Poly1305 key constructor"
-    (let [key1 (poly/make-key "secret")
-          key2 (poly/make-key "secret")]
-      (is (Arrays/equals (:key key1) (:key key2)))
-      (is (not (Arrays/equals (:iv key1) (:iv key2))))))
+  (testing "Poly1305-AES enc/verify using key with good iv"
+    (let [iv1      (make-random-bytes 16)
+          iv2      (make-random-bytes 16)
+          macbytes (poly/poly1305 plaintext secretkey iv1 :aes)]
+      (is (poly/poly1305-verify plaintext macbytes secretkey iv1 :aes))
+      (is (not (poly/poly1305-verify plaintext macbytes secretkey iv2 :aes)))))
 
-  (testing "Poly1305 enc/verify using key with good iv"
-    (let [plaintext "text"
-          secret1   (poly/make-key "secret")
-          secret2   (poly/make-key "secret") ;; same as secret1 but with new iv
-          macbytes  (poly/make-poly1305 plaintext secret1)]
-      (is (poly/verify-poly1305 plaintext macbytes secret1))
-      (is (not (poly/verify-poly1305 plaintext macbytes secret2)))))
-)
+  (testing "Poly1305-Twofish env/verify"
+    (let [iv2 (make-random-bytes 16)
+          signature (poly/poly1305-twofish plaintext secretkey iv2)]
+      (is (poly/poly1305-twofish-verify plaintext signature secretkey iv2))
+      (is (not (poly/poly1305-twofish-verify plaintext signature secretkey iv)))))
+
+  (testing "Poly1305-Serpent env/verify"
+    (let [iv2 (make-random-bytes 16)
+          signature (poly/poly1305-serpent plaintext secretkey iv2)]
+      (is (poly/poly1305-serpent-verify plaintext signature secretkey iv2))
+      (is (not (poly/poly1305-serpent-verify plaintext signature secretkey iv)))))
+))
 
