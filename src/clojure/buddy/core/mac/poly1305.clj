@@ -15,77 +15,51 @@ guarantee."
            org.bouncycastle.crypto.params.KeyParameter
            org.bouncycastle.crypto.params.ParametersWithIV
            org.bouncycastle.crypto.engines.AESFastEngine
-           java.util.Arrays
-           buddy.core.keys.Key)
+           org.bouncycastle.crypto.engines.SerpentEngine
+           org.bouncycastle.crypto.engines.TwofishEngine
+           clojure.lang.IFn
+           clojure.lang.Keyword
+           buddy.Arrays)
   (:require [buddy.core.hash :refer [sha3-256]]
             [buddy.core.codecs :refer :all]
             [buddy.core.keys :refer [make-random-bytes]]
             [clojure.java.io :as io]))
 
-(defprotocol Poly1305KeyType
-  "Defines unform access to poly 1305 formatted key."
-  (key->bytes [obj] "Get 32 bytes array formated for poly1305.")
-  (key->iv [obj] "Get 128bit (16 bytes) iv for encryption engine."))
+(def ^{:doc "Default engine factories."
+       :dynamic true}
+  *available-engines* {:aes     #(AESFastEngine.)
+                       :serpent #(SerpentEngine.)
+                       :twofish #(TwofishEngine.)})
 
-(defprotocol KeyConstructor
-  "Poly1305 key constructor defined as protocol
-for easy extensibility for different types."
-  (make-key [obj] "Build poly 1305 key instance from type."))
+(defn- resolve-engine-factory
+  "Given dynamic type engine, try resolve it to
+valid engine factory. By default accepts keywords
+and functions."
+  [engine]
+  (cond
+   (instance? Keyword engine) (engine *available-engines*)
+   (instance? IFn engine) engine))
 
-(alter-meta! #'key->bytes assoc :no-doc true :private true)
-(alter-meta! #'key->iv assoc :no-doc true :private true)
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; Internal implementations
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-;; Constructor implementations
-
-(extend-protocol KeyConstructor
-  java.lang.String
-  (make-key [self]
-    (let [bkey (sha3-256 self)
-          iv   (make-random-bytes 16)]
-      (Poly1305KeyGenerator/clamp bkey)
-      (Key. bkey iv))))
-
-;; Conversion implementations
-
-(extend-protocol Poly1305KeyType
-  ;; Default implementation of type converter for String.
-  ;; This generates:
-  ;;
-  ;; - a poly 1305 formatted key from string
-  ;; - a 0 filled iv 16 bytes array.
-  ;;
-  ;; Mainly used when poly1305 mac is used with
-  ;; string as key argument. If you want stronguest security
-  ;; build poly 1305 key previously with corresponding
-  ;; constructor instead of using string key directly.
-
-  java.lang.String
-  (key->bytes [self]
-    (let [key (sha3-256 self)]
-      (Poly1305KeyGenerator/clamp key)
-      key))
-  (key->iv [self]
-    (byte-array 16))
-
-  ;; Default implementation of type converter for Key.
-  ;; This does nothing, simple return Key instance values.
-
-  Key
-  (key->bytes [self]
-    (:key self))
-  (key->iv [self]
-    (:iv self)))
-
-;; Algorithm implementation
+(defn- key->poly1305key
+  "Noramalizes any length byte array key to poly1305
+formatted byte array key.
+It uses sha3 (256 bit) for normalize the size to 32
+bytes and poly1305 algorithm for transform it."
+  [^bytes key]
+  (let [bkey (sha3-256 key)]
+    (Poly1305KeyGenerator/clamp bkey)
+    bkey))
 
 (defn- make-poly1305-plain-impl
-  [^bytes data pkey]
-  (let [bkey (key->bytes pkey)
-        iv   (key->iv pkey)
-        mac  (Poly1305. (AESFastEngine.))
-        out  (byte-array 16)
-        kp   (KeyParameter. bkey)
-        pwi  (ParametersWithIV. kp iv)]
+  [^bytes data ^bytes pkey ^bytes iv ^IFn enginefactory]
+  (let [mac (Poly1305. (enginefactory))
+        out (byte-array 16)
+        kp  (KeyParameter. (key->poly1305key pkey))
+        pwi (ParametersWithIV. kp iv)]
     (doto mac
       (.init pwi)
       (.update data 0 (count data))
@@ -93,12 +67,10 @@ for easy extensibility for different types."
     out))
 
 (defn- make-poly1305-stream-impl
-  [stream pkey]
-  (let [bkey (key->bytes pkey)
-        iv   (key->iv pkey)
-        mac  (Poly1305. (AESFastEngine.))
+  [^java.io.InputStream stream ^bytes pkey ^bytes iv ^IFn enginefactory]
+  (let [mac  (Poly1305. (enginefactory))
         out  (byte-array 16)
-        kp   (KeyParameter. bkey)
+        kp   (KeyParameter. (key->poly1305key pkey))
         pwi  (ParametersWithIV. kp iv)
         bfr  (byte-array 5120)]
     (.init mac pwi)
@@ -110,11 +82,16 @@ for easy extensibility for different types."
     (.doFinal mac out 0)
     out))
 
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; Low level interface
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
 (declare make-poly1305)
 
-(defn- verify-poly1305-impl
-  [data signature pkey]
-  (let [sig (make-poly1305 data pkey)]
+(defn verify-poly1305-impl
+  "Generic implementation of verify."
+  [data ^bytes signature ^bytes pkey ^bytes iv ^IFn enginefactory]
+  (let [sig (make-poly1305 data pkey iv enginefactory)]
     (Arrays/equals sig signature)))
 
 (defprotocol Poly1305Mac
@@ -123,42 +100,71 @@ to poly 1305 algorithm and allows extend it for
 different types.
 It comes with default implementation for: string,
 bytes, input stream, file, url and uri."
-  (make-poly1305 [obj key] "Calculate poly1305 mac for type.")
-  (verify-poly1305 [obj signature key] "Verify poly1305 mac for type."))
+  (make-poly1305 [obj key iv enginefactory] "Calculate poly1305 mac for type."))
+
+(alter-meta! #'make-poly1305 assoc :no-doc true :private true)
 
 (extend-protocol Poly1305Mac
   (Class/forName "[B")
-  (make-poly1305 [^bytes data ^String key]
-    (make-poly1305-plain-impl data key))
-  (verify-poly1305 [^bytes data ^bytes signature ^String key]
-    (verify-poly1305-impl data signature key))
+  (make-poly1305 [^bytes data ^bytes key ^bytes iv ^IFn enginefactory]
+    (make-poly1305-plain-impl data key iv enginefactory))
 
   java.lang.String
-  (make-poly1305 [^String data ^String key]
-    (make-poly1305-plain-impl (->byte-array data) key))
-  (verify-poly1305 [^String data ^bytes signature ^String key]
-    (verify-poly1305-impl (->byte-array data) signature key))
+  (make-poly1305 [^String data ^bytes key ^bytes iv ^IFn enginefactory]
+    (make-poly1305-plain-impl (->byte-array data) key iv enginefactory))
 
   java.io.InputStream
-  (make-poly1305 [^java.io.InputStream data ^String key]
-    (make-poly1305-stream-impl data key))
-  (verify-poly1305 [^java.io.InputStream data ^bytes signature ^String key]
-    (verify-poly1305-impl data signature key))
+  (make-poly1305 [^java.io.InputStream data ^bytes key ^bytes iv ^IFn enginefactory]
+    (make-poly1305-stream-impl data key iv enginefactory))
 
   java.io.File
-  (make-poly1305 [^java.io.File data ^String key]
-    (make-poly1305-stream-impl (io/input-stream data) key))
-  (verify-poly1305 [^java.io.File data ^bytes signature ^String key]
-    (verify-poly1305-impl (io/input-stream data) signature key))
+  (make-poly1305 [^java.io.File data ^bytes key ^bytes iv ^IFn enginefactory]
+    (make-poly1305-stream-impl (io/input-stream data) key iv enginefactory))
 
   java.net.URL
-  (make-poly1305 [^java.net.URL data ^String key]
-    (make-poly1305-stream-impl (io/input-stream data) key))
-  (verify-poly1305 [^java.net.URL data ^bytes signature ^String key]
-    (verify-poly1305-impl (io/input-stream data) signature key))
+  (make-poly1305 [^java.net.URL data ^bytes key ^bytes iv ^IFn enginefactory]
+    (make-poly1305-stream-impl (io/input-stream data) key iv enginefactory))
 
   java.net.URI
-  (make-poly1305 [^java.net.URI data ^String key]
-    (make-poly1305-stream-impl (io/input-stream data) key))
-  (verify-poly1305 [^java.net.URI data ^bytes signature ^String key]
-    (verify-poly1305-impl (io/input-stream data) signature key)))
+  (make-poly1305 [^java.net.URI data ^bytes key ^bytes iv ^IFn enginefactory]
+    (make-poly1305-stream-impl (io/input-stream data) key iv enginefactory)))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; High level interface
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+(defn poly1305
+  "Make poly1305 mac for specified data, using arbitrary
+length key and 128 bits iv.
+Key can be any type that implements ByteArray protocol."
+  [data key ^bytes iv engine]
+  {:pre [(= (count iv) 16)]}
+  (let [key (->byte-array key)
+        ef  (resolve-engine-factory engine)]
+    (make-poly1305 data key iv ef)))
+
+(defn poly1305-verify
+  "Verify poly1305 mac for specified data and signature."
+  [data ^bytes signature pkey ^bytes iv engine]
+  {:pre [(= (count iv) 16)]}
+  (let [key (->byte-array pkey)
+        ef  (resolve-engine-factory engine)]
+    (verify-poly1305-impl data signature key iv ef)))
+
+(def ^{:doc "Alias for Poly1305 + AES mac."}
+  poly1305-aes #(poly1305 %1 %2 %3 :aes))
+
+(def ^{:doc "Alias for Poly1305 + AES mac verify function."}
+  poly1305-aes-verify #(poly1305-verify %1 %2 %3 %4 :aes))
+
+(def ^{:doc "Alias for Poly1305 + Twofish mac."}
+  poly1305-twofish #(poly1305 %1 %2 %3 :twofish))
+
+(def ^{:doc "Alias for Poly1305 + Twofish mac verify function."}
+  poly1305-twofish-verify #(poly1305-verify %1 %2 %3 %4 :twofish))
+
+(def ^{:doc "Alias for Poly1305 + Serpent mac."}
+  poly1305-serpent #(poly1305 %1 %2 %3 :serpent))
+
+(def ^{:doc "Alias for Poly1305 + Serpent mac verify function."}
+  poly1305-serpent-verify #(poly1305-verify %1 %2 %3 %4 :serpent))
