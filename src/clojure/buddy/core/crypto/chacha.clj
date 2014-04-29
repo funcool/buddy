@@ -16,7 +16,7 @@
 (defn- process-bytes
   "Encrypt/Decript implementation."
   [^ChaChaEngine engine ^bytes input]
-  (let [len  (count in)
+  (let [len  (count input)
         out  (byte-array len)]
     (.processBytes engine input 0 len out 0)
     out))
