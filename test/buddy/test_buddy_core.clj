@@ -13,7 +13,7 @@
             [clojure.java.io :as io])
   (:import buddy.Arrays))
 
-(deftest codecs-test
+(deftest buddy-core-codecs
   (testing "Hex encode/decode 01"
     (let [some-bytes  (str->bytes "FooBar")
           encoded     (bytes->hex some-bytes)
@@ -28,7 +28,7 @@
           decoded (hex->bytes encoded)]
       (is (Arrays/equals decoded mybytes)))))
 
-(deftest password-hashers-tests
+(deftest buddy-hashers
   (testing "Test low level api for encrypt/verify pbkdf2"
     (let [plain-password      "my-test-password"
           encrypted-password  (pbkdf2/make-password plain-password)]
@@ -54,7 +54,7 @@
           encrypted-password  (scrypt/make-password plain-password)]
       (is (scrypt/check-password plain-password encrypted-password)))))
 
-(deftest core-hash-tests
+(deftest buddy-core-hash
   (testing "SHA3 support test"
     (let [plain-text "FooBar"
           hashed     (-> (hash/sha3-256 plain-text)
@@ -65,7 +65,7 @@
           valid-hash "7aa01e35e65701c9a9d8f71c4cbf056acddc9be17fdff06b4c7af1b0b34ddc29"]
       (is (= (bytes->hex (hash/sha256 (io/input-stream path))) valid-hash)))))
 
-(deftest poly1305-tests
+(deftest core-mac-poly1305
   (let [iv        (byte-array 16) ;; 16 bytes array filled with 0
         plaintext "text"
         secretkey "secret"]
@@ -95,6 +95,5 @@
     (let [iv2 (make-random-bytes 16)
           signature (poly/poly1305-serpent plaintext secretkey iv2)]
       (is (poly/poly1305-serpent-verify plaintext signature secretkey iv2))
-      (is (not (poly/poly1305-serpent-verify plaintext signature secretkey iv)))))
-))
+      (is (not (poly/poly1305-serpent-verify plaintext signature secretkey iv)))))))
 
