@@ -33,32 +33,45 @@
       (is (= (:username parsed) "foo")))))
 
 (deftest token-test
-  (testing "Parse authorization header"
-    (let [signed-data     (s/dumps {:userid 1} secret-key)
-          header-content  (format "Token %s" signed-data)
-          request         {:headers {"authorization" header-content}}
-          parsed          (stoken/parse-authorization-header request)]
-      (is (= parsed signed-data))))
+  (let [authenticate-handler (fn [request token]
+                               (get {:token1 {:userid 1}
+                                     :token2 {:userid 2}} (keyword token)))]
 
-  (testing "Signed token backend authentication"
-    (let [signed-data     (s/dumps {:userid 1} secret-key)
-          header-content  (format "Token %s" signed-data)
-          request         {:headers {"authorization" header-content}}
-          backend         (stoken/signed-token-backend secret-key)
-          handler         (-> (fn [req] req)
-                              (wrap-authentication backend))
-          resp            (handler request)]
-      (is (= (:identity resp) {:userid 1}))))
+    (testing "Parse authorization header"
+      (let [signed-data     (s/dumps {:userid 1} secret-key)
+            header-content  (format "Token %s" signed-data)
+            request         {:headers {"authorization" header-content}}
+            parsed          (stoken/parse-authorization-header request)]
+        (is (= parsed signed-data))))
 
-  (testing "Signed token backend wrong authentication"
-    (let [signed-data     (s/dumps {:userid 1} "wrong-key")
-          header-content  (format "Token %s" signed-data)
-          request         {:headers {"authorization" header-content}}
-          backend         (stoken/signed-token-backend secret-key)
-          handler         (-> (fn [req] req)
-                              (wrap-authentication backend))
-          resp            (handler request)]
-      (is (nil? (:identity resp)))))
+    (testing "Signed token backend authentication"
+      (let [signed-data     (s/dumps {:userid 1} secret-key)
+            header-content  (format "Token %s" signed-data)
+            request         {:headers {"authorization" header-content}}
+            backend         (stoken/signed-token-backend secret-key)
+            handler         (-> (fn [req] req)
+                                (wrap-authentication backend))
+            resp            (handler request)]
+        (is (= (:identity resp) {:userid 1}))))
+
+    (testing "Signed token backend wrong authentication"
+      (let [signed-data     (s/dumps {:userid 1} "wrong-key")
+            header-content  (format "Token %s" signed-data)
+            request         {:headers {"authorization" header-content}}
+            backend         (stoken/signed-token-backend secret-key)
+            handler         (-> (fn [req] req)
+                                (wrap-authentication backend))
+            resp            (handler request)]
+        (is (nil? (:identity resp)))))
+
+    (testing "Signed token backend with wrong data"
+      (let [header-content  "Token foobar"
+            request         {:headers {"authorization" header-content}}
+            backend         (stoken/signed-token-backend secret-key)
+            handler         (-> (fn [req] req)
+                                (wrap-authentication backend))
+            resp            (handler request)]
+        (is (nil? (:identity resp)))))
 
   (testing "Signed token unathorized request 1"
     (let [signed-data     (s/dumps {:userid 1} secret-key)
@@ -95,9 +108,6 @@
           resp            (handler request)]
       (is (= (:status resp) 3000))))
 
-  (let [authenticate-handler (fn [request token]
-                               (get {:token1 {:userid 1}
-                                     :token2 {:userid 2}} (keyword token)))]
 
     (testing "Basic token backend authentication 01"
       (let [request              {:headers {"authorization" "Token token1"}}
@@ -135,6 +145,7 @@
                          (wrap-authentication backend))
             response (handler request)]
         (is (= (:status response) 3000))))
+
 ))
 
 (deftest session-auth-test

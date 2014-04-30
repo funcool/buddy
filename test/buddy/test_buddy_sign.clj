@@ -135,13 +135,15 @@
       (is (= (gsign/unsign signed secret) "foo"))))
 
   (testing "Signing/Unsigning timestamped"
-    (let [signed (gsign/sign "foo" secret)]
-      (is (= "foo" (gsign/unsign signed secret {:max-age 20})))
-      (Thread/sleep 700)
-      (is (nil? (gsign/unsign signed secret {:max-age -1})))))
+    (let [signed  (gsign/sign "foo" secret)
+          result1 (gsign/unsign signed secret {:max-age 20})
+          _       (Thread/sleep 700)
+          result2 (gsign/unsign signed secret {:max-age -1})]
+      (is (= "foo" result1))
+      (is (nil? result2))))
 
   (testing "Try sing with invalid alg"
-    (is (thrown? RuntimeException (gsign/sign "foo" secret {:alg :invalid}))))
+    (is (thrown? AssertionError (gsign/sign "foo" secret {:alg :invalid}))))
 
   (testing "Use custom algorithm for sign/unsign"
     (let [rsa-privkey (private-key "test/_files/privkey.3des.rsa.pem" "secret")
@@ -155,5 +157,6 @@
 
   (testing "Signing/Unsigning complex clojure data"
     (let [signed (gsign/dumps {:foo 2 :bar 1} secret)]
-      (is (= {:foo 2 :bar 1} (gsign/loads signed secret))))))
+      (is (= {:foo 2 :bar 1} (gsign/loads signed secret)))))
+)
 
