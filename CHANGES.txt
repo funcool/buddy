@@ -9,6 +9,8 @@ Date: unreleased
 - HMAC moved to buddy.core.mac.hmac (mantaining old ns for backward compatibility).
 - Add Poly1305 mac support.
 - Add chacha20 crypto algorithm support.
+- Changed generic sign output format (security improvements but backward incompatible)
+- Changed maxage parameter to more consistent max-age on token auth backend.
 
 Version 0.1.1
 -------------
