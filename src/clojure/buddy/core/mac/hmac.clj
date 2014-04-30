@@ -72,37 +72,37 @@ InputStream, File, URL and URI."
 
 (extend-protocol HMac
   (Class/forName "[B")
-  (make-hmac [^bytes data ^String key ^String algorithm]
+  (make-hmac [^bytes data key ^String algorithm]
     (make-hmac-for-plain-data data key algorithm))
   (verify-hmac [^bytes data ^bytes signature ^String key ^String algorithm]
     (verify-hmac-for-plain-data data signature key algorithm))
 
   java.lang.String
-  (make-hmac [^String data ^String key ^String algorithm]
+  (make-hmac [^String data key ^String algorithm]
     (make-hmac-for-plain-data (->byte-array data) key algorithm))
   (verify-hmac [^String data ^bytes signature ^String key ^String algorithm]
     (verify-hmac-for-plain-data (->byte-array data) signature key algorithm))
 
   java.io.InputStream
-  (make-hmac [^java.io.InputStream data ^String key ^String algorithm]
+  (make-hmac [^java.io.InputStream data key ^String algorithm]
     (make-hmac-for-stream data key algorithm))
   (verify-hmac [^java.io.InputStream data ^bytes signature ^String key ^String algorithm]
     (verify-hmac-for-stream data signature key algorithm))
 
   java.io.File
-  (make-hmac [^java.io.File data ^String key ^String algorithm]
+  (make-hmac [^java.io.File data key ^String algorithm]
     (make-hmac-for-stream (io/input-stream data) key algorithm))
   (verify-hmac [^java.io.File data ^bytes signature ^String key ^String algorithm]
     (verify-hmac-for-stream (io/input-stream data) signature key algorithm))
 
   java.net.URL
-  (make-hmac [^java.net.URL data ^String key ^String algorithm]
+  (make-hmac [^java.net.URL data key ^String algorithm]
     (make-hmac-for-stream (io/input-stream data) key algorithm))
   (verify-hmac [^java.net.URL data ^bytes signature ^String key ^String algorithm]
     (verify-hmac-for-stream (io/input-stream data) signature key algorithm))
 
   java.net.URI
-  (make-hmac [^java.net.URI data ^String key ^String algorithm]
+  (make-hmac [^java.net.URI data key ^String algorithm]
     (make-hmac-for-stream (io/input-stream data) key algorithm))
   (verify-hmac [^java.net.URI data ^bytes signature ^String key ^String algorithm]
     (verify-hmac-for-stream (io/input-stream data) signature key algorithm)))
@@ -111,13 +111,13 @@ InputStream, File, URL and URI."
   "Generic function that implement salted variant
 of keyed-hash message authentication code (hmac).
 This is a low level function and always return bytes."
-  [data ^String key salt ^String algorithm]
+  [data key salt ^String algorithm]
   (let [key (concat-byte-arrays (->byte-array key)
                                 (->byte-array salt))]
     (make-hmac data (sha512 key) algorithm)))
 
 (defn- verify-salted-hmac
-  [data ^bytes signature ^String key salt ^String algorithm]
+  [data ^bytes signature key salt ^String algorithm]
   (let [key (concat-byte-arrays (->byte-array key)
                                 (->byte-array salt))]
     (verify-hmac data signature (sha512 key) algorithm)))
@@ -127,11 +127,11 @@ This is a low level function and always return bytes."
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (defn hmac
-  [data ^String key ^String algorithm]
+  [data key ^String algorithm]
   (make-hmac data key algorithm))
 
 (defn hmac-verify
-  [data ^bytes signature ^String key ^String algorithm]
+  [data ^bytes signature key ^String algorithm]
   (verify-hmac data signature key algorithm))
 
 (defn shmac
@@ -145,7 +145,7 @@ authentication code algorithm."
   "Generic function that exposes a high level
 interface for salted variant of keyed-hash message
 authentication code verification algorithm."
-  [data ^bytes signature ^String key ^String salt ^String algorithm]
+  [data ^bytes signature key ^String salt ^String algorithm]
   (verify-salted-hmac data signature key salt algorithm))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
