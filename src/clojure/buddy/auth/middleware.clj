@@ -16,7 +16,6 @@
   (:require [buddy.auth.protocols :as proto]
             [buddy.auth.accessrules :as accessrules]
             [buddy.auth :refer [authenticated? throw-unauthorized]]
-            [buddy.util :refer [m-maybe]]
             [ring.util.response :refer [response response?]])
   (:import (buddy.exceptions UnauthorizedAccessException)))
 

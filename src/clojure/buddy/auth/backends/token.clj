@@ -16,7 +16,7 @@
   (:require [buddy.auth.protocols :as proto]
             [buddy.auth :refer [authenticated?]]
             [buddy.sign.generic :refer [loads]]
-            [buddy.util :refer [m-maybe]]
+            [buddy.util :refer [maybe-let]]
             [clojure.string :refer [split]]
             [ring.util.response :refer [response response? header status]]))
 
@@ -24,10 +24,10 @@
   "Given a request, try extract and parse
   authorization header."
   [request]
-  (m-maybe [headers-map (:headers request)
-            auth-header (get headers-map "authorization")
-            pattern     (re-pattern "^Token (.+)$")
-            matches     (re-find pattern auth-header)]
+  (maybe-let [headers-map (:headers request)
+              auth-header (get headers-map "authorization")
+              pattern     (re-pattern "^Token (.+)$")
+              matches     (re-find pattern auth-header)]
     (get matches 1)))
 
 (defrecord SignedTokenBackend [pkey unauthorized-handler max-age]

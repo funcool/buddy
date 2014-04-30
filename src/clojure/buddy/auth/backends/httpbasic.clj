@@ -16,7 +16,7 @@
   (:require [buddy.auth.protocols :as proto]
             [buddy.auth :refer [authenticated?]]
             [buddy.core.codecs :refer [base64->str]]
-            [buddy.util :refer [m-maybe]]
+            [buddy.util :refer [maybe-let]]
             [clojure.string :refer [split]]
             [ring.util.response :refer [response response? header status]]))
 
@@ -24,11 +24,11 @@
   "Given a request, try extract and parse
   http basic header."
   [request]
-  (m-maybe [headers-map (:headers request)
-            auth-header (get headers-map "authorization")
-            pattern     (re-pattern "^Basic (.+)$")
-            matches     (re-find pattern auth-header)
-            decoded     (base64->str (get matches 1))]
+  (maybe-let [headers-map (:headers request)
+              auth-header (get headers-map "authorization")
+              pattern     (re-pattern "^Basic (.+)$")
+              matches     (re-find pattern auth-header)
+              decoded     (base64->str (get matches 1))]
     (let [[username, password] (split decoded #":")]
       {:username username :password password})))
 
