@@ -2,7 +2,9 @@
   "Util functions for make conversion between string, bytes
 and encode them to base64 ot hex format."
   (:require [clojure.string :as str])
-  (:import (org.apache.commons.codec.binary Base64 Hex)))
+  (:import org.apache.commons.codec.binary.Base64
+           org.apache.commons.codec.binary.Hex
+           java.nio.ByteBuffer))
 
 (defn bytes?
   "Test if a first parameter is a byte
@@ -107,6 +109,19 @@ urlsafe base64 version."
       (str/replace "-" "+")
       (str/replace "_" "/")
       (base64->bytes)))
+
+(defn long->bytes
+  [^Long input]
+  (let [buffer (ByteBuffer/allocate (/ Long/SIZE 8))]
+    (.putLong buffer input)
+    (.array buffer)))
+
+(defn bytes->long
+  [^bytes input]
+  (let [buffer (ByteBuffer/allocate (/ Long/SIZE 8))]
+    (.put buffer input)
+    (.flip buffer)
+    (.getLong buffer)))
 
 (defprotocol ByteArray
   "Facility for convert input parameters
