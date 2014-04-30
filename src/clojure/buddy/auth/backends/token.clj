@@ -30,12 +30,12 @@
             matches     (re-find pattern auth-header)]
     (get matches 1)))
 
-(defrecord SignedTokenBackend [pkey unauthorized-handler maxage]
+(defrecord SignedTokenBackend [pkey unauthorized-handler max-age]
   proto/Authentication
   (parse [_ request]
     (parse-authorization-header request))
   (authenticate [_ request data]
-    (assoc request :identity (loads data pkey {:maxage maxage})))
+    (assoc request :identity (loads data pkey {:max-age max-age})))
 
   proto/Authorization
   (handle-unauthorized [_ request metadata]
@@ -67,8 +67,8 @@
             (status 401))))))
 
 (defn signed-token-backend
-  [pkey & {:keys [unauthorized-handler maxage]}]
-  (->SignedTokenBackend pkey unauthorized-handler maxage))
+  [pkey & {:keys [unauthorized-handler max-age]}]
+  (->SignedTokenBackend pkey unauthorized-handler max-age))
 
 (defn token-backend
   [authenticate-handler & {:keys [unauthorized-handler]}]
