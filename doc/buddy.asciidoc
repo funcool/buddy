@@ -48,6 +48,15 @@ Install
 This section covers installing _buddy_.
 
 
+Requirements
+~~~~~~~~~~~~
+
+_buddy_ has support for these jvm versions:
+
+- JDK7
+- JDK8
+
+
 Leiningen
 ~~~~~~~~~
 
