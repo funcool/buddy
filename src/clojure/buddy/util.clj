@@ -21,3 +21,10 @@
   `(domonad maybe-m
      ~bindings
      (do ~@body)))
+
+(defmacro maybe-let
+  "Simple helper for maybe monad."
+  [bindings & body]
+  `(domonad maybe-m
+            ~bindings
+            (do ~@body)))
