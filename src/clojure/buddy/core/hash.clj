@@ -55,8 +55,8 @@ from algorithm parameter."
       buffer))
 
   String
-  (make-digest [^String input ^keying alg]
-    (make-digest (->byte-array input) algorithm))
+  (make-digest [^String input ^Keyword alg]
+    (make-digest (->byte-array input) alg))
 
   java.io.InputStream
   (make-digest [^java.io.InputStream input ^Keyword alg]
