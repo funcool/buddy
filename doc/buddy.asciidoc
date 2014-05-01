@@ -385,7 +385,34 @@ RSASSA-PSS is an improved probabilistic signature scheme with
 appendix. What that means is that you can use a private RSA key
 to sign data in combination with some random input.
 
-http://www.ietf.org/rfc/rfc3447.txt
+link:http://www.ietf.org/rfc/rfc3447.txt[rfc3447.txt]
+
+.Sign sample string using rsassa-pss.
+[source, clojure]
+----
+(require '[buddy.core.keys :as keys])
+(require '[buddy.core.sign :as sign])
+
+;; Read private key
+(def rsaprivkey (keys/private-key "test/_files/privkey.3des.rsa.pem" "secret"))
+
+;; Make signature
+(def signature (sign/rsassa-pss-sha256 "foo" rsaprivkey))
+
+;; Now signature contains a byte[] with signature of "foo" string
+----
+
+.Verify signature using rsassa-pss.
+[source, clojure]
+----
+;; Read private key
+(def rsapubkey (keys/private-key "test/_files/pubkey.3des.rsa.pem"))
+
+;; Make verification
+(sign/rsassa-pss-sha256-verify "foo" signature rsapubkey))
+;; => true
+----
+
 
 
 RSASSA PKCS1 v1.5
@@ -394,7 +421,34 @@ RSASSA PKCS1 v1.5
 RSASSA-PSS is an probabilistic signature scheme with appendix.
 What that means is that you can use a private RSA key to sign data.
 
-http://www.ietf.org/rfc/rfc3447.txt
+link:http://www.ietf.org/rfc/rfc3447.txt[rfc3447.txt]
+
+
+.Sign sample string using rsassa-pkcs.
+[source, clojure]
+----
+(require '[buddy.core.keys :as keys])
+(require '[buddy.core.sign :as sign])
+
+;; Read private key
+(def rsaprivkey (keys/private-key "test/_files/privkey.3des.rsa.pem" "secret"))
+
+;; Make signature
+(def signature (sign/rsassa-pkcs-sha256 "foo" rsaprivkey))
+
+;; Now signature contains a byte[] with signature of "foo" string
+----
+
+.Verify signature using rsassa-pkcs.
+[source, clojure]
+----
+;; Read private key
+(def rsapubkey (keys/private-key "test/_files/pubkey.3des.rsa.pem"))
+
+;; Make verification
+(sign/rsassa-pkcs-sha256-verify "foo" signature rsapubkey))
+;; => true
+----
 
 
 Eliptic Curve DSA
