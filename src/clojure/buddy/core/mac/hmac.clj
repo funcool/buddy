@@ -16,12 +16,13 @@
   "Hash-based Message Authentication Codes (HMACs)"
   (:require [buddy.core.codecs :refer :all]
             [buddy.core.util :refer [concat-byte-arrays]]
-            [buddy.core.hash :refer [sha512]]
+            [buddy.core.hash :as hash]
             [clojure.java.io :as io])
-  (:import javax.crypto.Mac
-           javax.crypto.spec.SecretKeySpec
-           java.security.MessageDigest
-           java.util.Arrays))
+  (:import org.bouncycastle.crypto.macs.HMac
+           org.bouncycastle.crypto.Mac
+           org.bouncycastle.crypto.params.KeyParameter
+           clojure.lang.Keyword
+           buddy.Arrays))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Low level private function with all logic for make
@@ -29,141 +30,147 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (defn- make-hmac-for-plain-data
-  [^bytes data, pkey, ^String algorithm]
-  (let [bkey (->byte-array pkey)
-        sks  (SecretKeySpec. bkey algorithm)
-        mac  (Mac/getInstance algorithm)]
-    (.init mac sks)
-    (.doFinal mac data)))
+  [^bytes input, pkey, ^Keyword alg]
+  (let [digest (hash/resolve-digest alg)
+        kp     (KeyParameter. (->byte-array pkey))
+        mac    (HMac. digest)
+        buffer (byte-array (.getMacSize mac))]
+    (doto mac
+      (.init kp)
+      (.update input 0 (count input))
+      (.doFinal buffer 0))
+    buffer))
 
 (defn- verify-hmac-for-plain-data
-  [^bytes data, ^bytes signature, pkey, ^String algorithm]
-  (let [sig (make-hmac-for-plain-data data pkey algorithm)]
+  [^bytes input, ^bytes signature, pkey, ^Keyword alg]
+  (let [sig (make-hmac-for-plain-data input pkey alg)]
     (Arrays/equals sig signature)))
 
 (defn- make-hmac-for-stream
-  [^java.io.InputStream stream, pkey, ^String algorithm]
-  (let [bkey (->byte-array pkey)
-        sks  (SecretKeySpec. bkey algorithm)
-        bfr  (byte-array 5120)
-        mac  (Mac/getInstance algorithm)]
-    (.init mac sks)
+  [^java.io.InputStream input, pkey, ^Keyword alg]
+  (let [digest  (hash/resolve-digest alg)
+        kp      (KeyParameter. (->byte-array pkey))
+        mac     (HMac. digest)
+        buffer1 (byte-array 5120)
+        buffer2 (byte-array (.getMacSize mac))]
+    (.init mac kp)
     (loop []
-      (let [readed (.read stream bfr 0 5120)]
+      (let [readed (.read input buffer1 0 5120)]
         (when-not (= readed -1)
-          (.update mac bfr 0 readed)
+          (.update mac buffer1 0 readed)
           (recur))))
-    (.doFinal mac)))
+    (.doFinal mac buffer2 0)
+    buffer2))
 
 (defn- verify-hmac-for-stream
-  [^java.io.InputStream stream, ^bytes signature, pkey, ^String algorithm]
-  (let [sig (make-hmac-for-stream stream pkey algorithm)]
+  [^java.io.InputStream input, ^bytes signature, pkey, ^Keyword alg]
+  (let [sig (make-hmac-for-stream input pkey alg)]
     (Arrays/equals sig signature)))
 
-(defprotocol HMac
+(defprotocol HMacType
   "Unified protocol for calculate a keyed-hash message.
 It comes with default implementations for bytes, String,
 InputStream, File, URL and URI."
-  (make-hmac [data key algorithm] "Calculate hmac for data using key and algorithm.")
-  (verify-hmac [data signature key algorithm] "Verify hmac for data using key and algorithm."))
+  (make-hmac [data key alg] "Calculate hmac for input using key and alg.")
+  (verify-hmac [data signature key alg] "Verify hmac for input using key and alg."))
 
 (alter-meta! #'make-hmac assoc :no-doc true :private true)
 (alter-meta! #'verify-hmac assoc :no-doc true :private true)
 
-(extend-protocol HMac
+(extend-protocol HMacType
   (Class/forName "[B")
-  (make-hmac [^bytes data key ^String algorithm]
-    (make-hmac-for-plain-data data key algorithm))
-  (verify-hmac [^bytes data ^bytes signature ^String key ^String algorithm]
-    (verify-hmac-for-plain-data data signature key algorithm))
+  (make-hmac [^bytes input key ^Keyword alg]
+    (make-hmac-for-plain-data input key alg))
+  (verify-hmac [^bytes input ^bytes signature ^String key ^Keyword alg]
+    (verify-hmac-for-plain-data input signature key alg))
 
   java.lang.String
-  (make-hmac [^String data key ^String algorithm]
-    (make-hmac-for-plain-data (->byte-array data) key algorithm))
-  (verify-hmac [^String data ^bytes signature ^String key ^String algorithm]
-    (verify-hmac-for-plain-data (->byte-array data) signature key algorithm))
+  (make-hmac [^String input key ^Keyword alg]
+    (make-hmac-for-plain-data (->byte-array input) key alg))
+  (verify-hmac [^String input ^bytes signature ^String key ^Keyword alg]
+    (verify-hmac-for-plain-data (->byte-array input) signature key alg))
 
   java.io.InputStream
-  (make-hmac [^java.io.InputStream data key ^String algorithm]
-    (make-hmac-for-stream data key algorithm))
-  (verify-hmac [^java.io.InputStream data ^bytes signature ^String key ^String algorithm]
-    (verify-hmac-for-stream data signature key algorithm))
+  (make-hmac [^java.io.InputStream input key ^Keyword alg]
+    (make-hmac-for-stream input key alg))
+  (verify-hmac [^java.io.InputStream input ^bytes signature ^String key ^Keyword alg]
+    (verify-hmac-for-stream input signature key alg))
 
   java.io.File
-  (make-hmac [^java.io.File data key ^String algorithm]
-    (make-hmac-for-stream (io/input-stream data) key algorithm))
-  (verify-hmac [^java.io.File data ^bytes signature ^String key ^String algorithm]
-    (verify-hmac-for-stream (io/input-stream data) signature key algorithm))
+  (make-hmac [^java.io.File input key ^Keyword alg]
+    (make-hmac-for-stream (io/input-stream input) key alg))
+  (verify-hmac [^java.io.File input ^bytes signature ^String key ^Keyword alg]
+    (verify-hmac-for-stream (io/input-stream input) signature key alg))
 
   java.net.URL
-  (make-hmac [^java.net.URL data key ^String algorithm]
-    (make-hmac-for-stream (io/input-stream data) key algorithm))
-  (verify-hmac [^java.net.URL data ^bytes signature ^String key ^String algorithm]
-    (verify-hmac-for-stream (io/input-stream data) signature key algorithm))
+  (make-hmac [^java.net.URL input key ^Keyword alg]
+    (make-hmac-for-stream (io/input-stream input) key alg))
+  (verify-hmac [^java.net.URL input ^bytes signature ^String key ^Keyword alg]
+    (verify-hmac-for-stream (io/input-stream input) signature key alg))
 
   java.net.URI
-  (make-hmac [^java.net.URI data key ^String algorithm]
-    (make-hmac-for-stream (io/input-stream data) key algorithm))
-  (verify-hmac [^java.net.URI data ^bytes signature ^String key ^String algorithm]
-    (verify-hmac-for-stream (io/input-stream data) signature key algorithm)))
+  (make-hmac [^java.net.URI input key ^Keyword alg]
+    (make-hmac-for-stream (io/input-stream input) key alg))
+  (verify-hmac [^java.net.URI input ^bytes signature ^String key ^Keyword alg]
+    (verify-hmac-for-stream (io/input-stream input) signature key alg)))
 
 (defn- make-salted-hmac
   "Generic function that implement salted variant
 of keyed-hash message authentication code (hmac).
 This is a low level function and always return bytes."
-  [data key salt ^String algorithm]
+  [input key salt ^Keyword alg]
   (let [key (concat-byte-arrays (->byte-array key)
                                 (->byte-array salt))]
-    (make-hmac data (sha512 key) algorithm)))
+    (make-hmac input (hash/sha512 key) alg)))
 
 (defn- verify-salted-hmac
-  [data ^bytes signature key salt ^String algorithm]
+  [input ^bytes signature key salt ^Keyword alg]
   (let [key (concat-byte-arrays (->byte-array key)
                                 (->byte-array salt))]
-    (verify-hmac data signature (sha512 key) algorithm)))
+    (verify-hmac input signature (hash/sha512 key) alg)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; High level interface
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (defn hmac
-  [data key ^String algorithm]
-  (make-hmac data key algorithm))
+  [input key ^Keyword alg]
+  (make-hmac input key alg))
 
 (defn hmac-verify
-  [data ^bytes signature key ^String algorithm]
-  (verify-hmac data signature key algorithm))
+  [input ^bytes signature key ^Keyword alg]
+  (verify-hmac input signature key alg))
 
 (defn shmac
   "Generic function that exposes a high level
 interface for salted variant of keyed-hash message
 authentication code algorithm."
-  [data, key, salt, ^String algorithm]
-  (make-salted-hmac data key salt algorithm))
+  [input key salt ^Keyword alg]
+  (make-salted-hmac input key salt alg))
 
 (defn shmac-verify
   "Generic function that exposes a high level
 interface for salted variant of keyed-hash message
 authentication code verification algorithm."
-  [data ^bytes signature key ^String salt ^String algorithm]
-  (verify-salted-hmac data signature key salt algorithm))
+  [input ^bytes signature key salt ^Keyword alg]
+  (verify-salted-hmac input signature key salt alg))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Most used aliases
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 ;; Alias for hmac + sha2 hash algorithms
-(def hmac-sha256 #(hmac %1 %2 "HmacSHA256"))
-(def hmac-sha384 #(hmac %1 %2 "HmacSHA384"))
-(def hmac-sha512 #(hmac %1 %2 "HmacSHA512"))
-(def hmac-sha256-verify #(hmac-verify %1 %2 %3 "HmacSHA256"))
-(def hmac-sha384-verify #(hmac-verify %1 %2 %3 "HmacSHA384"))
-(def hmac-sha512-verify #(hmac-verify %1 %2 %3 "HmacSHA512"))
+(def hmac-sha256 #(hmac %1 %2 :sha256))
+(def hmac-sha384 #(hmac %1 %2 :sha384))
+(def hmac-sha512 #(hmac %1 %2 :sha512))
+(def hmac-sha256-verify #(hmac-verify %1 %2 %3 :sha256))
+(def hmac-sha384-verify #(hmac-verify %1 %2 %3 :sha384))
+(def hmac-sha512-verify #(hmac-verify %1 %2 %3 :sha512))
 
 ;; Alias for salted hmac + sha2 hash algorithms
-(def shmac-sha256 #(shmac %1 %2 %3 "HmacSHA256"))
-(def shmac-sha384 #(shmac %1 %2 %3 "HmacSHA384"))
-(def shmac-sha512 #(shmac %1 %2 %3 "HmacSHA512"))
-(def shmac-sha256-verify #(shmac-verify %1 %2 %3 %4 "HmacSHA256"))
-(def shmac-sha384-verify #(shmac-verify %1 %2 %3 %4 "HmacSHA384"))
-(def shmac-sha512-verify #(shmac-verify %1 %2 %3 %4 "HmacSHA512"))
+(def shmac-sha256 #(shmac %1 %2 %3 :sha256))
+(def shmac-sha384 #(shmac %1 %2 %3 :sha384))
+(def shmac-sha512 #(shmac %1 %2 %3 :sha512))
+(def shmac-sha256-verify #(shmac-verify %1 %2 %3 %4 :sha256))
+(def shmac-sha384-verify #(shmac-verify %1 %2 %3 %4 :sha384))
+(def shmac-sha512-verify #(shmac-verify %1 %2 %3 %4 :sha512))
