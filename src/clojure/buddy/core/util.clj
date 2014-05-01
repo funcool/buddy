@@ -25,7 +25,6 @@ one unique byte array and return it."
   [& parts]
   (byte-array (for [ar parts
                     i  ar] i)))
-
 (defn random-bytes
   "Generate a byte array of random bytes using
   secure random generator."

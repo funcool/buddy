@@ -263,7 +263,38 @@ Functions like *hmac-sha256* just alias the more generic functions
 Poly1305
 ^^^^^^^^
 
-TODO
+Poly1305-AES is a cryptographic message authentication code
+(MAC) written by Daniel J. Bernstein. It can be used to verify the
+data integrity and the authenticity of a message.
+
+The security of Poly1305-AES is very close to the underlying AES
+block cipher algorithm. As a result, the only way for an attacker
+to break Poly1305-AES is to break AES.
+
+Poly1305-AES offers also cipher replaceability. If anything does
+go wrong with AES, it can be substituted with identical security
+guarantee.
+
+Unlike *HMac*, it requires initialization vector (IV). Is like a
+salt, but required for security guarantee, and it should be generated
+using strong random number generator. Also, iv should be of same
+length as choised cipher block size.
+
+Basic usage
++++++++++++
+
+.Make mac using Serpent block cipher with random IV
+[source, clojure]
+----
+(require '[buddy.core.codecs :refe [bytes->hex]])
+(require '[buddy.core.mac.poly1305 :as poly])
+(require '[buddy.core.keys :refer [make-random-bytes]])
+
+(let [iv  (make-random-bytes 16)
+      mac (poly/poly1305 "some-data" "mysecret" iv :serpent)]
+  (println (bytes->hex mac)))
+;; => "1976b1c490c306e7304a59dfacee4207"
+----
 
 
 Digital Signatures
