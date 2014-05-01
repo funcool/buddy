@@ -11,6 +11,7 @@ Date: unreleased
 - Add chacha20 crypto algorithm support.
 - Changed generic sign output format (security improvements but backward incompatible)
 - Changed maxage parameter to more consistent max-age on token auth backend.
+- Make buddy.core.hash namespace more consistent with rest buddy api.
 - Add key derivation functions: HKDF
 
 Version 0.1.1
