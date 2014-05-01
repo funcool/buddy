@@ -107,11 +107,219 @@ You can clone the public repository with this command:
 git clone https://github.com/niwibe/buddy
 ----
 
-User guide
-----------
 
-Signing
+Core library
+------------
+
+Buddy is splitted in "two libraries", the low level interface
+and high level interface.
+
+Low level interface is located on `buddy.core` namespace and
+has implementations for:
+
+- cryptographyc hash algorithms
+- key derivation algorithms
+- digital signature
+- message authentication (mac)
+- cryptography algorithms (block & stream ciphers)
+
+
+Cryptographic hash algorithms
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+All hash algorithms are located on the `buddy.core.hash` namespace.
+
+.Available hash algorithms
+[options="header"]
+|===============================================
+| Hash algorithm name  | Digest size
+| SHA1                 | 160
+| SHA2                 | 256, 384, 512
+| SHA3                 | 256, 384, 512
+| MD5                  | 128
+| Tiger                | 192
+|===============================================
+
+Basic usage
+^^^^^^^^^^^
+
+.Import namespace example:
+[source, clojure]
+----
+(require '[buddy.core.hash :as hash])
+(require '[buddy.core.codecs :refer :all])
+----
+
+.Usage examples:
+[source, clojure]
+----
+(hash/sha256 "foo bar")
+;; -> #<byte[] [B@162a657e>
+
+(-> (hash/sha256 "foo bar")
+    (bytes->hex))
+;; -> "fbc1a9f858ea9e177916964bd88c3d37b91a1e84412765e29950777f265c4b75"
+----
+
+
+Advanced usage
+^^^^^^^^^^^^^^
+
+Hash functions are implemented using protocols and it can be extended
+to other types. The default implementations also comes with implementation
+for file like objects (*File*, *URL*, URI* and *InputStream*).
+
+.Make hash of file example:
+[source, clojure]
+----
+;; Additional import for easy open files
+(require '[clojure.java.io :as io])
+
+(-> (hash/sha256 (io/input-stream "/tmp/some-file"))
+    (bytes->hex))
+;; -> "bba878639499c8449f69efbfc699413eebfaf41d4b7a7faa560bfaf7e93a43dd"
+----
+
+You can extend it for your own types using the
+*buddy.core.hash/Digest* protocol:
+
+[source,clojure]
+----
+(defprotocol Digest
+  (make-digest [data algorithm]))
+----
+
+[NOTE]
+Functions like *sha256* are aliases for the more generic
+function *digest*.
+
+
+Message authentication code algorithms
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+Buddy comes with two mac implementations: *HMac* and *Poly1305*.
+
+HMac
+^^^^
+
+There are two variants of hmac: simple and salted. Both are available
+in `buddy.core.mac.hmac` namespace.
+
+Basic usage
++++++++++++
+
+[source, clojure]
+----
+;; Import required namespaces
+(require '[buddy.core.mac.hmac :as hmac])
+(require '[buddy.core.codecs :refer :all])
+
+;; Generate sha256 hmac over string
+(-> (hmac/hmac-sha256 "foo bar" "mysecretkey")
+    (bytes->hex))
+;; -> "61849448bdbb67b39d609471eead667e65b0d1b9e01b1c3bf7aa56b83e9c8083"
+
+;; Same example but using salted variant
+(-> (hmac/salted-hmac-sha256 "foo bar" "salt" "mysecretkey")
+    (bytes->hex))
+;; -> "bd5f7a0040430a73f4845bac8f980c6398b4baae8a22efcc22038be0f4dd9678"
+----
+
+The key parameter can be any type that implements the *ByteArray* protocol
+defined on `buddy.core.codecs` namespace. It comes with default implementation for
+`byte[]` and `java.lang.String`.
+
+
+Advanced usage
+++++++++++++++
+
+Like hash functions, hmac is implemented using Clojure
+protocols and it comes with default implementated for: String, byte[], 
+*File*, *URL*, *URI* and *InputStream*.
+
+[source,clojure]
+----
+(require '[clojure.java.io :as io])
+
+;; Generate hmac for file
+(-> (io/input-stream "/tmp/somefile")
+    (hmac/hmac-sha256 "mysecretkey")
+    (bytes->hex))
+;; -> "4cb793e600848da2053238003fce4c010233c49df3e6a04119b4287eb464c27e"
+----
+
+You can extend it for your own types using `buddy.core.hmac/HMac` protocol:
+
+[source,clojure]
+----
+(defprotocol HMac
+  (make-hmac [data key algorithm]))
+----
+
+[NOTE]
+Functions like *hmac-sha256* just alias the more generic functions
+*hmac* and *shmac*.
+
+
+Poly1305
+^^^^^^^^
+
+TODO
+
+
+Digital Signatures
+~~~~~~~~~~~~~~~~~~
+
+RSASSA PSS
+^^^^^^^^^^
+
+TODO
+
+
+RSASSA PKCS1 v1.5
+^^^^^^^^^^^^^^^^^
+
+TODO
+
+
+Eliptic Curve DSA
+^^^^^^^^^^^^^^^^^
+
+TODO
+
+
+Key Derivation Functions
+~~~~~~~~~~~~~~~~~~~~~~~~
+
+TODO
+
+
+Ciphers
 ~~~~~~~
+
+TODO
+
+
+Public/Private keys reading
+~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+TODO
+
+Codecs (binary -> string conversion)
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+Implements some useful and widely used around all buddy library functions
+for make conversions between strings, bytes, hex encoded strings and base64
+encoded strings.
+
+No documentation found for this part, but you can view source code for it.
+
+
+High Level Library
+------------------
+
+Message Signing
+~~~~~~~~~~~~~~~
 
 The "signing framework" of _buddy_ is mainly based on django's
 link:https://docs.djangoproject.com/en/1.6/topics/signing/[Cryptographic
@@ -142,7 +350,7 @@ NOTE: this library is used by one of authentication backends for implement token
 [NOTE]
 ====
 Only HMAC based algorithm supports plain text secret keys, If you want use
-more Digital Signature instead of hmac, you must have a key pair (public and private).
+Digital Signature instead of hmac, you must have a key pair (public and private).
 ====
 
 
@@ -280,14 +488,14 @@ Signature algorithms also previously mentioned.
 ----
 
 
-Hashers
-~~~~~~~
+Password Hashers
+~~~~~~~~~~~~~~~~
 
 Another important part of a good authentication/authorization library
 is providing some facilities for generating secure passwords.
 
 _buddy_ comes with a few functions for generating and verifying passwords
-with the widely used password derivation algorithms bcrypt and pbkdf2.
+with the widely used password derivation algorithms: bcrypt and pbkdf2.
 
 .Supported password hashers algorithms
 [options="header"]
@@ -320,9 +528,17 @@ hash.
 
 [NOTE]
 ====
-`make-password` accept distinct parameters depending on hasher implementation.
+`make-password` accept distinct parameters depending on hasher implementation and all functions
+works with strings instead of bytes (unlike cryptographyc hash functions).
 ====
 
+
+Web extensions
+--------------
+
+Additionaly, buddy commes with web libraries support for authentication and authorization. It
+mainly works with ring/compojure combination but in future can be extended for work with other
+libraries
 
 Authentication
 ~~~~~~~~~~~~~~
@@ -440,7 +656,6 @@ The authorization system is splited in two parts:
   for handle unauthorized requsts.
 - access rules system based on matching urls using regular expressions and apply some
   rules handlers. The idea is taken from `lib-noir` but with slighty distinct approach.
-
 
 Generic authorization
 ^^^^^^^^^^^^^^^^^^^^^
@@ -722,165 +937,6 @@ This is a flow that follows authorization middleware:
    any part of your handler.
 3. handle-unauthorized is executed of your backend, if user has specified it own function,
    the user defined function is executed else, default behavior is executed.
-
-
-Core library
-------------
-
-Behind the scenes, _buddy_ uses an low-level library exposed in the
-`buddy.core` namespace, that contains implementations for:
-
-- hash functions
-- crypt functions
-- mac functions
-- digital signature functions
-- encoding functions (base64, hex, ...)
-
-
-Cryptographic hash algorithms
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-
-All hash algorithms interface is located on the `buddy.core.hash` namespace.
-
-.Available hash algorithms
-[options="header"]
-|===============================================
-| Hash algorithm name  | Digest size
-| SHA1                 | 160
-| SHA2                 | 256, 384, 512
-| SHA3                 | 256, 384, 512
-| MD5                  | 128
-|===============================================
-
-
-Basic usage
-^^^^^^^^^^^
-
-.Import namespace example:
-[source, clojure]
-----
-(require '[buddy.core.hash :as hash])
-(require '[buddy.core.codecs :refer :all])
-----
-
-.Usage examples:
-[source, clojure]
-----
-(hash/sha256 "foo bar")
-;; -> #<byte[] [B@162a657e>
-
-(-> (hash/sha256 "foo bar")
-    (bytes->hex))
-;; -> "fbc1a9f858ea9e177916964bd88c3d37b91a1e84412765e29950777f265c4b75"
-----
-
-
-Advanced usage
-^^^^^^^^^^^^^^
-
-Hash functions are implemented using protocols and it can be extended
-to other types. The default implementations also comes with implementation
-for file like objects (*File*, *URL*, URI* and *InputStream*).
-
-.Make hash of file example:
-[source, clojure]
-----
-;; Additional import for easy open files
-(require '[clojure.java.io :as io])
-
-(-> (hash/sha256 (io/input-stream "/tmp/some-file"))
-    (bytes->hex))
-;; -> "bba878639499c8449f69efbfc699413eebfaf41d4b7a7faa560bfaf7e93a43dd"
-----
-
-You can extend it for your own types using the
-*buddy.core.hash/Digest* protocol:
-
-[source,clojure]
-----
-(defprotocol Digest
-  (make-digest [data algorithm]))
-----
-
-[NOTE]
-Functions like *sha256* are aliases for the more generic
-function *digest*.
-
-
-Hash-based message authentication
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-
-buddy comes with two variants of *hmac*: standard and salted. Both are
-available in `buddy.core.hmac` namespace.
-
-Basic usage
-^^^^^^^^^^^
-
-[source, clojure]
-----
-;; Import required namespaces
-(require '[buddy.core.hmac :as hmac])
-(require '[buddy.core.codecs :refer :all])
-
-;; Generate sha256 hmac over string
-(-> (hmac/hmac-sha256 "foo bar" "mysecretkey")
-    (bytes->hex))
-;; -> "61849448bdbb67b39d609471eead667e65b0d1b9e01b1c3bf7aa56b83e9c8083"
-
-;; Same example but using salted variant
-(-> (hmac/salted-hmac-sha256 "foo bar" "salt" "mysecretkey")
-    (bytes->hex))
-;; -> "bd5f7a0040430a73f4845bac8f980c6398b4baae8a22efcc22038be0f4dd9678"
-----
-
-[NOTE]
-====
-The key parameter can be any type that implements the *ByteArray* protocol
-defined on `buddy.core.codecs` namespace. It comes with default implementation for
-`byte[]` and `java.lang.String`.
-====
-
-
-Advanced usage
-^^^^^^^^^^^^^^
-
-Like the other hash functions, hmac is implemented using Clojure
-protocols and is implementated for: String, byte[], *File*, *URL*,
-*URI* and *InputStream*.
-
-[source,clojure]
-----
-;; Additional import for easy open files
-(require '[clojure.java.io :as io])
-
-;; Generate hmac for file
-(-> (io/input-stream "/tmp/somefile")
-    (hmac/hmac-sha256 "mysecretkey")
-    (bytes->hex))
-;; -> "4cb793e600848da2053238003fce4c010233c49df3e6a04119b4287eb464c27e"
-----
-
-You can extend it for your own types using `buddy.core.hmac/HMac` protocol:
-
-[source,clojure]
-----
-(defprotocol HMac
-  (make-hmac [data key algorithm]))
-----
-
-[NOTE]
-Functions like *hmac-sha256* just alias the more generic functions
-*hmac* and *salted-hmac*.
-
-
-Codecs (binary -> string conversion)
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-
-Implements some useful and widely used around all buddy library functions
-for make conversions between strings, bytes, hex encoded strings and base64
-encoded strings.
-
-No documentation found for this part, but you can view source code for it.
 
 
 Examples
