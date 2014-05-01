@@ -11,6 +11,7 @@
             [buddy.hashers.scrypt :as scrypt]
             [buddy.core.mac.poly1305 :as poly]
             [buddy.core.crypto.chacha :as chacha]
+            [buddy.core.kdf :as kdf]
             [clojure.java.io :as io])
   (:import buddy.Arrays))
 
@@ -109,3 +110,30 @@
         (is (Arrays/equals plain1 (chacha/decrypt encrypted key1 iv1)))
         (is (not (Arrays/equals plain1 (chacha/decrypt encrypted key1 iv2))))
         (is (not (Arrays/equals plain1 (chacha/decrypt encrypted key2 iv1))))))))
+
+
+(deftest buddy-core-kdf
+  (let [key1 (make-random-bytes 32)
+        key2 (make-random-bytes 16)
+        salt (make-random-bytes 8)
+        info (make-random-bytes 8)]
+    (testing "HKDF with sha256 with info"
+      (let [generator1 (kdf/hkdf key1 salt info :sha256)
+            generator2 (kdf/hkdf key1 salt info :sha256)
+            bytes1     (kdf/generate-bytes! generator1 8)
+            bytes2     (kdf/generate-bytes! generator1 8)
+            bytes3     (kdf/generate-bytes! generator1 8)
+            bytes4     (kdf/generate-bytes! generator1 8)]
+        (is (Arrays/equals bytes1 (kdf/generate-bytes! generator2 8)))
+        (is (Arrays/equals bytes2 (kdf/generate-bytes! generator2 8)))
+        (is (Arrays/equals bytes3 (kdf/generate-bytes! generator2 8)))
+        (is (Arrays/equals bytes4 (kdf/generate-bytes! generator2 8)))))
+    (testing "HKDF with sha256 without info"
+      (let [generator1 (kdf/hkdf key1 salt nil :sha256)
+            generator2 (kdf/hkdf key1 salt nil :sha256)
+            bytes1     (kdf/generate-bytes! generator1 8)
+            bytes2     (kdf/generate-bytes! generator1 8)]
+        (is (Arrays/equals bytes1 (kdf/generate-bytes! generator2 8)))
+        (is (Arrays/equals bytes2 (kdf/generate-bytes! generator2 8)))))
+))
+
