@@ -344,34 +344,176 @@ protocols and it comes with default implementated for: String, byte[],
 </div>
 <div class="sect3">
 <h4 id="_poly1305">4.2.2. Poly1305</h4>
-<div class="paragraph"><p>TODO</p></div>
+<div class="paragraph"><p>Poly1305 is a cryptographic message authentication code
+(MAC) written by Daniel J. Bernstein. It can be used to verify the
+data integrity and the authenticity of a message.</p></div>
+<div class="paragraph"><p>The security of Poly1305 is very close to the bock cipher algorithm.
+As a result, the only way for an attacker to break Poly1305 is to break
+the cipher.</p></div>
+<div class="paragraph"><p>Poly1305 offers cipher replaceability. If anything does
+go wrong with one, it can be substituted with an other with identical
+security guarantee.</p></div>
+<div class="paragraph"><p>Unlike <strong>HMac</strong>, it requires initialization vector (IV). Is like a
+salt, but required for security guarantee, and it should be generated
+using strong random number generator. Also, iv should be of same
+length as choised cipher block size.</p></div>
+<div class="sect4">
+<h5 id="_basic_usage_3">Basic usage</h5>
+<div class="paragraph"><p>The default specification talks about AES as default block cipher,
+but buddy comes with support for three block ciphers: AES, Serpent
+and Twofish.</p></div>
+<div class="listingblock">
+<div class="title">Make mac using Serpent block cipher with random IV</div>
+<div class="content"><div class="highlight"><pre><span class="p">(</span><span class="nf">require</span> <span class="o">&#39;</span><span class="p">[</span><span class="nv">buddy.core.codecs</span> <span class="ss">:refe</span> <span class="p">[</span><span class="nv">bytes-&gt;hex</span><span class="p">]])</span>
+<span class="p">(</span><span class="nf">require</span> <span class="o">&#39;</span><span class="p">[</span><span class="nv">buddy.core.mac.poly1305</span> <span class="ss">:as</span> <span class="nv">poly</span><span class="p">])</span>
+<span class="p">(</span><span class="nf">require</span> <span class="o">&#39;</span><span class="p">[</span><span class="nv">buddy.core.keys</span> <span class="ss">:refer</span> <span class="p">[</span><span class="nv">make-random-bytes</span><span class="p">]])</span>
+
+<span class="p">(</span><span class="k">let </span><span class="p">[</span><span class="nv">iv</span>  <span class="p">(</span><span class="nf">make-random-bytes</span> <span class="mi">16</span><span class="p">)</span>
+      <span class="nv">mac</span> <span class="p">(</span><span class="nf">poly/poly1305</span> <span class="s">&quot;some-data&quot;</span> <span class="s">&quot;mysecret&quot;</span> <span class="nv">iv</span> <span class="ss">:serpent</span><span class="p">)]</span>
+  <span class="p">(</span><span class="nb">println </span><span class="p">(</span><span class="nf">bytes-&gt;hex</span> <span class="nv">mac</span><span class="p">)))</span>
+<span class="c1">;; =&gt; &quot;1976b1c490c306e7304a59dfacee4207&quot;</span>
+</pre></div></div></div>
+</div>
 </div>
 </div>
 <div class="sect2">
-<h3 id="_digital_signatures">4.3. Digital Signatures</h3>
+<h3 id="_public_private_keypairs">4.3. Public/Private keypairs</h3>
+<div class="paragraph"><p>Before explaining digital signatures, you need read public/private keypairs
+and conver them to usable objects. Buddy has limited support for read:</p></div>
+<div class="ulist"><ul>
+<li>
+<p>
+RSA keypair
+</p>
+</li>
+<li>
+<p>
+ECDSA keypair
+</p>
+</li>
+</ul></div>
 <div class="sect3">
-<h4 id="_rsassa_pss">4.3.1. RSASSA PSS</h4>
-<div class="paragraph"><p>TODO</p></div>
+<h4 id="_rsa_keypair">4.3.1. RSA Keypair</h4>
+<div class="paragraph"><p>RSA keypair is used for obvious rsa encrypt/decrypt operations, but also
+is used for make digital signature with any rsa derived algorithm.</p></div>
+<div class="listingblock">
+<div class="title">Read keys</div>
+<div class="content"><div class="highlight"><pre><span class="p">(</span><span class="nf">require</span> <span class="o">&#39;</span><span class="p">[</span><span class="nv">buddy.core.keys</span> <span class="ss">:as</span> <span class="nv">keys</span><span class="p">])</span>
+
+<span class="c1">;; The last parameter is optional and is only mandatory</span>
+<span class="c1">;; if a private key is encrypted.</span>
+<span class="p">(</span><span class="k">def </span><span class="nv">privkey</span> <span class="p">(</span><span class="nf">keys/private-key</span> <span class="s">&quot;test/_files/privkey.3des.rsa.pem&quot;</span> <span class="s">&quot;secret&quot;</span><span class="p">)</span>
+<span class="p">(</span><span class="k">def </span><span class="nv">pubkey</span> <span class="p">(</span><span class="nf">keys/public-key</span> <span class="s">&quot;test/_files/pubkey.3des.rsa.pem&quot;</span><span class="p">))</span>
+</pre></div></div></div>
+<div class="listingblock">
+<div class="title">Generate a RSA Keypair using openssl.</div>
+<div class="content"><div class="highlight"><pre><span class="c"># Generate aes256 encrypted private key</span>
+openssl genrsa -aes256 -out privkey.pem 2048
+
+<span class="c"># Generate public key from previously created private key.</span>
+openssl rsa -pubout -in privkey.pem -out pubkey.pem
+</pre></div></div></div>
 </div>
 <div class="sect3">
-<h4 id="_rsassa_pkcs1_v1_5">4.3.2. RSASSA PKCS1 v1.5</h4>
-<div class="paragraph"><p>TODO</p></div>
+<h4 id="_ecdsa_keypair">4.3.2. ECDSA Keypair</h4>
+<div class="paragraph"><p>Like RSA keypair, ECDSA also are used for make a digital signature and
+can be readed like previous rsa examples.</p></div>
+<div class="listingblock">
+<div class="title">Read keys.</div>
+<div class="content"><div class="highlight"><pre><span class="p">(</span><span class="nf">require</span> <span class="o">&#39;</span><span class="p">[</span><span class="nv">buddy.core.keys</span> <span class="ss">:as</span> <span class="nv">keys</span><span class="p">])</span>
+
+<span class="c1">;; The last parameter is optional and is only mandatory</span>
+<span class="c1">;; if a private key is encrypted.</span>
+<span class="p">(</span><span class="k">def </span><span class="nv">privkey</span> <span class="p">(</span><span class="nf">keys/private-key</span> <span class="s">&quot;test/_files/privkey.ecdsa.pem&quot;</span> <span class="s">&quot;secret&quot;</span><span class="p">)</span>
+<span class="p">(</span><span class="k">def </span><span class="nv">pubkey</span> <span class="p">(</span><span class="nf">keys/public-key</span> <span class="s">&quot;test/_files/pubkey.ecdsa.pem&quot;</span><span class="p">))</span>
+</pre></div></div></div>
+<div class="listingblock">
+<div class="title">Generate a ECDSA Keypair using openssl.</div>
+<div class="content"><div class="highlight"><pre><span class="c"># Generating params file</span>
+openssl ecparam -name prime256v1 -out ecparams.pem
+
+<span class="c"># Generate a private key from params file</span>
+openssl ecparam -in ecparams.pem -genkey -noout -out ecprivkey.pem
+
+<span class="c"># Generate a public key from private key</span>
+openssl ec -in ecprivkey.pem -pubout -out ecpubkey.pem
+</pre></div></div></div>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_digital_signatures">4.4. Digital Signatures</h3>
+<div class="paragraph"><p>Digital Signatures differs from Mac as Mac values are both generated and verified
+using the same secret key. Digital Signatures requires public/private keypair, it
+signs using private key and verifies signature using a public key.</p></div>
+<div class="sect3">
+<h4 id="_rsassa_pss">4.4.1. RSASSA PSS</h4>
+<div class="paragraph"><p>RSASSA-PSS is an improved probabilistic signature scheme with
+appendix. What that means is that you can use a private RSA key
+to sign data in combination with some random input.</p></div>
+<div class="paragraph"><p><a href="http://www.ietf.org/rfc/rfc3447.txt">rfc3447.txt</a></p></div>
+<div class="listingblock">
+<div class="title">Sign sample string using rsassa-pss.</div>
+<div class="content"><div class="highlight"><pre><span class="p">(</span><span class="nf">require</span> <span class="o">&#39;</span><span class="p">[</span><span class="nv">buddy.core.keys</span> <span class="ss">:as</span> <span class="nv">keys</span><span class="p">])</span>
+<span class="p">(</span><span class="nf">require</span> <span class="o">&#39;</span><span class="p">[</span><span class="nv">buddy.core.sign</span> <span class="ss">:as</span> <span class="nv">sign</span><span class="p">])</span>
+
+<span class="c1">;; Read private key</span>
+<span class="p">(</span><span class="k">def </span><span class="nv">rsaprivkey</span> <span class="p">(</span><span class="nf">keys/private-key</span> <span class="s">&quot;test/_files/privkey.3des.rsa.pem&quot;</span> <span class="s">&quot;secret&quot;</span><span class="p">))</span>
+
+<span class="c1">;; Make signature</span>
+<span class="p">(</span><span class="k">def </span><span class="nv">signature</span> <span class="p">(</span><span class="nf">sign/rsassa-pss-sha256</span> <span class="s">&quot;foo&quot;</span> <span class="nv">rsaprivkey</span><span class="p">))</span>
+
+<span class="c1">;; Now signature contains a byte[] with signature of &quot;foo&quot; string</span>
+</pre></div></div></div>
+<div class="listingblock">
+<div class="title">Verify signature using rsassa-pss.</div>
+<div class="content"><div class="highlight"><pre><span class="c1">;; Read private key</span>
+<span class="p">(</span><span class="k">def </span><span class="nv">rsapubkey</span> <span class="p">(</span><span class="nf">keys/private-key</span> <span class="s">&quot;test/_files/pubkey.3des.rsa.pem&quot;</span><span class="p">))</span>
+
+<span class="c1">;; Make verification</span>
+<span class="p">(</span><span class="nf">sign/rsassa-pss-sha256-verify</span> <span class="s">&quot;foo&quot;</span> <span class="nv">signature</span> <span class="nv">rsapubkey</span><span class="p">))</span>
+<span class="c1">;; =&gt; true</span>
+</pre></div></div></div>
 </div>
 <div class="sect3">
-<h4 id="_eliptic_curve_dsa">4.3.3. Eliptic Curve DSA</h4>
-<div class="paragraph"><p>TODO</p></div>
+<h4 id="_rsassa_pkcs1_v1_5">4.4.2. RSASSA PKCS1 v1.5</h4>
+<div class="paragraph"><p>RSASSA-PSS is an probabilistic signature scheme with appendix.
+What that means is that you can use a private RSA key to sign data.</p></div>
+<div class="paragraph"><p><a href="http://www.ietf.org/rfc/rfc3447.txt">rfc3447.txt</a></p></div>
+<div class="listingblock">
+<div class="title">Sign sample string using rsassa-pkcs.</div>
+<div class="content"><div class="highlight"><pre><span class="p">(</span><span class="nf">require</span> <span class="o">&#39;</span><span class="p">[</span><span class="nv">buddy.core.keys</span> <span class="ss">:as</span> <span class="nv">keys</span><span class="p">])</span>
+<span class="p">(</span><span class="nf">require</span> <span class="o">&#39;</span><span class="p">[</span><span class="nv">buddy.core.sign</span> <span class="ss">:as</span> <span class="nv">sign</span><span class="p">])</span>
+
+<span class="c1">;; Read private key</span>
+<span class="p">(</span><span class="k">def </span><span class="nv">rsaprivkey</span> <span class="p">(</span><span class="nf">keys/private-key</span> <span class="s">&quot;test/_files/privkey.3des.rsa.pem&quot;</span> <span class="s">&quot;secret&quot;</span><span class="p">))</span>
+
+<span class="c1">;; Make signature</span>
+<span class="p">(</span><span class="k">def </span><span class="nv">signature</span> <span class="p">(</span><span class="nf">sign/rsassa-pkcs-sha256</span> <span class="s">&quot;foo&quot;</span> <span class="nv">rsaprivkey</span><span class="p">))</span>
+
+<span class="c1">;; Now signature contains a byte[] with signature of &quot;foo&quot; string</span>
+</pre></div></div></div>
+<div class="listingblock">
+<div class="title">Verify signature using rsassa-pkcs.</div>
+<div class="content"><div class="highlight"><pre><span class="c1">;; Read private key</span>
+<span class="p">(</span><span class="k">def </span><span class="nv">rsapubkey</span> <span class="p">(</span><span class="nf">keys/private-key</span> <span class="s">&quot;test/_files/pubkey.3des.rsa.pem&quot;</span><span class="p">))</span>
+
+<span class="c1">;; Make verification</span>
+<span class="p">(</span><span class="nf">sign/rsassa-pkcs-sha256-verify</span> <span class="s">&quot;foo&quot;</span> <span class="nv">signature</span> <span class="nv">rsapubkey</span><span class="p">))</span>
+<span class="c1">;; =&gt; true</span>
+</pre></div></div></div>
+</div>
+<div class="sect3">
+<h4 id="_eliptic_curve_dsa">4.4.3. Eliptic Curve DSA</h4>
+<div class="paragraph"><p>Elliptic Curve Digital Signature Algorithm (ECDSA) is a variant of the
+Digital Signature Algorithm (DSA) which uses elliptic curve cryptography.</p></div>
 </div>
 </div>
 <div class="sect2">
-<h3 id="_key_derivation_functions">4.4. Key Derivation Functions</h3>
+<h3 id="_key_derivation_functions">4.5. Key Derivation Functions</h3>
 <div class="paragraph"><p>TODO</p></div>
 </div>
 <div class="sect2">
-<h3 id="_ciphers">4.5. Ciphers</h3>
-<div class="paragraph"><p>TODO</p></div>
-</div>
-<div class="sect2">
-<h3 id="_public_private_keys_reading">4.6. Public/Private keys reading</h3>
+<h3 id="_ciphers">4.6. Ciphers</h3>
 <div class="paragraph"><p>TODO</p></div>
 </div>
 <div class="sect2">
@@ -1182,7 +1324,7 @@ limitations under the License.
 <div id="footer">
 <div id="footer-text">
 Version 0.1.2<br>
-Last updated 2014-05-01 22:46:36 CEST
+Last updated 2014-05-02 01:47:35 CEST
 </div>
 </div>
 </body>
