@@ -373,22 +373,35 @@ openssl ec -in ecprivkey.pem -pubout -out ecpubkey.pem
 Digital Signatures
 ~~~~~~~~~~~~~~~~~~
 
+Digital Signatures differs from Mac as Mac values are both generated and verified
+using the same secret key. Digital Signatures requires public/private keypair, it
+signs using private key and verifies signature using a public key.
+
+
 RSASSA PSS
 ^^^^^^^^^^
 
-TODO
+RSASSA-PSS is an improved probabilistic signature scheme with
+appendix. What that means is that you can use a private RSA key
+to sign data in combination with some random input.
+
+http://www.ietf.org/rfc/rfc3447.txt
 
 
 RSASSA PKCS1 v1.5
 ^^^^^^^^^^^^^^^^^
 
-TODO
+RSASSA-PSS is an probabilistic signature scheme with appendix.
+What that means is that you can use a private RSA key to sign data.
+
+http://www.ietf.org/rfc/rfc3447.txt
 
 
 Eliptic Curve DSA
 ^^^^^^^^^^^^^^^^^
 
-TODO
+Elliptic Curve Digital Signature Algorithm (ECDSA) is a variant of the
+Digital Signature Algorithm (DSA) which uses elliptic curve cryptography.
 
 
 Key Derivation Functions
@@ -402,11 +415,6 @@ Ciphers
 
 TODO
 
-
-Public/Private keys reading
-~~~~~~~~~~~~~~~~~~~~~~~~~~~
-
-TODO
 
 Codecs (binary -> string conversion)
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
