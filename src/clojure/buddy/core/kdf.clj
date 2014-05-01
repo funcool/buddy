@@ -9,10 +9,11 @@
            org.bouncycastle.crypto.generators.KDFDoublePipelineIterationBytesGenerator
            org.bouncycastle.crypto.params.HKDFParameters
            org.bouncycastle.crypto.params.KDFParameters
-           org.bouncycastle.crypto.Digest
-           org.bouncycastle.crypto.digests.SHA256Digest
-           org.bouncycastle.crypto.digests.SHA512Digest
-           clojure.lang.IFn
+           org.bouncycastle.crypto.params.KDFCounterParameters
+           org.bouncycastle.crypto.params.KDFFeedbackParameters
+           org.bouncycastle.crypto.params.KDFDoublePipelineIterationParameters
+           org.bouncycastle.crypto.macs.HMac
+           org.bouncycastle.crypto.Mac
            clojure.lang.Keyword))
 
 (defprotocol KDFType
@@ -78,3 +79,76 @@ than KDF's based on just a hash function."
         kdfimpl (KDF2BytesGenerator. digest)]
     (.init kdfimpl params)
     (->KDF digest kdfimpl)))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; Counter mode KDF
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+(defrecord CMKDF [mac salt r impl]
+  KDFType
+  (generate-bytes! [obj length] (generate-bytes-impl impl length)))
+
+(alter-meta! #'->CMKDF assoc :no-doc true :private true)
+(alter-meta! #'map->CMKDF assoc :no-doc true :private true)
+
+(defn cmkdf
+  "Counter mode KDF defined by the publicly available
+NIST SP 800-108 specification."
+  [^bytes keydata ^bytes salt ^Keyword alg & [{:keys [r] :or {r 32}}]]
+  (let [params  (KDFCounterParameters. keydata salt r)
+        digest  (hash/resolve-digest alg)
+        mac     (HMac. digest)
+        kdfimpl (KDFCounterBytesGenerator. mac)]
+    (.init kdfimpl params)
+    (->CMKDF mac salt r kdfimpl)))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; Feedback mode KDF
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+(defrecord FMKDF [mac salt r impl]
+  KDFType
+  (generate-bytes! [obj length] (generate-bytes-impl impl length)))
+
+(alter-meta! #'->FMKDF assoc :no-doc true :private true)
+(alter-meta! #'map->FMKDF assoc :no-doc true :private true)
+
+(defn fmkdf
+  "Counter mode KDF defined by the publicly available
+NIST SP 800-108 specification."
+  [^bytes keydata ^bytes salt ^Keyword alg & [{:keys [r use-counter] :or {r 32 use-counter true}}]]
+  ;; KDFFeedbackParameters takes iv and salt as parameter but
+  ;; at this momment, iv is totally ignored:
+  ;; https://github.com/bcgit/bc-java/../generators/KDFFeedbackBytesGenerator.java#L137
+  (let [params  (if use-counter
+                  (KDFFeedbackParameters/createWithCounter keydata salt salt r)
+                  (KDFFeedbackParameters/createWithoutCounter keydata salt salt))
+        digest  (hash/resolve-digest alg)
+        mac     (HMac. digest)
+        kdfimpl (KDFFeedbackBytesGenerator. mac)]
+    (.init kdfimpl params)
+    (->CMKDF mac salt r kdfimpl)))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; Feedback mode KDF
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+(defrecord DPIMKDF [mac salt r impl]
+  KDFType
+  (generate-bytes! [obj length] (generate-bytes-impl impl length)))
+
+(alter-meta! #'->FMKDF assoc :no-doc true :private true)
+(alter-meta! #'map->FMKDF assoc :no-doc true :private true)
+
+(defn dpimkdf
+  "Double-Pipeline Iteration Mode KDF defined by the publicly
+available NIST SP 800-108 specification."
+  [^bytes keydata ^bytes salt ^Keyword alg & [{:keys [r use-counter] :or {r 32 use-counter true}}]]
+  (let [params  (if use-counter
+                  (KDFDoublePipelineIterationParameters/createWithCounter keydata salt r)
+                  (KDFDoublePipelineIterationParameters/createWithoutCounter keydata salt))
+        digest  (hash/resolve-digest alg)
+        mac     (HMac. digest)
+        kdfimpl (KDFDoublePipelineIterationBytesGenerator. mac)]
+    (.init kdfimpl params)
+    (->DPIMKDF mac salt r kdfimpl)))
