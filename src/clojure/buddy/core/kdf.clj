@@ -1,5 +1,6 @@
 (ns buddy.core.kdf
   "Key derivation function interface."
+  (:require [buddy.core.hash :as hash])
   (:import org.bouncycastle.crypto.generators.KDF2BytesGenerator
            org.bouncycastle.crypto.generators.HKDFBytesGenerator
            org.bouncycastle.crypto.generators.KDFCounterBytesGenerator
@@ -12,28 +13,10 @@
            clojure.lang.IFn
            clojure.lang.Keyword))
 
-;; TODO: Unify factory with hash interface.
-
-(def ^{:doc "Available digests for KDF"
-       :dynamic true}
-  *available-digests* {:sha256 #(SHA256Digest.)
-                       :sha512 #(SHA512Digest.)})
-
-(defn- make-digest-instance
-  "Helper function for make Digest instances
-for algorithm parameter."
-  [alg]
-  (cond
-   (instance? Keyword alg) (let [factory (*available-digests* alg)]
-                             (factory))
-   (instance? IFn alg) (alg)
-   (instance? Digest alg) alg))
-
 (defprotocol KDFType
   "Generic type that unify access to any implementation
 of kdf implemented in buddy."
   (generate-bytes! [obj length] "Generate bytes"))
-
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; HKDF interface
@@ -57,7 +40,7 @@ Research &amp; P. Eronen, Nokia. It uses a HMac internally to compute de OKM
 than KDF's based on just a hash function."
   [^bytes keydata ^bytes salt ^bytes info ^Keyword alg]
   (let [params  (HKDFParameters. keydata salt info)
-        digest  (make-digest-instance alg)
+        digest  (hash/resolve-digest alg)
         kdfimpl (HKDFBytesGenerator. digest)]
     (.init kdfimpl params)
     (->HKDF digest kdfimpl)))
