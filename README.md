@@ -6,11 +6,11 @@
 
 - authentication, authorization & access rules (ring/compojure extensions)
 - secure hash functions (digest)
-- password hasing algorithms
+- password hashing algorithms
 - message/text signing (high level interface)
-- signing and authentication (mac & digital signature)
+- signature & authentication (mac & digital signature)
 - encryption (block & stream ciphers)
-- key derivartion functions
+- key derivartion functions (kdf)
 
 For more info:
 
