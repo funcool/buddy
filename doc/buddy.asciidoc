@@ -933,6 +933,10 @@ authentication only) without including the other.
 The best combination is to use _buddy_'s authentication middleware
 with liberator authorization endpoints.
 
+*Buddy will support pgp?*
+
+Surely not! Because there is already exists one good link:https://github.com/greglook/clj-pgp[library for that].
+
 License
 -------
 
