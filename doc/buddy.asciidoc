@@ -1,7 +1,7 @@
 buddy documentation
 ===================
 Andrey Antukh, <niwi@niwi.be>
-0.1.2, 2014-04-07
+0.1.2, 2014-05-01
 
 :toc:
 :numbered:
@@ -10,18 +10,18 @@ Andrey Antukh, <niwi@niwi.be>
 Introduction
 ------------
 
-_buddy_ is an authentication, authorization and cryptography/signing library for Clojure.
-It's designed with simplicity in mind.
+_buddy_ is a complete security library for clojure with support for:
 
+- authentication
+- authorization
+- secure hash functions (digest)
+- password hasing algorithms
+- message/text signing (high level interface)
+- signing and authentication (mac & digital signature)
+- encryption (block & stream ciphers)
+- key derivartion functions
 
-Features/Libraries:
-
-- Modular Authentication library.
-- Modular Authorization library.
-- Regex/decorator based composable access rules system.
-- Password hashing library.
-- Signing library.
-- Crypto library.
+Obviously backed by battle tested link:http://www.bouncycastle.org/specifications.html[bouncy castle] library.
 
 link:api/index.html[API reference documentation.]
 
@@ -35,6 +35,7 @@ Five most important rules:
 - Explicit is better than implicit
 - Simple is better than complex
 - Readability counts
+
 
 Project Maturity
 ----------------
@@ -920,7 +921,6 @@ FAQ
 ---
 
 *Buddy is a security library/framework?*
-
 Yes and No. I don't like call "security" library because security represents a very generic
 concepts and can contain a lot of things. Buddy is target to authentication, authorization and signing.
 
