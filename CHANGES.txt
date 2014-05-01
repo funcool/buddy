@@ -13,7 +13,7 @@ Date: unreleased
 - Changed maxage parameter to more consistent max-age on token auth backend.
 - Make buddy.core.hash namespace more consistent with rest buddy api.
 - Make buddy.core.mac.hmac namespace more consistent with rest buddy api.
-- Add key derivation functions: HKDF
+- Add key derivation functions: HKDF, KDF1, KDF2
 
 Version 0.1.1
 -------------

@@ -135,5 +135,30 @@
             bytes2     (kdf/generate-bytes! generator1 8)]
         (is (Arrays/equals bytes1 (kdf/generate-bytes! generator2 8)))
         (is (Arrays/equals bytes2 (kdf/generate-bytes! generator2 8)))))
+
+    (testing "KDF1 with sha512"
+      (let [generator1 (kdf/kdf1 key1 salt :sha512)
+            generator2 (kdf/kdf1 key1 salt :sha512)
+            bytes1     (kdf/generate-bytes! generator1 8)
+            bytes2     (kdf/generate-bytes! generator1 8)
+            bytes3     (kdf/generate-bytes! generator1 8)
+            bytes4     (kdf/generate-bytes! generator1 8)]
+        (is (Arrays/equals bytes1 (kdf/generate-bytes! generator2 8)))
+        (is (Arrays/equals bytes2 (kdf/generate-bytes! generator2 8)))
+        (is (Arrays/equals bytes3 (kdf/generate-bytes! generator2 8)))
+        (is (Arrays/equals bytes4 (kdf/generate-bytes! generator2 8)))))
+
+    (testing "KDF2 with sha512"
+      (let [generator1 (kdf/kdf2 key1 salt :sha512)
+            generator2 (kdf/kdf2 key1 salt :sha512)
+            bytes1     (kdf/generate-bytes! generator1 8)
+            bytes2     (kdf/generate-bytes! generator1 8)
+            bytes3     (kdf/generate-bytes! generator1 8)
+            bytes4     (kdf/generate-bytes! generator1 8)]
+        (is (Arrays/equals bytes1 (kdf/generate-bytes! generator2 8)))
+        (is (Arrays/equals bytes2 (kdf/generate-bytes! generator2 8)))
+        (is (Arrays/equals bytes3 (kdf/generate-bytes! generator2 8)))
+        (is (Arrays/equals bytes4 (kdf/generate-bytes! generator2 8)))))
+
 ))
 
