@@ -12,8 +12,7 @@ Introduction
 
 _buddy_ is a complete security library for clojure with support for:
 
-- authentication
-- authorization
+- authentication, authorization & access rules (ring/compojure extensions)
 - secure hash functions (digest)
 - password hasing algorithms
 - message/text signing (high level interface)
