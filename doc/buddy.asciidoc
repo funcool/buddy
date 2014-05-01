@@ -301,6 +301,75 @@ and Twofish.
 ----
 
 
+Public/Private keypairs
+~~~~~~~~~~~~~~~~~~~~~~~
+
+Before explaining digital signatures, you need read public/private keypairs
+and conver them to usable objects. Buddy has limited support for read:
+
+- RSA keypair
+- ECDSA keypair
+
+
+RSA Keypair
+^^^^^^^^^^^
+
+RSA keypair is used for obvious rsa encrypt/decrypt operations, but also
+is used for make digital signature with any rsa derived algorithm.
+
+.Read keys
+[source,clojure]
+----
+(require '[buddy.core.keys :as keys])
+
+;; The last parameter is optional and is only mandatory
+;; if a private key is encrypted.
+(def privkey (keys/private-key "test/_files/privkey.3des.rsa.pem" "secret")
+(def pubkey (keys/public-key "test/_files/pubkey.3des.rsa.pem"))
+----
+
+.Generate a RSA Keypair using openssl.
+[source,bash]
+----
+# Generate aes256 encrypted private key
+openssl genrsa -aes256 -out privkey.pem 2048
+
+# Generate public key from previously created private key.
+openssl rsa -pubout -in privkey.pem -out pubkey.pem
+----
+
+
+ECDSA Keypair
+^^^^^^^^^^^^^
+
+Like RSA keypair, ECDSA also are used for make a digital signature and
+can be readed like previous rsa examples.
+
+.Read keys.
+[source, clojure]
+----
+(require '[buddy.core.keys :as keys])
+
+;; The last parameter is optional and is only mandatory
+;; if a private key is encrypted.
+(def privkey (keys/private-key "test/_files/privkey.ecdsa.pem" "secret")
+(def pubkey (keys/public-key "test/_files/pubkey.ecdsa.pem"))
+----
+
+.Generate a ECDSA Keypair using openssl.
+[source, bash]
+----
+# Generating params file
+openssl ecparam -name prime256v1 -out ecparams.pem
+
+# Generate a private key from params file
+openssl ecparam -in ecparams.pem -genkey -noout -out ecprivkey.pem
+
+# Generate a public key from private key
+openssl ec -in ecprivkey.pem -pubout -out ecpubkey.pem
+----
+
+
 Digital Signatures
 ~~~~~~~~~~~~~~~~~~
 
