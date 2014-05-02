@@ -52,12 +52,12 @@
         ec-pubkey   (public-key "test/_files/pubkey.ecdsa.pem")]
 
     (testing "Multiple sign using rsassa-pkcs"
-      (is (Arrays/equals (sign/rsassa-pkcs-sha256 "foobar" rsa-privkey)
-                         (sign/rsassa-pkcs-sha256 "foobar" rsa-privkey))))
+      (is (Arrays/equals (sign/rsassa-pkcs15-sha256 "foobar" rsa-privkey)
+                         (sign/rsassa-pkcs15-sha256 "foobar" rsa-privkey))))
 
     (testing "Sign/Verify using rsassa-pkcs"
-      (let [signature (sign/rsassa-pkcs-sha256 "foobar" rsa-privkey)]
-        (is (true? (sign/rsassa-pkcs-sha256-verify "foobar" signature rsa-pubkey)))))
+      (let [signature (sign/rsassa-pkcs15-sha256 "foobar" rsa-privkey)]
+        (is (true? (sign/rsassa-pkcs15-sha256-verify "foobar" signature rsa-pubkey)))))
 
     (testing "Multiple sign using rsassa-pss"
       (is (false? (Arrays/equals (sign/rsassa-pss-sha256 "foobar" rsa-privkey)

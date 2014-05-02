@@ -28,8 +28,8 @@
        :dynamic true}
   *signers-map* {:hs256 {:signer hmac/hmac-sha256 :verifier hmac/hmac-sha256-verify}
                  :hs512 {:signer hmac/hmac-sha512 :verifier hmac/hmac-sha512-verify}
-                 :rs256 {:signer sign/rsassa-pkcs-sha256 :verifier sign/rsassa-pkcs-sha256-verify}
-                 :rs512 {:signer sign/rsassa-pkcs-sha512 :verifier sign/rsassa-pkcs-sha512-verify}
+                 :rs256 {:signer sign/rsassa-pkcs15-sha256 :verifier sign/rsassa-pkcs15-sha256-verify}
+                 :rs512 {:signer sign/rsassa-pkcs15-sha512 :verifier sign/rsassa-pkcs15-sha512-verify}
                  :ps256 {:signer sign/rsassa-pss-sha256 :verifier sign/rsassa-pss-sha256-verify}
                  :ps512 {:signer sign/rsassa-pss-sha512 :verifier sign/rsassa-pss-sha512-verify}
                  :es256 {:signer sign/ecdsa-sha256 :verifier sign/ecdsa-sha256-verify}

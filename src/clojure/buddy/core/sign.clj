@@ -17,7 +17,11 @@
   level abstractions."
   (:require [buddy.core.codecs :refer :all]
             [clojure.java.io :as io])
-  (:import (java.security PublicKey PrivateKey)))
+  (:import java.security.PublicKey
+           java.security.PrivateKey
+           java.security.Signature
+           clojure.lang.Keyword
+           clojure.lang.IFn))
 
 (java.security.Security/addProvider
  (org.bouncycastle.jce.provider.BouncyCastleProvider.))
@@ -26,118 +30,128 @@
        :dynamic true}
   *default-buffer-size* 5120)
 
-(def ^{:doc "List of officially supported algorithms by buddy."
+(def ^{:doc "Supported digital signature algorithms"
        :dynamic true}
-  *supported-algorithms* ["SHA256withRSAandMGF1" ;; rsassa-pss
-                          "SHA384withRSAandMGF1"
-                          "SHA512withRSAandMGF1"
-                          "SHA1withRSAandMGF1"
-                          "SHA256withRSA"        ;; rsassa-pkcs
-                          "SHA384withRSA"
-                          "SHA512withRSA"
-                          "SHA256withECDSA"      ;; ecdsa
-                          "SHA384withECDSA"
-                          "SHA512withECDSA"])
+  *supported-algorithms* {:rsassa-pss-sha256    #(Signature/getInstance "SHA256withRSAandMGF1" "BC")
+                          :rsassa-pss-sha384    #(Signature/getInstance "SHA384withRSAandMGF1" "BC")
+                          :rsassa-pss-sha512    #(Signature/getInstance "SHA512withRSAandMGF1" "BC")
+                          :rsassa-pkcs15-sha256 #(Signature/getInstance "SHA256withRSA" "BC")
+                          :rsassa-pkcs15-sha384 #(Signature/getInstance "SHA384withRSA" "BC")
+                          :rsassa-pkcs15-sha512 #(Signature/getInstance "SHA512withRSA" "BC")
+                          :ecdsa-sha256         #(Signature/getInstance "SHA256withECDSA" "BC")
+                          :ecdsa-sha384         #(Signature/getInstance "SHA384withECDSA" "BC")
+                          :ecdsa-sha512         #(Signature/getInstance "SHA512withECDSA" "BC")})
+
+(defn- resolve-signer
+  "Given dynamic type engine, try resolve it to
+valid engine instance. By default accepts keywords
+and functions."
+  [signer]
+  (cond
+   (instance? Keyword signer) (let [factory (signer *supported-algorithms*)] (factory))
+   (instance? IFn signer) (signer)))
 
 (defn- make-signature-for-plain-data
-  [^bytes data, pkey, ^String algorithm]
-  (let [sig (doto (java.security.Signature/getInstance algorithm "BC")
-              (.initSign pkey (java.security.SecureRandom.))
-              (.update data))]
-    (.sign sig)))
+  [^bytes input, pkey, ^Keyword alg]
+  (let [signer (resolve-signer alg)
+        srng   (java.security.SecureRandom.)]
+    (.initSign signer pkey srng)
+    (.update signer input)
+    (.sign signer)))
 
 (defn- verify-signature-for-plain-data
-  [^bytes data, ^bytes signature, pkey, ^String algorithm]
-  (let [sig (doto (java.security.Signature/getInstance algorithm "BC")
-              (.initVerify pkey)
-              (.update data))]
-    (.verify sig signature)))
+  [^bytes input, ^bytes signature, pkey, ^Keyword alg]
+  (let [signer (resolve-signer alg)]
+    (.initVerify signer pkey)
+    (.update signer input)
+    (.verify signer signature)))
 
 (defn- make-signature-for-stream
-  [^java.io.InputStream stream, pkey, ^String algorithm]
-  (let [sig  (doto (java.security.Signature/getInstance algorithm "BC")
-               (.initSign pkey (java.security.SecureRandom.)))
-        buff (byte-array *default-buffer-size*)]
+  [^java.io.InputStream stream, pkey, ^Keyword alg]
+  (let [signer (resolve-signer alg)
+        srng   (java.security.SecureRandom.)
+        buff   (byte-array *default-buffer-size*)]
+    (.initSign signer pkey srng)
     (loop []
       (let [readed (.read stream buff 0 *default-buffer-size*)]
         (when-not (= readed -1)
-          (.update sig buff 0 readed)
+          (.update signer buff 0 readed)
           (recur))))
-    (.sign sig)))
+    (.sign signer)))
 
 (defn- verify-signature-for-stream
-  [^java.io.InputStream stream, ^bytes signature, pkey, ^String algorithm]
-  (let [sig  (doto (java.security.Signature/getInstance algorithm "BC")
-               (.initVerify pkey))
-        buff (byte-array *default-buffer-size*)]
+  [^java.io.InputStream stream, ^bytes signature, pkey, ^Keyword alg]
+  (let [signer (resolve-signer alg)
+        buff   (byte-array *default-buffer-size*)]
+    (.initVerify signer pkey)
     (loop []
       (let [readed (.read stream buff 0 *default-buffer-size*)]
         (when-not (= readed -1)
-          (.update sig buff 0 readed)
+          (.update signer buff 0 readed)
           (recur))))
-    (.verify sig signature)))
+    (.verify signer signature)))
 
-(defprotocol Signature
-  (make-signature [data key algorithm] "")
-  (verify-signature [data signature key algorithm] ""))
+(defprotocol SignatureType
+  (make-signature [input key alg] "")
+  (verify-signature [input signature key alg] ""))
 
-(extend-protocol Signature
+(extend-protocol SignatureType
   (Class/forName "[B")
-  (make-signature [^bytes data, pkey, ^String algorithm]
-    (make-signature-for-plain-data data pkey algorithm))
-  (verify-signature [^bytes data, ^bytes signature, pkey, ^String algorithm]
-    (verify-signature-for-plain-data data signature pkey algorithm))
+  (make-signature [^bytes input, pkey, ^Keyword alg]
+    (make-signature-for-plain-data input pkey alg))
+  (verify-signature [^bytes input, ^bytes signature, pkey, ^Keyword alg]
+    (verify-signature-for-plain-data input signature pkey alg))
 
   java.lang.String
-  (make-signature [^String data, pkey, ^String algorithm]
-    (make-signature-for-plain-data (->byte-array data) pkey algorithm))
-  (verify-signature [^String data, ^bytes signature, pkey, ^String algorithm]
-    (verify-signature-for-plain-data (->byte-array data) signature pkey algorithm))
+  (make-signature [^String input, pkey, ^Keyword alg]
+    (make-signature-for-plain-data (->byte-array input) pkey alg))
+  (verify-signature [^String input, ^bytes signature, pkey, ^Keyword alg]
+    (verify-signature-for-plain-data (->byte-array input) signature pkey alg))
 
   java.io.InputStream
-  (make-signature [^java.io.InputStream stream, pkey, ^String algorithm]
-    (make-signature-for-stream stream pkey algorithm))
-  (verify-signature [^java.io.InputStream stream, ^bytes signature, pkey, ^String algorithm]
-    (verify-signature-for-stream stream signature pkey algorithm))
+  (make-signature [^java.io.InputStream input, pkey, ^Keyword alg]
+    (make-signature-for-stream input pkey alg))
+  (verify-signature [^java.io.InputInput input, ^bytes signature, pkey, ^Keyword alg]
+    (verify-signature-for-stream input signature pkey alg))
 
   java.io.File
-  (make-signature [^java.io.File stream, pkey, ^String algorithm]
-    (make-signature-for-stream (io/input-stream stream) pkey algorithm))
-  (verify-signature [^java.io.File stream, ^bytes signature, pkey, ^String algorithm]
-    (verify-signature-for-stream (io/input-stream stream) signature pkey algorithm))
+  (make-signature [^java.io.File input, pkey, ^Keyword alg]
+    (make-signature-for-stream (io/input-stream input) pkey alg))
+  (verify-signature [^java.io.File input, ^bytes signature, pkey, ^Keyword alg]
+    (verify-signature-for-stream (io/input-stream input) signature pkey alg))
 
   java.net.URL
-  (make-signature [^java.net.URL stream, pkey, ^String algorithm]
-    (make-signature-for-stream (io/input-stream stream) pkey algorithm))
-  (verify-signature [^java.net.URL stream, ^bytes signature, pkey, ^String algorithm]
-    (verify-signature-for-stream (io/input-stream stream) signature pkey algorithm))
+  (make-signature [^java.net.URL input, pkey, ^Keyword alg]
+    (make-signature-for-stream (io/input-stream input) pkey alg))
+  (verify-signature [^java.net.URL input, ^bytes signature, pkey, ^Keyword alg]
+    (verify-signature-for-stream (io/input-stream input) signature pkey alg))
 
   java.net.URI
-  (make-signature [^java.net.URI stream, pkey, ^String algorithm]
-    (make-signature-for-stream (io/input-stream stream) pkey algorithm))
-  (verify-signature [^java.net.URI stream, ^bytes signature, pkey, ^String algorithm]
-    (verify-signature-for-stream (io/input-stream stream) signature pkey algorithm)))
+  (make-signature [^java.net.URI input, pkey, ^Keyword alg]
+    (make-signature-for-stream (io/input-stream input) pkey alg))
+  (verify-signature [^java.net.URI input, ^bytes signature, pkey, ^Keyword alg]
+    (verify-signature-for-stream (io/input-stream input) signature pkey alg)))
 
 ;; RSASSA-PKCS1-V1_5 + sha2 aliases
-(def rsassa-pkcs-sha256 #(make-signature %1 %2 "SHA256withRSA"))
-(def rsassa-pkcs-sha384 #(make-signature %1 %2 "SHA384withRSA"))
-(def rsassa-pkcs-sha512 #(make-signature %1 %2 "SHA512withRSA"))
-(def rsassa-pkcs-sha256-verify #(verify-signature %1 %2 %3 "SHA256withRSA"))
-(def rsassa-pkcs-sha384-verify #(verify-signature %1 %2 %3 "SHA384withRSA"))
-(def rsassa-pkcs-sha512-verify #(verify-signature %1 %2 %3 "SHA512withRSA"))
+(def rsassa-pkcs15-sha256 #(make-signature %1 %2 :rsassa-pkcs15-sha256))
+(def rsassa-pkcs15-sha384 #(make-signature %1 %2 :rsassa-pkcs15-sha384))
+(def rsassa-pkcs15-sha512 #(make-signature %1 %2 :rsassa-pkcs15-sha512))
+(def rsassa-pkcs15-sha256-verify #(verify-signature %1 %2 %3 :rsassa-pkcs15-sha256))
+(def rsassa-pkcs15-sha384-verify #(verify-signature %1 %2 %3 :rsassa-pkcs15-sha384))
+(def rsassa-pkcs15-sha512-verify #(verify-signature %1 %2 %3 :rsassa-pkcs15-sha512))
 
 ;; RSASSA-PSS (With MGF1)
-(def rsassa-pss-sha256 #(make-signature %1 %2 "SHA256withRSAandMGF1"))
-(def rsassa-pss-sha384 #(make-signature %1 %2 "SHA384withRSAandMGF1"))
-(def rsassa-pss-sha512 #(make-signature %1 %2 "SHA512withRSAandMGF1"))
-(def rsassa-pss-sha256-verify #(verify-signature %1 %2 %3 "SHA256withRSAandMGF1"))
-(def rsassa-pss-sha384-verify #(verify-signature %1 %2 %3 "SHA384withRSAandMGF1"))
-(def rsassa-pss-sha512-verify #(verify-signature %1 %2 %3 "SHA512withRSAandMGF1"))
+(def rsassa-pss-sha256 #(make-signature %1 %2 :rsassa-pss-sha256))
+(def rsassa-pss-sha384 #(make-signature %1 %2 :rsassa-pss-sha384))
+(def rsassa-pss-sha512 #(make-signature %1 %2 :rsassa-pss-sha512))
+(def rsassa-pss-sha256-verify #(verify-signature %1 %2 %3 :rsassa-pss-sha256))
+(def rsassa-pss-sha384-verify #(verify-signature %1 %2 %3 :rsassa-pss-sha384))
+(def rsassa-pss-sha512-verify #(verify-signature %1 %2 %3 :rsassa-pss-sha512))
 
 ;; ECDSA + sha2 aliases
-(def ecdsa-sha256 #(make-signature %1 %2 "SHA256withECDSA"))
-(def ecdsa-sha384 #(make-signature %1 %2 "SHA384withECDSA"))
-(def ecdsa-sha512 #(make-signature %1 %2 "SHA512withECDSA"))
-(def ecdsa-sha256-verify #(verify-signature %1 %2 %3 "SHA256withECDSA"))
-(def ecdsa-sha384-verify #(verify-signature %1 %2 %3 "SHA384withECDSA"))
-(def ecdsa-sha512-verify #(verify-signature %1 %2 %3 "SHA512withECDSA"))
+(def ecdsa-sha256 #(make-signature %1 %2 :ecdsa-sha256))
+(def ecdsa-sha384 #(make-signature %1 %2 :ecdsa-sha384))
+(def ecdsa-sha512 #(make-signature %1 %2 :ecdsa-sha512))
+(def ecdsa-sha256-verify #(verify-signature %1 %2 %3 :ecdsa-sha256))
+(def ecdsa-sha384-verify #(verify-signature %1 %2 %3 :ecdsa-sha384))
+(def ecdsa-sha512-verify #(verify-signature %1 %2 %3 :ecdsa-sha512))
