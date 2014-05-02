@@ -538,38 +538,46 @@ style="
 width:100%;
 ">
 <caption class="title">Table 2. Supported key derivation functions.</caption>
-<col style="width:50%;">
-<col style="width:50%;">
+<col style="width:33%;">
+<col style="width:33%;">
+<col style="width:33%;">
 <thead>
 <tr>
 <th class="tableblock halign-left valign-top" >Algorithm name </th>
-<th class="tableblock halign-left valign-top" > Constructor</th>
+<th class="tableblock halign-left valign-top" > Constructor              </th>
+<th class="tableblock halign-left valign-top" > Notes</th>
 </tr>
 </thead>
 <tbody>
 <tr>
 <td class="tableblock halign-left valign-top" ><p class="tableblock">HKDF</p></td>
 <td class="tableblock halign-left valign-top" ><p class="tableblock"><span class="monospaced">buddy.core.kdf/hkdf</span></p></td>
+<td class="tableblock halign-left valign-top" ><p class="tableblock">HMAC based KDF</p></td>
 </tr>
 <tr>
 <td class="tableblock halign-left valign-top" ><p class="tableblock">KDF1</p></td>
 <td class="tableblock halign-left valign-top" ><p class="tableblock"><span class="monospaced">buddy.core.kdf/kdf1</span></p></td>
+<td class="tableblock halign-left valign-top" ><p class="tableblock"></p></td>
 </tr>
 <tr>
 <td class="tableblock halign-left valign-top" ><p class="tableblock">KDF2</p></td>
 <td class="tableblock halign-left valign-top" ><p class="tableblock"><span class="monospaced">buddy.core.kdf/kdf2</span></p></td>
+<td class="tableblock halign-left valign-top" ><p class="tableblock"></p></td>
 </tr>
 <tr>
 <td class="tableblock halign-left valign-top" ><p class="tableblock">CMKDF</p></td>
 <td class="tableblock halign-left valign-top" ><p class="tableblock"><span class="monospaced">buddy.core.kdf/cmkdf</span></p></td>
+<td class="tableblock halign-left valign-top" ><p class="tableblock">Counter Mode KDF</p></td>
 </tr>
 <tr>
 <td class="tableblock halign-left valign-top" ><p class="tableblock">FMKDF</p></td>
 <td class="tableblock halign-left valign-top" ><p class="tableblock"><span class="monospaced">buddy.core.kdf/fmkdf</span></p></td>
+<td class="tableblock halign-left valign-top" ><p class="tableblock">Feedback Mode KDF</p></td>
 </tr>
 <tr>
 <td class="tableblock halign-left valign-top" ><p class="tableblock">DPIMKDF</p></td>
 <td class="tableblock halign-left valign-top" ><p class="tableblock"><span class="monospaced">buddy.core.kdf/dpimkdf</span></p></td>
+<td class="tableblock halign-left valign-top" ><p class="tableblock">Double-Pipeline Iteration Mode KDF</p></td>
 </tr>
 </tbody>
 </table>
@@ -636,15 +644,19 @@ NIST SP 800-108 specification.</p></div>
 </div>
 </div>
 <div class="sect2">
-<h3 id="_ciphers">4.6. Ciphers</h3>
-<div class="paragraph"><p>TODO</p></div>
+<h3 id="_block_ciphers">4.6. Block Ciphers</h3>
+<div class="paragraph"><p>WIP</p></div>
 </div>
 <div class="sect2">
-<h3 id="_codecs_binary_8594_string_conversion">4.7. Codecs (binary &#8594; string conversion)</h3>
+<h3 id="_stream_ciphers">4.7. Stream Ciphers</h3>
+<div class="paragraph"><p>WIP</p></div>
+</div>
+<div class="sect2">
+<h3 id="_codecs_binary_8594_string_conversion">4.8. Codecs (binary &#8594; string conversion)</h3>
 <div class="paragraph"><p>Implements some useful and widely used around all buddy library functions
 for make conversions between strings, bytes, hex encoded strings and base64
 encoded strings.</p></div>
-<div class="paragraph"><p>No documentation found for this part, but you can view source code for it.</p></div>
+<div class="paragraph"><p>The best documentation for this part is the source code.</p></div>
 </div>
 </div>
 </div>
@@ -938,33 +950,47 @@ mainly works with ring/compojure combination but in future can be extended for w
 libraries</p></div>
 <div class="sect2">
 <h3 id="_authentication">6.1. Authentication</h3>
-<div class="paragraph"><p><em>buddy</em> comes with an authentication system. It is implemented with
-protocols that can be used to implement your own authentication
-backend if one of the now supported backends by buddy does not satisfy
-your needs.</p></div>
-<div class="paragraph"><p>Here is a list of built-in authentication backends:</p></div>
-<div class="ulist"><ul>
-<li>
-<p>
-Http Basic
-</p>
-</li>
-<li>
-<p>
-Session
-</p>
-</li>
-<li>
-<p>
-Token
-</p>
-</li>
-<li>
-<p>
-SignedToken (using previously explained signing framework).
-</p>
-</li>
-</ul></div>
+<div class="paragraph"><p>Authentication in buddy is implemented using clojure protocols for easy extensibility. If
+you are not happy with builtin auth backends you can implement your own and use it with buddy
+without much problems.</p></div>
+<table class="tableblock frame-all grid-all"
+style="
+width:100%;
+">
+<caption class="title">Table 5. Here is a list of built-in authentication backends:</caption>
+<col style="width:33%;">
+<col style="width:33%;">
+<col style="width:33%;">
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top" > Backend name </th>
+<th class="tableblock halign-left valign-top" > Namespace                       </th>
+<th class="tableblock halign-left valign-top" > Observations</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top" ><p class="tableblock">Http Basic</p></td>
+<td class="tableblock halign-left valign-top" ><p class="tableblock"><span class="monospaced">buddy.auth.backends.httpbasic</span></p></td>
+<td class="tableblock halign-left valign-top" ><p class="tableblock"></p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top" ><p class="tableblock">Session</p></td>
+<td class="tableblock halign-left valign-top" ><p class="tableblock"><span class="monospaced">buddy.auth.backends.session</span></p></td>
+<td class="tableblock halign-left valign-top" ><p class="tableblock">Can be combined with password hashers.</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top" ><p class="tableblock">Token</p></td>
+<td class="tableblock halign-left valign-top" ><p class="tableblock"><span class="monospaced">buddy.auth.backends.token</span></p></td>
+<td class="tableblock halign-left valign-top" ><p class="tableblock">Can be combined with password hashers and high level signing library for generate tokens.</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top" ><p class="tableblock">SignedToken</p></td>
+<td class="tableblock halign-left valign-top" ><p class="tableblock"><span class="monospaced">buddy.auth.backends.token</span></p></td>
+<td class="tableblock halign-left valign-top" ><p class="tableblock">Based on the high level signing framework.</p></td>
+</tr>
+</tbody>
+</table>
 <div class="sect3">
 <h4 id="_http_basic">6.1.1. HTTP Basic</h4>
 <div class="paragraph"><p>The HTTP Basic authentication backend is one of the simplest/insecure
@@ -975,7 +1001,7 @@ authentication with <em>buddy</em>.</p></div>
 <div class="content"><div class="highlight"><pre><span class="p">(</span><span class="nf">require</span> <span class="o">&#39;</span><span class="p">[</span><span class="nv">buddy.auth</span> <span class="ss">:refer</span> <span class="p">(</span><span class="nf">authenticated?</span><span class="p">)])</span>
 <span class="p">(</span><span class="nf">require</span> <span class="o">&#39;</span><span class="p">[</span><span class="nv">ring.util.response</span> <span class="ss">:refer</span> <span class="p">(</span><span class="nf">response</span><span class="p">)])</span>
 
-<span class="c1">;; Simple ring handler. This can also be a compojure routes handler</span>
+<span class="c1">;; Simple ring handler. This can also be a compojure router handler</span>
 <span class="c1">;; or anything else compatible with ring middlewares.</span>
 <span class="p">(</span><span class="kd">defn </span><span class="nv">handler</span>
   <span class="p">[</span><span class="nv">request</span><span class="p">]</span>
@@ -1015,27 +1041,26 @@ authentication with <em>buddy</em>.</p></div>
 </div>
 <div class="sect3">
 <h4 id="_session">6.1.2. Session</h4>
-<div class="paragraph"><p>The session-authenticated backend has the simplest implementation, but
-requires session middleware to work properly.</p></div>
-<div class="paragraph"><p>Unlike the previous auth backend, this does not requires authfn,
-because it relies on <span class="monospaced">:identity</span> key on session and trust it. If a
-session contains the <span class="monospaced">:identity</span> key with logical true value it
-identifies the current request as authenticated and put <span class="monospaced">:identity</span>
-key on request map.</p></div>
+<div class="paragraph"><p>The session backend has the simplest implementation, because it completely
+relies on ring session support.</p></div>
+<div class="paragraph"><p>It checks the <span class="monospaced">:identity</span> key on sesion for authenticate the user with its
+value. The value is identified as logged user if it contains any logical true
+value.</p></div>
 <div class="paragraph"><p>See <a href="#examples">examples section</a> for complete examples for this backend.</p></div>
 </div>
 <div class="sect3">
 <h4 id="_token">6.1.3. Token</h4>
-<div class="paragraph"><p>It works as expected, parses token and call function for authenticate the token. Nothing
-more.</p></div>
+<div class="paragraph"><p>This backend works much like the basic auth backend with differente that this works with
+tokens that can be unpredictable and generated randomly.</p></div>
+<div class="paragraph"><p>It parses a token and passes it to auth-fn for authenticate it.</p></div>
 </div>
 <div class="sect3">
 <h4 id="_signed_token">6.1.4. Signed Token</h4>
-<div class="paragraph"><p>This works similar to <strong>session</strong> and <strong>token</strong> backends, but it uses a signing framework explained in a
-first section of this document.</p></div>
-<div class="paragraph"><p>Extracts token from header using same functions as <strong>token</strong> backend but instad of call a function
-for authorize or trust a session key, it try verify the incoming token and if it success, the signed
-data are trustly set to <span class="monospaced">:identity</span> key on request.</p></div>
+<div class="paragraph"><p>This backend is very similar to standard token backend previously explained, but instead
+of relying on auth-fn for identify a token, it uses stateless tokens (contains all needed
+data in a token, whithout storing any information about token on database as ex&#8230;).</p></div>
+<div class="paragraph"><p>This backend relies on the security of high level signing framework for authenticate
+the user.</p></div>
 <div class="paragraph"><p>See <a href="#examples">examples section</a> for complete examples for this backend.</p></div>
 </div>
 </div>
@@ -1052,8 +1077,8 @@ generic authorization system using exceptions for fast return and unauthorized-h
 </li>
 <li>
 <p>
-access rules system based on matching urls using regular expressions and apply some
-  rules handlers. The idea is taken from <span class="monospaced">lib-noir</span> but with slighty distinct approach.
+access rules system, using rules and logical combinators that applies to specific urls (matching
+  them using regular expressions) or specific handlers wrapping it with the <span class="monospaced">restricted</span> decorator.
 </p>
 </li>
 </ul></div>
@@ -1061,15 +1086,14 @@ access rules system based on matching urls using regular expressions and apply s
 <h4 id="_generic_authorization">6.2.1. Generic authorization</h4>
 <div class="paragraph"><p>This authorization system encapsulates your handlers/controllers in one try/catch block
 catching only notauthorized exceptions. So spliting unauthorized request handling code from
-your handlers/controllers in a separate function. Moreover, permits fast return when
+your handlers/controllers in a separate function. Moreover, it permits fast return when
 not authorized request is detected.</p></div>
 <div class="paragraph"><p>Like authentication system, authorization is also implemented using protocols. Taking advantage of
 it, all builtin authentication backends also implements this authorization protocol (<span class="monospaced">IAuthorization</span>).</p></div>
-<div class="paragraph"><p>Some authentication backends require specific behavior in the
-authorization layer (like http-basic which should return
-<span class="monospaced">WWW-Authenticate</span> header when request is unauthorized) and by
-default, all backends come with an implementation. You can overwrite
-the default behavior by passing your own exception handler through the
+<div class="paragraph"><p>Some authentication backends require specific behavior in the authorization layer (like http-basic
+which should return <span class="monospaced">WWW-Authenticate</span> header when request is unauthorized). By default, all backends
+come with an specific implementation.</p></div>
+<div class="paragraph"><p>You can overwrite the default behavior by passing your own exception handler through the
 <span class="monospaced">:unauthorized-handler</span> keyword parameter in the backend constructor.</p></div>
 <div class="paragraph"><p>Below is a complete example setting up a basic/generic authorization
 system for your ring compatible web application:</p></div>
@@ -1079,7 +1103,7 @@ system for your ring compatible web application:</p></div>
 <span class="p">(</span><span class="nf">require</span> <span class="o">&#39;</span><span class="p">[</span><span class="nv">ring.util.response</span> <span class="ss">:refer</span> <span class="p">(</span><span class="nf">response</span> <span class="nv">redirect</span><span class="p">)])</span>
 
 <span class="c1">;; An unauthorized-handler is executed when `buddy.auth/throw-unauthorized`</span>
-<span class="c1">;; exception is raised and captured by genric authorization middleware:</span>
+<span class="c1">;; exception is raised and captured by generic authorization middleware:</span>
 <span class="c1">;; `wrap-authorization`. It always receives the current request and metadata</span>
 <span class="c1">;; hash-map that in most cases is empty.</span>
 
@@ -1447,7 +1471,7 @@ limitations under the License.
 <div id="footer">
 <div id="footer-text">
 Version 0.1.2<br>
-Last updated 2014-05-02 21:23:47 CEST
+Last updated 2014-05-02 22:49:49 CEST
 </div>
 </div>
 </body>
