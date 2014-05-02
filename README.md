@@ -6,7 +6,7 @@
 
 - authentication, authorization & access rules (ring/compojure extensions)
 - secure hash functions (digest)
-- password hashing algorithms
+- password hashing algorithms (bcrypt, pbkdf2, scrypt)
 - message/text signing (high level interface)
 - signature & authentication (mac & digital signature)
 - encryption (block & stream ciphers)
