@@ -137,8 +137,8 @@ NIST SP 800-108 specification."
   KDFType
   (generate-bytes! [obj length] (generate-bytes-impl impl length)))
 
-(alter-meta! #'->FMKDF assoc :no-doc true :private true)
-(alter-meta! #'map->FMKDF assoc :no-doc true :private true)
+(alter-meta! #'->DPIMKDF assoc :no-doc true :private true)
+(alter-meta! #'map->DPIMKDF assoc :no-doc true :private true)
 
 (defn dpimkdf
   "Double-Pipeline Iteration Mode KDF defined by the publicly
