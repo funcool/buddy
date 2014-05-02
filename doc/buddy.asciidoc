@@ -280,6 +280,7 @@ salt, but required for security guarantee, and it should be generated
 using strong random number generator. Also, iv should be of same
 length as choised cipher block size.
 
+
 Basic usage
 +++++++++++
 
@@ -414,7 +415,6 @@ link:http://www.ietf.org/rfc/rfc3447.txt[rfc3447.txt]
 ----
 
 
-
 RSASSA PKCS1 v1.5
 ^^^^^^^^^^^^^^^^^
 
@@ -492,15 +492,15 @@ to derive one or more keys from a common secret value.
 
 .Supported key derivation functions.
 [options="header"]
-|==========================================
-|Algorithm name | Constructor
-|HKDF           | `buddy.core.kdf/hkdf`
-|KDF1           | `buddy.core.kdf/kdf1`
-|KDF2           | `buddy.core.kdf/kdf2`
-|CMKDF          | `buddy.core.kdf/cmkdf`
-|FMKDF          | `buddy.core.kdf/fmkdf`
-|DPIMKDF        | `buddy.core.kdf/dpimkdf`
-|==========================================
+|==============================================================================
+|Algorithm name | Constructor              | Notes
+|HKDF           | `buddy.core.kdf/hkdf`    | HMAC based KDF
+|KDF1           | `buddy.core.kdf/kdf1`    |
+|KDF2           | `buddy.core.kdf/kdf2`    |
+|CMKDF          | `buddy.core.kdf/cmkdf`   | Counter Mode KDF
+|FMKDF          | `buddy.core.kdf/fmkdf`   | Feedback Mode KDF
+|DPIMKDF        | `buddy.core.kdf/dpimkdf` | Double-Pipeline Iteration Mode KDF
+|==============================================================================
 
 NOTE: All key derivation functions work with byte arrays. For following examples, `buddy.core.codecs`
 functions for convert strings to byte arrays.
@@ -571,10 +571,16 @@ Hash based KDF with Double-Pipeline Iteration Mode defined by the publicly avail
 NIST SP 800-108 specification.
 
 
-Ciphers
-~~~~~~~
+Block Ciphers
+~~~~~~~~~~~~~
 
-TODO
+WIP
+
+
+Stream Ciphers
+~~~~~~~~~~~~~~
+
+WIP
 
 
 Codecs (binary -> string conversion)
@@ -584,7 +590,7 @@ Implements some useful and widely used around all buddy library functions
 for make conversions between strings, bytes, hex encoded strings and base64
 encoded strings.
 
-No documentation found for this part, but you can view source code for it.
+The best documentation for this part is the source code.
 
 
 High Level Library
@@ -815,17 +821,19 @@ libraries
 Authentication
 ~~~~~~~~~~~~~~
 
-_buddy_ comes with an authentication system. It is implemented with
-protocols that can be used to implement your own authentication
-backend if one of the now supported backends by buddy does not satisfy
-your needs.
+Authentication in buddy is implemented using clojure protocols for easy extensibility. If
+you are not happy with builtin auth backends you can implement your own and use it with buddy
+without much problems.
 
-Here is a list of built-in authentication backends:
-
-- Http Basic
-- Session
-- Token
-- SignedToken (using previously explained signing framework).
+.Here is a list of built-in authentication backends:
+[options="header"]
+|=====================================================================================
+| Backend name | Namespace                       | Observations
+| Http Basic   | `buddy.auth.backends.httpbasic` |
+| Session      | `buddy.auth.backends.session`   | Can be combined with password hashers.
+| Token        | `buddy.auth.backends.token`     | Can be combined with password hashers and high level signing library for generate tokens.
+| SignedToken  | `buddy.auth.backends.token`     | Based on the high level signing framework.
+|=====================================================================================
 
 
 HTTP Basic
@@ -841,7 +849,7 @@ authentication with _buddy_.
 (require '[buddy.auth :refer (authenticated?)])
 (require '[ring.util.response :refer (response)])
 
-;; Simple ring handler. This can also be a compojure routes handler
+;; Simple ring handler. This can also be a compojure router handler
 ;; or anything else compatible with ring middlewares.
 (defn handler
   [request]
@@ -885,14 +893,12 @@ authentication with _buddy_.
 Session
 ^^^^^^^
 
-The session-authenticated backend has the simplest implementation, but
-requires session middleware to work properly.
+The session backend has the simplest implementation, because it completely
+relies on ring session support.
 
-Unlike the previous auth backend, this does not requires authfn,
-because it relies on `:identity` key on session and trust it. If a
-session contains the `:identity` key with logical true value it
-identifies the current request as authenticated and put `:identity`
-key on request map.
+It checks the `:identity` key on sesion for authenticate the user with its
+value. The value is identified as logged user if it contains any logical true
+value.
 
 See xref:examples[examples section] for complete examples for this backend.
 
@@ -900,19 +906,21 @@ See xref:examples[examples section] for complete examples for this backend.
 Token
 ^^^^^
 
-It works as expected, parses token and call function for authenticate the token. Nothing
-more.
+This backend works much like the basic auth backend with differente that this works with
+tokens that can be unpredictable and generated randomly.
+
+It parses a token and passes it to auth-fn for authenticate it.
 
 
 Signed Token
 ^^^^^^^^^^^^
 
-This works similar to *session* and *token* backends, but it uses a signing framework explained in a
-first section of this document.
+This backend is very similar to standard token backend previously explained, but instead
+of relying on auth-fn for identify a token, it uses stateless tokens (contains all needed
+data in a token, whithout storing any information about token on database as ex...).
 
-Extracts token from header using same functions as *token* backend but instad of call a function
-for authorize or trust a session key, it try verify the incoming token and if it success, the signed
-data are trustly set to `:identity` key on request.
+This backend relies on the security of high level signing framework for authenticate
+the user.
 
 See xref:examples[examples section] for complete examples for this backend.
 
@@ -926,30 +934,30 @@ The authorization system is splited in two parts:
 
 - generic authorization system using exceptions for fast return and unauthorized-handler function
   for handle unauthorized requsts.
-- access rules system based on matching urls using regular expressions and apply some
-  rules handlers. The idea is taken from `lib-noir` but with slighty distinct approach.
+- access rules system, using rules and logical combinators that applies to specific urls (matching
+  them using regular expressions) or specific handlers wrapping it with the `restricted` decorator.
+
 
 Generic authorization
 ^^^^^^^^^^^^^^^^^^^^^
 
 This authorization system encapsulates your handlers/controllers in one try/catch block
 catching only notauthorized exceptions. So spliting unauthorized request handling code from
-your handlers/controllers in a separate function. Moreover, permits fast return when
+your handlers/controllers in a separate function. Moreover, it permits fast return when
 not authorized request is detected.
 
 Like authentication system, authorization is also implemented using protocols. Taking advantage of
 it, all builtin authentication backends also implements this authorization protocol (`IAuthorization`).
 
-Some authentication backends require specific behavior in the
-authorization layer (like http-basic which should return
-`WWW-Authenticate` header when request is unauthorized) and by
-default, all backends come with an implementation. You can overwrite
-the default behavior by passing your own exception handler through the
+Some authentication backends require specific behavior in the authorization layer (like http-basic
+which should return `WWW-Authenticate` header when request is unauthorized). By default, all backends
+come with an specific implementation.
+
+You can overwrite the default behavior by passing your own exception handler through the
 `:unauthorized-handler` keyword parameter in the backend constructor.
 
 Below is a complete example setting up a basic/generic authorization
 system for your ring compatible web application:
-
 
 .Defining unauthorized handler
 [source,clojure]
@@ -958,7 +966,7 @@ system for your ring compatible web application:
 (require '[ring.util.response :refer (response redirect)])
 
 ;; An unauthorized-handler is executed when `buddy.auth/throw-unauthorized`
-;; exception is raised and captured by genric authorization middleware:
+;; exception is raised and captured by generic authorization middleware:
 ;; `wrap-authorization`. It always receives the current request and metadata
 ;; hash-map that in most cases is empty.
 
@@ -968,7 +976,6 @@ system for your ring compatible web application:
     (response "Permission denied")
     (redirect "/login")))
 ----
-
 
 .Defining a simple handler that raises unauthorized exception when user is not authenticated
 [source,clojure]
