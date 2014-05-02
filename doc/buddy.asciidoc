@@ -485,7 +485,90 @@ Digital Signature Algorithm (DSA) which uses elliptic curve cryptography.
 Key Derivation Functions
 ~~~~~~~~~~~~~~~~~~~~~~~~
 
-TODO
+Key derivation functions are often used in conjunction with non-secret parameters
+to derive one or more keys from a common secret value.
+
+*buddy* commes with several of them:
+
+.Supported key derivation functions.
+[options="header"]
+|==========================================
+|Algorithm name | Constructor
+|HKDF           | `buddy.core.kdf/hkdf`
+|KDF1           | `buddy.core.kdf/kdf1`
+|KDF2           | `buddy.core.kdf/kdf2`
+|CMKDF          | `buddy.core.kdf/cmkdf`
+|FMKDF          | `buddy.core.kdf/fmkdf`
+|DPIMKDF        | `buddy.core.kdf/dpimkdf`
+|==========================================
+
+NOTE: All key derivation functions work with byte arrays. For following examples, `buddy.core.codecs`
+functions for convert strings to byte arrays.
+
+
+HKDF
+^^^^
+
+HMAC-based Extract-and-Expand Key Derivation Function (HKDF) implemented according to IETF RFC 5869
+
+.Example using hkdf
+[source, clojure]
+----
+(require '[buddy.core.codecs :refer :all])
+(require '[buddy.core.kdf :as kdf])
+
+;; Using hkdf derivation functions. It requires a
+;; key data, salt and optionally info field that can
+;; contain any random data.
+
+(let [kfn (kdf/hkdf (str->bytes "mysecretkey")
+                    (str->bytes "mypublicsalt")
+                    nil ;; info parameter can be nil
+                    :sha256)]
+  (-> (kdf/generate-bytes! kfn 8)
+      (bytes->hex)))
+;; => "0faba553152fce4f"
+
+----
+
+KDF1/2
+^^^^^^
+
+KDF1/2 hash based key derivation functions for derived keys and ivs as defined by IEEE P1363a/ISO 18033.
+
+.Example using kdf1 or kdf2
+[source, clojure]
+----
+(require '[buddy.core.codecs :refer :all])
+(require '[buddy.core.kdf :as kdf])
+
+;; kdf1 and kdf2 are very similar and has the same
+;; consturctor signature. Requires: key data, salt
+;; and hash algorithm keyword.
+
+(let [kfn (kdf/kdf2 (str->bytes "mysecretkey") (str->bytes "mypublicsalt") :sha256)]
+  (-> (kdf/generate-bytes! kfn 8)
+      (bytes->hex)))
+;; => "0faba553152fce4f"
+----
+
+
+Counter Mode KDF
+^^^^^^^^^^^^^^^^
+
+Hash based KDF with counter mode defined by the publicly available NIST SP 800-108 specification.
+
+Feedback Mode KDF
+^^^^^^^^^^^^^^^^^
+
+Hash based KDF with feedback mode defined by the publicly available NIST SP 800-108 specification.
+
+
+Double-Pipeline Iteration Mode KDF
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+Hash based KDF with Double-Pipeline Iteration Mode defined by the publicly available
+NIST SP 800-108 specification.
 
 
 Ciphers
