@@ -73,7 +73,7 @@ bytes and poly1305 algorithm for transform it."
 (defn- make-poly1305-stream-impl
   [^java.io.InputStream stream ^bytes pkey ^bytes iv ^Keyword alg]
   (let [engine (resolve-engine alg)
-        mac    (Poly1305. (alg))
+        mac    (Poly1305. engine)
         out    (byte-array 16)
         kp     (KeyParameter. (key->poly1305key pkey))
         pwi    (ParametersWithIV. kp iv)
