@@ -67,6 +67,13 @@
           valid-hash "7aa01e35e65701c9a9d8f71c4cbf056acddc9be17fdff06b4c7af1b0b34ddc29"]
       (is (= (bytes->hex (hash/sha256 (io/input-stream path))) valid-hash)))))
 
+(deftest buddy-core-codecs
+  (testing "Safe base64 encode/decode"
+    (let [output1 (str->safebase64 "foo")
+          output2 (safebase64->str output1)]
+      (is (= output1 "Zm9v"))
+      (is (= output2 "foo")))))
+
 (deftest buddy-core-mac-poly1305
   (let [iv        (byte-array 16) ;; 16 bytes array filled with 0
         plaintext "text"
