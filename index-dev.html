@@ -16,7 +16,7 @@ asciidoc.install(2);
 /*]]>*/
 </script>
 </head>
-<body class="article" style="max-width:800px">
+<body class="article" style="max-width:960px">
 <div id="header">
 <h1>buddy documentation</h1>
 <span id="author">Andrey Antukh,</span><br>
@@ -506,11 +506,134 @@ What that means is that you can use a private RSA key to sign data.</p></div>
 <h4 id="_eliptic_curve_dsa">4.4.3. Eliptic Curve DSA</h4>
 <div class="paragraph"><p>Elliptic Curve Digital Signature Algorithm (ECDSA) is a variant of the
 Digital Signature Algorithm (DSA) which uses elliptic curve cryptography.</p></div>
+<div class="listingblock">
+<div class="title">Sign sample string using ecdsa.</div>
+<div class="content"><div class="highlight"><pre><span class="p">(</span><span class="nf">require</span> <span class="o">&#39;</span><span class="p">[</span><span class="nv">buddy.core.keys</span> <span class="ss">:as</span> <span class="nv">keys</span><span class="p">])</span>
+<span class="p">(</span><span class="nf">require</span> <span class="o">&#39;</span><span class="p">[</span><span class="nv">buddy.core.sign</span> <span class="ss">:as</span> <span class="nv">sign</span><span class="p">])</span>
+
+<span class="c1">;; Read private key</span>
+<span class="p">(</span><span class="k">def </span><span class="nv">ecdsaprivkey</span> <span class="p">(</span><span class="nf">keys/private-key</span> <span class="s">&quot;test/_files/privkey.ecdsa.pem&quot;</span> <span class="s">&quot;secret&quot;</span><span class="p">))</span>
+
+<span class="c1">;; Make signature</span>
+<span class="p">(</span><span class="k">def </span><span class="nv">signature</span> <span class="p">(</span><span class="nf">sign/ecdsa-sha256</span> <span class="s">&quot;foo&quot;</span> <span class="nv">ecdsaprivkey</span><span class="p">))</span>
+</pre></div></div></div>
+<div class="listingblock">
+<div class="title">Verify signature using ecdsa.</div>
+<div class="content"><div class="highlight"><pre><span class="c1">;; Read private key</span>
+<span class="p">(</span><span class="k">def </span><span class="nv">ecdsapubkey</span> <span class="p">(</span><span class="nf">keys/private-key</span> <span class="s">&quot;test/_files/pubkey.ecdsa.pem&quot;</span><span class="p">))</span>
+
+<span class="c1">;; Make verification</span>
+<span class="p">(</span><span class="nf">sign/ecdsa-sha256-verify</span> <span class="s">&quot;foo&quot;</span> <span class="nv">signature</span> <span class="nv">ecdsapubkey</span><span class="p">))</span>
+<span class="c1">;; =&gt; true</span>
+</pre></div></div></div>
 </div>
 </div>
 <div class="sect2">
 <h3 id="_key_derivation_functions">4.5. Key Derivation Functions</h3>
-<div class="paragraph"><p>TODO</p></div>
+<div class="paragraph"><p>Key derivation functions are often used in conjunction with non-secret parameters
+to derive one or more keys from a common secret value.</p></div>
+<div class="paragraph"><p><strong>buddy</strong> commes with several of them:</p></div>
+<table class="tableblock frame-all grid-all"
+style="
+width:100%;
+">
+<caption class="title">Table 2. Supported key derivation functions.</caption>
+<col style="width:50%;">
+<col style="width:50%;">
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top" >Algorithm name </th>
+<th class="tableblock halign-left valign-top" > Constructor</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top" ><p class="tableblock">HKDF</p></td>
+<td class="tableblock halign-left valign-top" ><p class="tableblock"><span class="monospaced">buddy.core.kdf/hkdf</span></p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top" ><p class="tableblock">KDF1</p></td>
+<td class="tableblock halign-left valign-top" ><p class="tableblock"><span class="monospaced">buddy.core.kdf/kdf1</span></p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top" ><p class="tableblock">KDF2</p></td>
+<td class="tableblock halign-left valign-top" ><p class="tableblock"><span class="monospaced">buddy.core.kdf/kdf2</span></p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top" ><p class="tableblock">CMKDF</p></td>
+<td class="tableblock halign-left valign-top" ><p class="tableblock"><span class="monospaced">buddy.core.kdf/cmkdf</span></p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top" ><p class="tableblock">FMKDF</p></td>
+<td class="tableblock halign-left valign-top" ><p class="tableblock"><span class="monospaced">buddy.core.kdf/fmkdf</span></p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top" ><p class="tableblock">DPIMKDF</p></td>
+<td class="tableblock halign-left valign-top" ><p class="tableblock"><span class="monospaced">buddy.core.kdf/dpimkdf</span></p></td>
+</tr>
+</tbody>
+</table>
+<div class="admonitionblock">
+<table><tr>
+<td class="icon">
+<div class="title">Note</div>
+</td>
+<td class="content">All key derivation functions work with byte arrays. For following examples, <span class="monospaced">buddy.core.codecs</span>
+functions for convert strings to byte arrays.</td>
+</tr></table>
+</div>
+<div class="sect3">
+<h4 id="_hkdf">4.5.1. HKDF</h4>
+<div class="paragraph"><p>HMAC-based Extract-and-Expand Key Derivation Function (HKDF) implemented according to IETF RFC 5869</p></div>
+<div class="listingblock">
+<div class="title">Example using hkdf</div>
+<div class="content"><div class="highlight"><pre><span class="p">(</span><span class="nf">require</span> <span class="o">&#39;</span><span class="p">[</span><span class="nv">buddy.core.codecs</span> <span class="ss">:refer</span> <span class="ss">:all</span><span class="p">])</span>
+<span class="p">(</span><span class="nf">require</span> <span class="o">&#39;</span><span class="p">[</span><span class="nv">buddy.core.kdf</span> <span class="ss">:as</span> <span class="nv">kdf</span><span class="p">])</span>
+
+<span class="c1">;; Using hkdf derivation functions. It requires a</span>
+<span class="c1">;; key data, salt and optionally info field that can</span>
+<span class="c1">;; contain any random data.</span>
+
+<span class="p">(</span><span class="k">let </span><span class="p">[</span><span class="nv">kfn</span> <span class="p">(</span><span class="nf">kdf/hkdf</span> <span class="p">(</span><span class="nf">str-&gt;bytes</span> <span class="s">&quot;mysecretkey&quot;</span><span class="p">)</span>
+                    <span class="p">(</span><span class="nf">str-&gt;bytes</span> <span class="s">&quot;mypublicsalt&quot;</span><span class="p">)</span>
+                    <span class="nv">nil</span> <span class="c1">;; info parameter can be nil</span>
+                    <span class="ss">:sha256</span><span class="p">)]</span>
+  <span class="p">(</span><span class="nb">-&gt; </span><span class="p">(</span><span class="nf">kdf/generate-bytes!</span> <span class="nv">kfn</span> <span class="mi">8</span><span class="p">)</span>
+      <span class="p">(</span><span class="nf">bytes-&gt;hex</span><span class="p">)))</span>
+<span class="c1">;; =&gt; &quot;0faba553152fce4f&quot;</span>
+</pre></div></div></div>
+</div>
+<div class="sect3">
+<h4 id="_kdf1_2">4.5.2. KDF1/2</h4>
+<div class="paragraph"><p>KDF1/2 hash based key derivation functions for derived keys and ivs as defined by IEEE P1363a/ISO 18033.</p></div>
+<div class="listingblock">
+<div class="title">Example using kdf1 or kdf2</div>
+<div class="content"><div class="highlight"><pre><span class="p">(</span><span class="nf">require</span> <span class="o">&#39;</span><span class="p">[</span><span class="nv">buddy.core.codecs</span> <span class="ss">:refer</span> <span class="ss">:all</span><span class="p">])</span>
+<span class="p">(</span><span class="nf">require</span> <span class="o">&#39;</span><span class="p">[</span><span class="nv">buddy.core.kdf</span> <span class="ss">:as</span> <span class="nv">kdf</span><span class="p">])</span>
+
+<span class="c1">;; kdf1 and kdf2 are very similar and has the same</span>
+<span class="c1">;; consturctor signature. Requires: key data, salt</span>
+<span class="c1">;; and hash algorithm keyword.</span>
+
+<span class="p">(</span><span class="k">let </span><span class="p">[</span><span class="nv">kfn</span> <span class="p">(</span><span class="nf">kdf/kdf2</span> <span class="p">(</span><span class="nf">str-&gt;bytes</span> <span class="s">&quot;mysecretkey&quot;</span><span class="p">)</span> <span class="p">(</span><span class="nf">str-&gt;bytes</span> <span class="s">&quot;mypublicsalt&quot;</span><span class="p">)</span> <span class="ss">:sha256</span><span class="p">)]</span>
+  <span class="p">(</span><span class="nb">-&gt; </span><span class="p">(</span><span class="nf">kdf/generate-bytes!</span> <span class="nv">kfn</span> <span class="mi">8</span><span class="p">)</span>
+      <span class="p">(</span><span class="nf">bytes-&gt;hex</span><span class="p">)))</span>
+<span class="c1">;; =&gt; &quot;0faba553152fce4f&quot;</span>
+</pre></div></div></div>
+</div>
+<div class="sect3">
+<h4 id="_counter_mode_kdf">4.5.3. Counter Mode KDF</h4>
+<div class="paragraph"><p>Hash based KDF with counter mode defined by the publicly available NIST SP 800-108 specification.</p></div>
+</div>
+<div class="sect3">
+<h4 id="_feedback_mode_kdf">4.5.4. Feedback Mode KDF</h4>
+<div class="paragraph"><p>Hash based KDF with feedback mode defined by the publicly available NIST SP 800-108 specification.</p></div>
+</div>
+<div class="sect3">
+<h4 id="_double_pipeline_iteration_mode_kdf">4.5.5. Double-Pipeline Iteration Mode KDF</h4>
+<div class="paragraph"><p>Hash based KDF with Double-Pipeline Iteration Mode defined by the publicly available
+NIST SP 800-108 specification.</p></div>
+</div>
 </div>
 <div class="sect2">
 <h3 id="_ciphers">4.6. Ciphers</h3>
@@ -564,7 +687,7 @@ Self contained token generation for use it on completely stateless token based a
 style="
 width:100%;
 ">
-<caption class="title">Table 2. Supported Algorithms</caption>
+<caption class="title">Table 3. Supported Algorithms</caption>
 <col style="width:25%;">
 <col style="width:25%;">
 <col style="width:25%;">
@@ -741,7 +864,7 @@ with the widely used password derivation algorithms: bcrypt and pbkdf2.</p></div
 style="
 width:100%;
 ">
-<caption class="title">Table 3. Supported password hashers algorithms</caption>
+<caption class="title">Table 4. Supported password hashers algorithms</caption>
 <col style="width:33%;">
 <col style="width:33%;">
 <col style="width:33%;">
@@ -1324,7 +1447,7 @@ limitations under the License.
 <div id="footer">
 <div id="footer-text">
 Version 0.1.2<br>
-Last updated 2014-05-02 01:47:35 CEST
+Last updated 2014-05-02 21:23:47 CEST
 </div>
 </div>
 </body>
