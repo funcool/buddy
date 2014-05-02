@@ -87,12 +87,19 @@
     (let [mac-bytes1 (poly/poly1305 plaintext secretkey iv :aes)]
       (is (= (-> mac-bytes1 (bytes->hex)) "98a94ff88861bf9b96bcb7112b506579"))))
 
+  (testing "File mac"
+    (let [path       "test/_files/pubkey.ecdsa.pem"
+          macbytes   (poly/poly1305 (io/input-stream path) secretkey iv :aes)]
+      (is (poly/poly1305-verify (io/input-stream path) macbytes secretkey iv :aes))))
+
   (testing "Poly1305-AES enc/verify using key with good iv"
     (let [iv1      (make-random-bytes 16)
           iv2      (make-random-bytes 16)
-          macbytes (poly/poly1305 plaintext secretkey iv1 :aes)]
-      (is (poly/poly1305-verify plaintext macbytes secretkey iv1 :aes))
-      (is (not (poly/poly1305-verify plaintext macbytes secretkey iv2 :aes)))))
+          macbytes1 (poly/poly1305 plaintext secretkey iv1 :aes)
+          macbytes2 (poly/poly1305-aes plaintext secretkey iv1)]
+      (is (poly/poly1305-verify plaintext macbytes1 secretkey iv1 :aes))
+      (is (poly/poly1305-aes-verify plaintext macbytes2 secretkey iv1))
+      (is (not (poly/poly1305-verify plaintext macbytes1 secretkey iv2 :aes)))))
 
   (testing "Poly1305-Twofish env/verify"
     (let [iv2 (make-random-bytes 16)
@@ -117,7 +124,6 @@
         (is (Arrays/equals plain1 (chacha/decrypt encrypted key1 iv1)))
         (is (not (Arrays/equals plain1 (chacha/decrypt encrypted key1 iv2))))
         (is (not (Arrays/equals plain1 (chacha/decrypt encrypted key2 iv1))))))))
-
 
 (deftest buddy-core-kdf
   (let [key1 (make-random-bytes 32)
