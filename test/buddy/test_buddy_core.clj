@@ -72,7 +72,12 @@
     (let [output1 (str->safebase64 "foo")
           output2 (safebase64->str output1)]
       (is (= output1 "Zm9v"))
-      (is (= output2 "foo")))))
+      (is (= output2 "foo"))))
+  (testing "Concat byte arrays"
+    (let [array1 (into-array Byte/TYPE [1,2,3])
+          array2 (into-array Byte/TYPE [3,4,5])]
+      (is (Arrays/equals (concat-byte-arrays array1 array2)
+                         (into-array Byte/TYPE [1,2,3,3,4,5]))))))
 
 (deftest buddy-core-mac-poly1305
   (let [iv        (byte-array 16) ;; 16 bytes array filled with 0

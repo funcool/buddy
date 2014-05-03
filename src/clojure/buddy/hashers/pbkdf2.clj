@@ -14,7 +14,7 @@
 
 (ns buddy.hashers.pbkdf2
   (:require [buddy.core.codecs :refer :all]
-            [buddy.core.util :refer :all]
+            [buddy.core.keys :refer [make-random-bytes]]
             [clojure.string :refer [split]])
   (:import javax.crypto.spec.PBEKeySpec
            javax.crypto.SecretKeyFactory))
@@ -39,7 +39,7 @@
   pbkdf2_sha1 algorithm and return formatted
   string."
   [pw & [{:keys [salt iterations] :or {iterations 20000}}]]
-  (let [salt      (if (nil? salt) (random-bytes 12) salt)
+  (let [salt      (if (nil? salt) (make-random-bytes 12) salt)
         password  (make-pbkdf2 pw salt iterations)]
     (format "pbkdf2+sha1$%s$%s$%s" (bytes->hex salt) iterations password)))
 

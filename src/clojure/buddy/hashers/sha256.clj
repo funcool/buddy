@@ -14,9 +14,8 @@
 
 (ns buddy.hashers.sha256
   (:require [buddy.core.codecs :refer :all]
-            [buddy.core.util :refer :all]
+            [buddy.core.keys :refer [make-random-bytes]]
             [buddy.core.hash :refer [sha256]]
-            [buddy.core.util :refer [concat-byte-arrays]]
             [clojure.string :refer [split]])
   (:import (java.security MessageDigest)))
 
@@ -32,7 +31,7 @@
   sha256 hash algorithm and return formatted
   string."
   [pw & [{:keys [salt]}]]
-  (let [bsalt         (if (nil? salt) (random-bytes 12) salt)
+  (let [bsalt         (if (nil? salt) (make-random-bytes 12) salt)
         password      (make-sha256 pw bsalt)]
     (format "sha256$%s$%s" (bytes->hex bsalt) password)))
 

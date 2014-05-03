@@ -123,6 +123,13 @@ urlsafe base64 version."
     (.flip buffer)
     (.getLong buffer)))
 
+(defn concat-byte-arrays
+  "Given N number of byte arrays, concat them in
+one unique byte array and return it."
+  [& parts]
+  (byte-array (for [ar parts
+                    i  ar] i)))
+
 (defprotocol ByteArray
   "Facility for convert input parameters
 to bytes array with default implementation

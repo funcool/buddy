@@ -13,10 +13,9 @@
 ;; limitations under the License.
 
 (ns buddy.hashers.md5
-  (:require [buddy.core.util :refer :all]
-            [buddy.core.codecs :refer :all]
+  (:require [buddy.core.codecs :refer :all]
             [buddy.core.hash :refer [md5]]
-            [buddy.core.util :refer [concat-byte-arrays]]
+            [buddy.core.keys :refer [make-random-bytes]]
             [clojure.string :refer [split]])
   (:import (java.security MessageDigest)))
 
@@ -32,7 +31,7 @@
   md5 hash algorithm and return formatted
   string."
   [pw & [{:keys [salt]}]]
-  (let [salt      (if (nil? salt) (random-bytes 12) salt)
+  (let [salt      (if (nil? salt) (make-random-bytes 12) salt)
         password  (make-md5 pw salt)]
     (format "md5$%s$%s" (bytes->hex salt) password)))
 

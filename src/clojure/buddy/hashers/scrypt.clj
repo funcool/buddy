@@ -14,7 +14,7 @@
 
 (ns buddy.hashers.scrypt
   (:require [buddy.core.codecs :refer :all]
-            [buddy.core.util :refer :all]
+            [buddy.core.keys :refer [make-random-bytes]]
             [clojure.string :refer [split]]
             [clojurewerkz.scrypt.core :as sc]))
 
@@ -28,8 +28,8 @@
 and return formated string."
   [pw & [{:keys [salt cpucost memcost parallelism]
           :or {cpucost 65536 memcost 8 parallelism 1}}]]
-  (let [salt   (cond 
-                (nil? salt) (bytes->hex (random-bytes 12))
+  (let [salt   (cond
+                (nil? salt) (bytes->hex (make-random-bytes 12))
                 :else (bytes->hex (->byte-array salt)))
         passwd (-> (str salt pw salt)
                    (make-scrypt cpucost memcost parallelism)

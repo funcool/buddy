@@ -18,7 +18,6 @@
             [buddy.core.hmac :refer [hmac-sha256]]
             [buddy.core.hmac :as hmac]
             [buddy.core.sign :as sign]
-            [buddy.core.util :refer [concat-byte-arrays]]
             [buddy.util :refer [maybe-let]]
             [clojure.string :as str]
             [taoensso.nippy :as nippy])

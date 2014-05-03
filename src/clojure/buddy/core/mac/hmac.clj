@@ -15,7 +15,6 @@
 (ns buddy.core.mac.hmac
   "Hash-based Message Authentication Codes (HMACs)"
   (:require [buddy.core.codecs :refer :all]
-            [buddy.core.util :refer [concat-byte-arrays]]
             [buddy.core.hash :as hash]
             [clojure.java.io :as io])
   (:import org.bouncycastle.crypto.macs.HMac
