@@ -46,7 +46,7 @@ secure hash functions (digest)
 </li>
 <li>
 <p>
-password hashing algorithms
+password hashing algorithms (bcrypt, pbkdf2, scrypt)
 </p>
 </li>
 <li>
@@ -70,7 +70,8 @@ key derivartion functions (kdf)
 </p>
 </li>
 </ul></div>
-<div class="paragraph"><p>Obviously backed by battle tested <a href="http://www.bouncycastle.org/specifications.html">bouncy castle</a> library.</p></div>
+<div class="paragraph"><p>Obviously backed by battle tested <a href="http://www.bouncycastle.org/specifications.html">bouncy castle</a>
+library and with 93% of test coverage.</p></div>
 <div class="paragraph"><p><a href="api/index.html">API reference documentation.</a></p></div>
 <div class="sect2">
 <h3 id="_philosophy">1.1. Philosophy</h3>
@@ -1433,15 +1434,20 @@ If it is accepted, follow same steps as "bugfix".
 <div class="sect1">
 <h2 id="_faq">10. FAQ</h2>
 <div class="sectionbody">
-<div class="paragraph"><p><strong>Buddy is a security library/framework?</strong>
-Yes and No. I don&#8217;t like call "security" library because security represents a very generic
-concepts and can contain a lot of things. Buddy is target to authentication, authorization and signing.</p></div>
+<div class="paragraph"><p><strong>Buddy is a security library/framework?</strong></p></div>
+<div class="paragraph"><p>Yes and No. I don&#8217;t like call "security" library because security represents a very generic
+concepts and can contain a lot of things. Buddy is target to cryptography, message signing
+and authentication/authorization extensions for ring compatible web applications. You can see
+the main target on the "Introduction" section of this documentation.</p></div>
 <div class="paragraph"><p><strong>How can I use <em>buddy</em> with <a href="http://clojure-liberator.github.io/liberator/">liberator</a>?</strong></p></div>
 <div class="paragraph"><p>By design, <em>buddy</em> has authorization and authentication well
 separated. This helps a lot if you want use only one part of it (ex:
 authentication only) without including the other.</p></div>
 <div class="paragraph"><p>The best combination is to use <em>buddy</em>'s authentication middleware
 with liberator authorization endpoints.</p></div>
+<div class="paragraph"><p><strong>Byddy has own cryptographic algorithms implementations?</strong></p></div>
+<div class="paragraph"><p>Mainly no, I&#8217;m not cryptography expert and I rely this to battle tested Bouncy Castle java
+library dedicated to that.</p></div>
 <div class="paragraph"><p><strong>Buddy will support pgp?</strong></p></div>
 <div class="paragraph"><p>Surely not! Because there is already exists one good <a href="https://github.com/greglook/clj-pgp">library for that</a>.</p></div>
 </div>
@@ -1471,7 +1477,7 @@ limitations under the License.
 <div id="footer">
 <div id="footer-text">
 Version 0.1.2<br>
-Last updated 2014-05-02 22:49:49 CEST
+Last updated 2014-05-03 01:55:57 CEST
 </div>
 </div>
 </body>
