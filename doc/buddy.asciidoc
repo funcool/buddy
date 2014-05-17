@@ -29,7 +29,7 @@ link:api/index.html[API reference documentation.]
 Philosophy
 ~~~~~~~~~
 
-Five most important rules:
+Four most important rules:
 
 - Beautiful is better than ugly
 - Explicit is better than implicit
@@ -98,7 +98,7 @@ Then for buddy:
 Get the Code
 ~~~~~~~~~~~~
 
-_buddy_ is opensource and is entirelly developed on link:https://github.com/niwibe/buddy[github].
+_buddy_ is opensource and is entirely developed on link:https://github.com/niwibe/buddy[github].
 
 You can clone the public repository with this command:
 
@@ -111,23 +111,22 @@ git clone https://github.com/niwibe/buddy
 Core library
 ------------
 
-Buddy is splitted in "two libraries", the low level interface
-and high level interface.
+Buddy has a low-level interface and a high-level interface.
 
-Low level interface is located on `buddy.core` namespace and
+The low-level interface is located in the `buddy.core` namespace and
 has implementations for:
 
-- cryptographyc hash algorithms
+- cryptographic hash algorithms
 - key derivation algorithms
-- digital signature
+- digital signatures
 - message authentication (mac)
-- cryptography algorithms (block & stream ciphers)
+- cryptographic algorithms (block & stream ciphers)
 
 
 Cryptographic hash algorithms
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-All hash algorithms are located on the `buddy.core.hash` namespace.
+All hash algorithms are located in the `buddy.core.hash` namespace.
 
 .Available hash algorithms
 [options="header"]
@@ -165,9 +164,9 @@ Basic usage
 Advanced usage
 ^^^^^^^^^^^^^^
 
-Hash functions are implemented using protocols and it can be extended
-to other types. The default implementations also comes with implementation
-for file like objects (*File*, *URL*, URI* and *InputStream*).
+Hash functions are implemented using protocols and can be extended
+to other types. The default implementations come with support
+for file-like objects (*File*, *URL*, URI* and *InputStream*).
 
 .Make hash of file example:
 [source, clojure]
@@ -203,7 +202,7 @@ HMac
 ^^^^
 
 There are two variants of hmac: simple and salted. Both are available
-in `buddy.core.mac.hmac` namespace.
+in the `buddy.core.mac.hmac` namespace.
 
 Basic usage
 +++++++++++
@@ -226,7 +225,7 @@ Basic usage
 ----
 
 The key parameter can be any type that implements the *ByteArray* protocol
-defined on `buddy.core.codecs` namespace. It comes with default implementation for
+defined in the `buddy.core.codecs` namespace. It comes with default implementations for
 `byte[]` and `java.lang.String`.
 
 
@@ -234,7 +233,7 @@ Advanced usage
 ++++++++++++++
 
 Like hash functions, hmac is implemented using Clojure
-protocols and it comes with default implementated for: String, byte[],
+protocols and comes with default implementations for: String, byte[],
 *File*, *URL*, *URI* and *InputStream*.
 
 [source,clojure]
@@ -268,18 +267,18 @@ Poly1305 is a cryptographic message authentication code
 (MAC) written by Daniel J. Bernstein. It can be used to verify the
 data integrity and the authenticity of a message.
 
-The security of Poly1305 is very close to the bock cipher algorithm.
+The security of Poly1305 is very close to the block cipher algorithm.
 As a result, the only way for an attacker to break Poly1305 is to break
 the cipher.
 
-Poly1305 offers cipher replaceability. If anything does
-go wrong with one, it can be substituted with an other with identical
-security guarantee.
+Poly1305 offers cipher replaceability. If anything goes wrong with
+one, it can be substituted by another with identical security
+guarantees.
 
-Unlike *HMac*, it requires initialization vector (IV). Is like a
-salt, but required for security guarantee, and it should be generated
-using strong random number generator. Also, iv should be of same
-length as choised cipher block size.
+Unlike *HMac*, it requires an initialization vector (IV). An IV is
+like a salt. It should be generated using a strong random number
+generator for security guarantees. Also, the IV should be of the same
+length as the chosen cipher block size.
 
 
 Basic usage
@@ -306,8 +305,9 @@ and Twofish.
 Public/Private keypairs
 ~~~~~~~~~~~~~~~~~~~~~~~
 
-Before explaining digital signatures, you need read public/private keypairs
-and conver them to usable objects. Buddy has limited support for read:
+Before explaining digital signatures, you need to read public/private
+keypairs and convert them to usable objects. Buddy has limited support
+for reading:
 
 - RSA keypair
 - ECDSA keypair
@@ -316,8 +316,9 @@ and conver them to usable objects. Buddy has limited support for read:
 RSA Keypair
 ^^^^^^^^^^^
 
-RSA keypair is used for obvious rsa encrypt/decrypt operations, but also
-is used for make digital signature with any rsa derived algorithm.
+An RSA keypair is obviously used for RSA encryption/decryption, but it
+is also used for making digital signatures with RSA-derived
+algorithms.
 
 .Read keys
 [source,clojure]
@@ -333,7 +334,7 @@ is used for make digital signature with any rsa derived algorithm.
 .Generate a RSA Keypair using openssl.
 [source,bash]
 ----
-# Generate aes256 encrypted private key
+# Generate AES-256 encrypted private key
 openssl genrsa -aes256 -out privkey.pem 2048
 
 # Generate public key from previously created private key.
@@ -344,8 +345,8 @@ openssl rsa -pubout -in privkey.pem -out pubkey.pem
 ECDSA Keypair
 ^^^^^^^^^^^^^
 
-Like RSA keypair, ECDSA also are used for make a digital signature and
-can be readed like previous rsa examples.
+Like RSA keypairs, ECDSA is also used for making digital signatures
+and can be read like in the RSA examples.
 
 .Read keys.
 [source, clojure]
@@ -361,7 +362,7 @@ can be readed like previous rsa examples.
 .Generate a ECDSA Keypair using openssl.
 [source, bash]
 ----
-# Generating params file
+# Generate a params file
 openssl ecparam -name prime256v1 -out ecparams.pem
 
 # Generate a private key from params file
@@ -375,9 +376,10 @@ openssl ec -in ecprivkey.pem -pubout -out ecpubkey.pem
 Digital Signatures
 ~~~~~~~~~~~~~~~~~~
 
-Digital Signatures differs from Mac as Mac values are both generated and verified
-using the same secret key. Digital Signatures requires public/private keypair, it
-signs using private key and verifies signature using a public key.
+Digital Signatures differ from Mac as Mac values are both generated
+and verified using the same secret key. Digital Signatures require a
+public/private keypair. It signs using a private key and verifies a
+signature using a public key.
 
 
 RSASSA PSS
@@ -503,14 +505,15 @@ to derive one or more keys from a common secret value.
 |DPIMKDF        | `buddy.core.kdf/dpimkdf` | Double-Pipeline Iteration Mode KDF
 |==============================================================================
 
-NOTE: All key derivation functions work with byte arrays. For following examples, `buddy.core.codecs`
-functions for convert strings to byte arrays.
+NOTE: All key derivation functions work with byte arrays. For the
+ following examples, the functions in `buddy.core.codecs` convert
+ strings to byte arrays.
 
 
 HKDF
 ^^^^
 
-HMAC-based Extract-and-Expand Key Derivation Function (HKDF) implemented according to IETF RFC 5869
+HMAC-based Extract-and-Expand Key Derivation Function (HKDF) is implemented according to IETF RFC 5869
 
 .Example using hkdf
 [source, clojure]
@@ -519,7 +522,7 @@ HMAC-based Extract-and-Expand Key Derivation Function (HKDF) implemented accordi
 (require '[buddy.core.kdf :as kdf])
 
 ;; Using hkdf derivation functions. It requires a
-;; key data, salt and optionally info field that can
+;; key, salt and optionally info field that can
 ;; contain any random data.
 
 (let [kfn (kdf/hkdf (str->bytes "mysecretkey")
@@ -535,7 +538,7 @@ HMAC-based Extract-and-Expand Key Derivation Function (HKDF) implemented accordi
 KDF1/2
 ^^^^^^
 
-KDF1/2 hash based key derivation functions for derived keys and ivs as defined by IEEE P1363a/ISO 18033.
+KDF1/2 hash-based key derivation functions for derived keys and ivs as defined by IEEE P1363a/ISO 18033.
 
 .Example using kdf1 or kdf2
 [source, clojure]
@@ -543,8 +546,8 @@ KDF1/2 hash based key derivation functions for derived keys and ivs as defined b
 (require '[buddy.core.codecs :refer :all])
 (require '[buddy.core.kdf :as kdf])
 
-;; kdf1 and kdf2 are very similar and has the same
-;; consturctor signature. Requires: key data, salt
+;; kdf1 and kdf2 are very similar and have the same
+;; constructor signature. Requires: key data, salt
 ;; and hash algorithm keyword.
 
 (let [kfn (kdf/kdf2 (str->bytes "mysecretkey") (str->bytes "mypublicsalt") :sha256)]
@@ -557,18 +560,18 @@ KDF1/2 hash based key derivation functions for derived keys and ivs as defined b
 Counter Mode KDF
 ^^^^^^^^^^^^^^^^
 
-Hash based KDF with counter mode defined by the publicly available NIST SP 800-108 specification.
+Hash-based KDF with counter mode defined by the publicly available NIST SP 800-108 specification.
 
 Feedback Mode KDF
 ^^^^^^^^^^^^^^^^^
 
-Hash based KDF with feedback mode defined by the publicly available NIST SP 800-108 specification.
+Hash-based KDF with feedback mode defined by the publicly available NIST SP 800-108 specification.
 
 
 Double-Pipeline Iteration Mode KDF
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-Hash based KDF with Double-Pipeline Iteration Mode defined by the publicly available
+Hash-based KDF with Double-Pipeline Iteration Mode defined by the publicly available
 NIST SP 800-108 specification.
 
 
@@ -588,7 +591,7 @@ Codecs (binary -> string conversion)
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 Implements some useful and widely used around all buddy library functions
-for make conversions between strings, bytes, hex encoded strings and base64
+for converting between strings, bytes, hex encoded strings and base64
 encoded strings.
 
 The best documentation for this part is the source code.
@@ -658,11 +661,11 @@ There are four signing functions in *`buddy.sign.generic`* namespace: `sign`,
 ;; unsigned-data should contain the original string: "mystring"
 ----
 
-The signing process consists of append signatures to the original
-string, separating the signature with a predefined separator (default
+The signing process consists of appending signatures to the original
+string and separating the signature with a predefined separator (default
 ":" char).
 
-Each signature have attached a timestamp (with millisecond of accuracy) and you can
+Each signature has a timestamp attached (with millisecond of accuracy) so you can
 invalidate signed messages based on their age.
 
 .Invalidate signed data using timestamp
@@ -710,7 +713,7 @@ Using Digital Signature algorithms
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
 For use anyone of digital signature algorithms you must have a private/public key. If you
-don't have one, don't worry, generate one it's very easy (using *openssl*).
+don't have one, don't worry - it's very easy to generate one using *openssl*.
 
 
 Elliptic Curve DSA
@@ -745,8 +748,8 @@ openssl rsa -pubout -in privkey.pem -out pubkey.pem
 Using Digital Signature Keys for signing
 ++++++++++++++++++++++++++++++++++++++++
 
-Now, having generated key pair, you can sign your messages with Digital
-Signature algorithms also previously mentioned.
+Now, having generated a key pair, you can sign your messages with the
+previously mentioned Digital Signature algorithms.
 
 [source, clojure]
 ----
@@ -773,8 +776,9 @@ Password Hashers
 Another important part of a good authentication/authorization library
 is providing some facilities for generating secure passwords.
 
-_buddy_ comes with a few functions for generating and verifying passwords
-with the widely used password derivation algorithms: bcrypt and pbkdf2.
+_buddy_ comes with a few functions for generating and verifying
+passwords such as the widely used password derivation algorithms:
+bcrypt and pbkdf2.
 
 .Supported password hashers algorithms
 [options="header"]
@@ -807,24 +811,26 @@ hash.
 
 [NOTE]
 ====
-`make-password` accept distinct parameters depending on hasher implementation and all functions
-works with strings instead of bytes (unlike cryptographyc hash functions).
+`make-password` accepts distinct parameters depending on hasher implementation and all functions
+work with strings instead of bytes (unlike cryptographic hash functions).
 ====
 
 
 Web extensions
 --------------
 
-Additionaly, buddy commes with web libraries support for authentication and authorization. It
-mainly works with ring/compojure combination but in future can be extended for work with other
-libraries
+Additionally, buddy commes with web library support for authentication
+and authorization. It mainly works with ring (and compojure, since it
+is ring-based) but in the future it can be extended for work with
+other libraries.
 
 Authentication
 ~~~~~~~~~~~~~~
 
-Authentication in buddy is implemented using clojure protocols for easy extensibility. If
-you are not happy with builtin auth backends you can implement your own and use it with buddy
-without much problems.
+Authentication in buddy is implemented using clojure protocols for
+extensibility. If you are not happy with built-in auth backends you
+can implement your own and use it with buddy without too many
+problems.
 
 .Here is a list of built-in authentication backends:
 [options="header"]
@@ -840,9 +846,9 @@ without much problems.
 HTTP Basic
 ^^^^^^^^^^
 
-The HTTP Basic authentication backend is one of the simplest/insecure
-authentication systems, but it works well as a first introduction of
-authentication with _buddy_.
+The HTTP Basic authentication backend is one of the simplest and most
+insecure authentication systems, but it works well as a first
+introduction of authentication with _buddy_.
 
 .Simple handler definition
 [source,clojure]
@@ -894,10 +900,10 @@ authentication with _buddy_.
 Session
 ^^^^^^^
 
-The session backend has the simplest implementation, because it completely
-relies on ring session support.
+The session backend has the simplest implementation because it relies
+entirely on ring session support.
 
-It checks the `:identity` key on sesion for authenticate the user with its
+It checks the `:identity` key on session to authenticate the user with its
 value. The value is identified as logged user if it contains any logical true
 value.
 
@@ -907,10 +913,10 @@ See xref:examples[examples section] for complete examples for this backend.
 Token
 ^^^^^
 
-This backend works much like the basic auth backend with differente that this works with
-tokens that can be unpredictable and generated randomly.
+This backend works much like the basic auth backend with the difference that this works with
+tokens that can be unpredictable.
 
-It parses a token and passes it to auth-fn for authenticate it.
+It parses a token and passes it to auth-fn for authentication.
 
 
 Signed Token
@@ -918,10 +924,11 @@ Signed Token
 
 This backend is very similar to standard token backend previously explained, but instead
 of relying on auth-fn for identify a token, it uses stateless tokens (contains all needed
-data in a token, whithout storing any information about token on database as ex...).
+data in a token, without storing any information about token on database as ex...).
 
-This backend relies on the security of high level signing framework for authenticate
-the user.
+This backend relies on the security of the high level signing
+framework for user authentication.
+
 
 See xref:examples[examples section] for complete examples for this backend.
 
@@ -931,7 +938,7 @@ Authorization
 
 _buddy_ also comes with an authorization system.
 
-The authorization system is splited in two parts:
+The authorization system is split into two parts:
 
 - generic authorization system using exceptions for fast return and unauthorized-handler function
   for handle unauthorized requsts.
@@ -943,12 +950,12 @@ Generic authorization
 ^^^^^^^^^^^^^^^^^^^^^
 
 This authorization system encapsulates your handlers/controllers in one try/catch block
-catching only notauthorized exceptions. So spliting unauthorized request handling code from
+catching only notauthorized exceptions. So splitting unauthorized request handling code from
 your handlers/controllers in a separate function. Moreover, it permits fast return when
 not authorized request is detected.
 
 Like authentication system, authorization is also implemented using protocols. Taking advantage of
-it, all builtin authentication backends also implements this authorization protocol (`IAuthorization`).
+it, all built-in authentication backends also implements this authorization protocol (`IAuthorization`).
 
 Some authentication backends require specific behavior in the authorization layer (like http-basic
 which should return `WWW-Authenticate` header when request is unauthorized). By default, all backends
