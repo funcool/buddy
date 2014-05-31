@@ -122,6 +122,6 @@ InputStream, File, URL and URI."
   [input key ^Keyword alg]
   (make-hmac input key alg))
 
-(defn hmac-verify
+(defn verify
   [input ^bytes signature key ^Keyword alg]
   (verify-hmac input signature key alg))
