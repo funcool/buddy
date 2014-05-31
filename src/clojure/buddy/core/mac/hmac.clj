@@ -113,20 +113,6 @@ InputStream, File, URL and URI."
   (verify-hmac [^java.net.URI input ^bytes signature ^String key ^Keyword alg]
     (verify-hmac-for-stream (io/input-stream input) signature key alg)))
 
-(defn- make-salted-hmac
-  "Generic function that implement salted variant
-of keyed-hash message authentication code (hmac).
-This is a low level function and always return bytes."
-  [input key salt ^Keyword alg]
-  (let [key (concat-byte-arrays (->byte-array key)
-                                (->byte-array salt))]
-    (make-hmac input (hash/sha512 key) alg)))
-
-(defn- verify-salted-hmac
-  [input ^bytes signature key salt ^Keyword alg]
-  (let [key (concat-byte-arrays (->byte-array key)
-                                (->byte-array salt))]
-    (verify-hmac input signature (hash/sha512 key) alg)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; High level interface
