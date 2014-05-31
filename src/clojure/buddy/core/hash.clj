@@ -37,9 +37,6 @@ from algorithm parameter."
    (instance? IFn alg) (alg)
    (instance? Digest alg) alg))
 
-;; (java.security.Security/addProvider
- ;; (org.bouncycastle.jce.provider.BouncyCastleProvider.))
-
 (defprotocol DigestType
   (make-digest [input algorithm] "Low level interface, always returns bytes"))
 
