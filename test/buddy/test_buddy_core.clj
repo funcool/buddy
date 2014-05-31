@@ -10,7 +10,6 @@
             [buddy.hashers.md5 :as md5]
             [buddy.hashers.scrypt :as scrypt]
             [buddy.core.mac.poly1305 :as poly]
-            [buddy.core.crypto.chacha :as chacha]
             [buddy.core.kdf :as kdf]
             [clojure.java.io :as io])
   (:import buddy.Arrays))
@@ -117,18 +116,6 @@
           signature (poly/poly1305-serpent plaintext secretkey iv2)]
       (is (poly/poly1305-serpent-verify plaintext signature secretkey iv2))
       (is (not (poly/poly1305-serpent-verify plaintext signature secretkey iv)))))))
-
-(deftest buddy-core-crypto-chacha
-  (let [iv1    (make-random-bytes 8)
-        iv2    (make-random-bytes 8)
-        key1   (make-random-bytes 32)
-        key2   (make-random-bytes 16)
-        plain1 (make-random-bytes 100)]
-    (testing "Enc/Dec simple text"
-      (let [encrypted (chacha/encrypt plain1 key1 iv1)]
-        (is (Arrays/equals plain1 (chacha/decrypt encrypted key1 iv1)))
-        (is (not (Arrays/equals plain1 (chacha/decrypt encrypted key1 iv2))))
-        (is (not (Arrays/equals plain1 (chacha/decrypt encrypted key2 iv1))))))))
 
 (deftest buddy-core-kdf
   (let [key1 (make-random-bytes 32)
