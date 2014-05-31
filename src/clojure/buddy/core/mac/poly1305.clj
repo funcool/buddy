@@ -147,27 +147,9 @@ Key can be any type that implements ByteArray protocol."
   (let [key (->byte-array key)]
     (make-poly1305 input key iv alg)))
 
-(defn poly1305-verify
+(defn verify
   "Verify poly1305 mac for specified data and signature."
   [input ^bytes signature pkey ^bytes iv ^Keyword alg]
   {:pre [(= (count iv) 16)]}
   (let [key (->byte-array pkey)]
     (verify-poly1305-impl input signature key iv alg)))
-
-(def ^{:doc "Alias for Poly1305 + AES mac."}
-  poly1305-aes #(poly1305 %1 %2 %3 :aes))
-
-(def ^{:doc "Alias for Poly1305 + AES mac verify function."}
-  poly1305-aes-verify #(poly1305-verify %1 %2 %3 %4 :aes))
-
-(def ^{:doc "Alias for Poly1305 + Twofish mac."}
-  poly1305-twofish #(poly1305 %1 %2 %3 :twofish))
-
-(def ^{:doc "Alias for Poly1305 + Twofish mac verify function."}
-  poly1305-twofish-verify #(poly1305-verify %1 %2 %3 %4 :twofish))
-
-(def ^{:doc "Alias for Poly1305 + Serpent mac."}
-  poly1305-serpent #(poly1305 %1 %2 %3 :serpent))
-
-(def ^{:doc "Alias for Poly1305 + Serpent mac verify function."}
-  poly1305-serpent-verify #(poly1305-verify %1 %2 %3 %4 :serpent))

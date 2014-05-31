@@ -94,28 +94,26 @@
   (testing "File mac"
     (let [path       "test/_files/pubkey.ecdsa.pem"
           macbytes   (poly/poly1305 (io/input-stream path) secretkey iv :aes)]
-      (is (poly/poly1305-verify (io/input-stream path) macbytes secretkey iv :aes))))
+      (is (poly/verify (io/input-stream path) macbytes secretkey iv :aes))))
 
   (testing "Poly1305-AES enc/verify using key with good iv"
     (let [iv1      (make-random-bytes 16)
           iv2      (make-random-bytes 16)
-          macbytes1 (poly/poly1305 plaintext secretkey iv1 :aes)
-          macbytes2 (poly/poly1305-aes plaintext secretkey iv1)]
-      (is (poly/poly1305-verify plaintext macbytes1 secretkey iv1 :aes))
-      (is (poly/poly1305-aes-verify plaintext macbytes2 secretkey iv1))
-      (is (not (poly/poly1305-verify plaintext macbytes1 secretkey iv2 :aes)))))
+          macbytes (poly/poly1305 plaintext secretkey iv1 :aes)]
+      (is (poly/verify plaintext macbytes secretkey iv1 :aes))
+      (is (not (poly/verify plaintext macbytes secretkey iv2 :aes)))))
 
   (testing "Poly1305-Twofish env/verify"
     (let [iv2 (make-random-bytes 16)
-          signature (poly/poly1305-twofish plaintext secretkey iv2)]
-      (is (poly/poly1305-twofish-verify plaintext signature secretkey iv2))
-      (is (not (poly/poly1305-twofish-verify plaintext signature secretkey iv)))))
+          signature (poly/poly1305 plaintext secretkey iv2 :twofish)]
+      (is (poly/verify plaintext signature secretkey iv2 :twofish))
+      (is (not (poly/verify plaintext signature secretkey iv :twofish)))))
 
   (testing "Poly1305-Serpent env/verify"
     (let [iv2 (make-random-bytes 16)
-          signature (poly/poly1305-serpent plaintext secretkey iv2)]
-      (is (poly/poly1305-serpent-verify plaintext signature secretkey iv2))
-      (is (not (poly/poly1305-serpent-verify plaintext signature secretkey iv)))))))
+          signature (poly/poly1305 plaintext secretkey iv2 :serpent)]
+      (is (poly/verify plaintext signature secretkey iv2 :serpent))
+      (is (not (poly/verify plaintext signature secretkey iv :serpent)))))))
 
 (deftest buddy-core-kdf
   (let [key1 (make-random-bytes 32)
