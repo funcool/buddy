@@ -125,25 +125,6 @@ InputStream, File, URL and URI."
 (defn hmac-verify
   [input ^bytes signature key ^Keyword alg]
   (verify-hmac input signature key alg))
-
-(defn shmac
-  "Generic function that exposes a high level
-interface for salted variant of keyed-hash message
-authentication code algorithm."
-  [input key salt ^Keyword alg]
-  (make-salted-hmac input key salt alg))
-
-(defn shmac-verify
-  "Generic function that exposes a high level
-interface for salted variant of keyed-hash message
-authentication code verification algorithm."
-  [input ^bytes signature key salt ^Keyword alg]
-  (verify-salted-hmac input signature key salt alg))
-
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;; Most used aliases
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-
 ;; Alias for hmac + sha2 hash algorithms
 (def hmac-sha256 #(hmac %1 %2 :sha256))
 (def hmac-sha384 #(hmac %1 %2 :sha384))
@@ -152,10 +133,3 @@ authentication code verification algorithm."
 (def hmac-sha384-verify #(hmac-verify %1 %2 %3 :sha384))
 (def hmac-sha512-verify #(hmac-verify %1 %2 %3 :sha512))
 
-;; Alias for salted hmac + sha2 hash algorithms
-(def shmac-sha256 #(shmac %1 %2 %3 :sha256))
-(def shmac-sha384 #(shmac %1 %2 %3 :sha384))
-(def shmac-sha512 #(shmac %1 %2 %3 :sha512))
-(def shmac-sha256-verify #(shmac-verify %1 %2 %3 %4 :sha256))
-(def shmac-sha384-verify #(shmac-verify %1 %2 %3 %4 :sha384))
-(def shmac-sha512-verify #(shmac-verify %1 %2 %3 %4 :sha512))
