@@ -125,11 +125,3 @@ InputStream, File, URL and URI."
 (defn hmac-verify
   [input ^bytes signature key ^Keyword alg]
   (verify-hmac input signature key alg))
-;; Alias for hmac + sha2 hash algorithms
-(def hmac-sha256 #(hmac %1 %2 :sha256))
-(def hmac-sha384 #(hmac %1 %2 :sha384))
-(def hmac-sha512 #(hmac %1 %2 :sha512))
-(def hmac-sha256-verify #(hmac-verify %1 %2 %3 :sha256))
-(def hmac-sha384-verify #(hmac-verify %1 %2 %3 :sha384))
-(def hmac-sha512-verify #(hmac-verify %1 %2 %3 :sha512))
-
