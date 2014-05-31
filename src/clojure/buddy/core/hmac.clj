@@ -16,10 +16,33 @@
   "Hash-based Message Authentication Codes (HMACs)
 This namespace is now deprecated in favour of buddy.core.mac.hmac
 and mantained for backward comaptibility."
-  (:require buddy.core.mac.hmac))
+  (:import clojure.lang.Keyword)
+  (:require buddy.core.mac.hmac
+            buddy.core.mac.shmac))
 
 (defmacro pullall [ns]
   `(do ~@(for [i (map first (ns-publics ns))]
            `(def ~i ~(symbol (str ns "/" i))))))
 
 (pullall buddy.core.mac.hmac)
+(pullall buddy.core.mac.shmac)
+
+(def hmac-verify buddy.core.mac.hmac/verify)
+(def shmac-verify buddy.core.mac.shmac/verify)
+
+
+;; Alias for hmac + sha2 hash algorithms
+(def hmac-sha256 #(buddy.core.mac.hmac/hmac %1 %2 :sha256))
+(def hmac-sha384 #(buddy.core.mac.hmac/hmac %1 %2 :sha384))
+(def hmac-sha512 #(buddy.core.mac.hmac/hmac %1 %2 :sha512))
+(def hmac-sha256-verify #(buddy.core.mac.hmac/verify %1 %2 %3 :sha256))
+(def hmac-sha384-verify #(buddy.core.mac.hmac/verify %1 %2 %3 :sha384))
+(def hmac-sha512-verify #(buddy.core.mac.hmac/verify %1 %2 %3 :sha512))
+
+;; Alias for salted hmac + sha2 hash algorithms
+(def shmac-sha256 #(buddy.core.mac.shmac/shmac %1 %2 %3 :sha256))
+(def shmac-sha384 #(buddy.core.mac.shmac/shmac %1 %2 %3 :sha384))
+(def shmac-sha512 #(buddy.core.mac.shmac/shmac %1 %2 %3 :sha512))
+(def shmac-sha256-verify #(buddy.core.mac.shmac/verify %1 %2 %3 %4 :sha256))
+(def shmac-sha384-verify #(buddy.core.mac.shmac/verify %1 %2 %3 %4 :sha384))
+(def shmac-sha512-verify #(buddy.core.mac.shmac/verify %1 %2 %3 %4 :sha512))
