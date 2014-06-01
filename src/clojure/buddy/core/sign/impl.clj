@@ -12,10 +12,11 @@
 ;; See the License for the specific language governing permissions and
 ;; limitations under the License.
 
-(ns buddy.core.sign
+(ns buddy.core.sign.impl
   "Basic crypto primitives that used for more high
   level abstractions."
   (:require [buddy.core.codecs :refer :all]
+            [buddy.core.sign.proto :as proto]
             [clojure.java.io :as io])
   (:import java.security.PublicKey
            java.security.PrivateKey
@@ -91,11 +92,7 @@ and functions."
           (recur))))
     (.verify signer signature)))
 
-(defprotocol SignatureType
-  (make-signature [input key alg] "")
-  (verify-signature [input signature key alg] ""))
-
-(extend-protocol SignatureType
+(extend-protocol proto/Signature
   (Class/forName "[B")
   (make-signature [^bytes input, pkey, ^Keyword alg]
     (make-signature-for-plain-data input pkey alg))
@@ -132,26 +129,3 @@ and functions."
   (verify-signature [^java.net.URI input, ^bytes signature, pkey, ^Keyword alg]
     (verify-signature-for-stream (io/input-stream input) signature pkey alg)))
 
-;; RSASSA-PKCS1-V1_5 + sha2 aliases
-(def rsassa-pkcs15-sha256 #(make-signature %1 %2 :rsassa-pkcs15-sha256))
-(def rsassa-pkcs15-sha384 #(make-signature %1 %2 :rsassa-pkcs15-sha384))
-(def rsassa-pkcs15-sha512 #(make-signature %1 %2 :rsassa-pkcs15-sha512))
-(def rsassa-pkcs15-sha256-verify #(verify-signature %1 %2 %3 :rsassa-pkcs15-sha256))
-(def rsassa-pkcs15-sha384-verify #(verify-signature %1 %2 %3 :rsassa-pkcs15-sha384))
-(def rsassa-pkcs15-sha512-verify #(verify-signature %1 %2 %3 :rsassa-pkcs15-sha512))
-
-;; RSASSA-PSS (With MGF1)
-(def rsassa-pss-sha256 #(make-signature %1 %2 :rsassa-pss-sha256))
-(def rsassa-pss-sha384 #(make-signature %1 %2 :rsassa-pss-sha384))
-(def rsassa-pss-sha512 #(make-signature %1 %2 :rsassa-pss-sha512))
-(def rsassa-pss-sha256-verify #(verify-signature %1 %2 %3 :rsassa-pss-sha256))
-(def rsassa-pss-sha384-verify #(verify-signature %1 %2 %3 :rsassa-pss-sha384))
-(def rsassa-pss-sha512-verify #(verify-signature %1 %2 %3 :rsassa-pss-sha512))
-
-;; ECDSA + sha2 aliases
-(def ecdsa-sha256 #(make-signature %1 %2 :ecdsa-sha256))
-(def ecdsa-sha384 #(make-signature %1 %2 :ecdsa-sha384))
-(def ecdsa-sha512 #(make-signature %1 %2 :ecdsa-sha512))
-(def ecdsa-sha256-verify #(verify-signature %1 %2 %3 :ecdsa-sha256))
-(def ecdsa-sha384-verify #(verify-signature %1 %2 %3 :ecdsa-sha384))
-(def ecdsa-sha512-verify #(verify-signature %1 %2 %3 :ecdsa-sha512))
