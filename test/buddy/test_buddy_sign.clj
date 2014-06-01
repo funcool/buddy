@@ -1,134 +1,33 @@
-(ns buddy.test_buddy_sign
+;; Copyright 2014 Andrey Antukh <niwi@niwi.be>
+;;
+;; Licensed under the Apache License, Version 2.0 (the "License")
+;; you may not use this file except in compliance with the License.
+;; You may obtain a copy of the License at
+;;
+;;     http://www.apache.org/licenses/LICENSE-2.0
+;;
+;; Unless required by applicable law or agreed to in writing, software
+;; distributed under the License is distributed on an "AS IS" BASIS,
+;; WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+;; See the License for the specific language governing permissions and
+;; limitations under the License.
+
+(ns buddy.test-buddy-sign
   (:require [clojure.test :refer :all]
             [buddy.core.codecs :refer :all]
-            [buddy.core.sign :as sign]
+            [buddy.core.keys :refer :all]
             [buddy.core.mac.hmac :as hmac]
             [buddy.core.mac.shmac :as shmac]
+            [buddy.core.sign.rsapss :as rsapss]
+            [buddy.core.sign.rsapkcs15 :as rsapkcs]
+            [buddy.core.sign.ecdsa :as ecdsa]
             [buddy.sign.generic :as gsign]
-            [buddy.core.keys :refer :all]
             [clojure.java.io :as io])
   (:import java.util.Arrays))
 
 (def secret "test")
 
-(deftest rsa-dsa-keys-test
-  (testing "Read rsa priv key"
-    (let [pkey (private-key "test/_files/privkey.3des.rsa.pem" "secret")]
-      (is (= (type pkey) org.bouncycastle.jcajce.provider.asymmetric.rsa.BCRSAPrivateCrtKey))))
-
-  (testing "Read dsa priv key"
-    (let [pkey (private-key "test/_files/privkey.3des.dsa.pem" "secret")]
-      (is (= (type pkey) org.bouncycastle.jcajce.provider.asymmetric.dsa.BCDSAPrivateKey))))
-
-  (testing "Read rsa priv key with bad password"
-    (is (thrown? org.bouncycastle.openssl.EncryptionException
-                (private-key "test/_files/privkey.3des.rsa.pem" "secret2"))))
-
-  (testing "Read dsa priv key with bad password"
-    (is (thrown? org.bouncycastle.openssl.EncryptionException
-                (private-key "test/_files/privkey.3des.dsa.pem" "secret2"))))
-
-  (testing "Read ecdsa priv key"
-    (let [pkey (private-key "test/_files/privkey.ecdsa.pem" "secret")]
-      (is (= (type pkey) org.bouncycastle.jcajce.provider.asymmetric.ec.BCECPrivateKey))))
-
-  (testing "Read rsa pub key"
-    (let [pkey (public-key "test/_files/pubkey.3des.rsa.pem")]
-      (is (= (type pkey) org.bouncycastle.jcajce.provider.asymmetric.rsa.BCRSAPublicKey))))
-
-  (testing "Read dsa pub key"
-    (let [pkey (public-key "test/_files/pubkey.3des.dsa.pem")]
-      (is (public-key? pkey))
-      (is (= (type pkey) org.bouncycastle.jcajce.provider.asymmetric.dsa.BCDSAPublicKey))))
-
-  (testing "Read ec pub key"
-    (let [pkey (public-key "test/_files/pubkey.ecdsa.pem")]
-      (is (= (type pkey) org.bouncycastle.jcajce.provider.asymmetric.ec.BCECPublicKey)))))
-
-
-(deftest low-level-sign-tests
-  (let [rsa-privkey (private-key "test/_files/privkey.3des.rsa.pem" "secret")
-        rsa-pubkey  (public-key "test/_files/pubkey.3des.rsa.pem")
-        ec-privkey  (private-key "test/_files/privkey.ecdsa.pem")
-        ec-pubkey   (public-key "test/_files/pubkey.ecdsa.pem")]
-
-    (testing "Multiple sign using rsassa-pkcs"
-      (is (Arrays/equals (sign/rsassa-pkcs15-sha256 "foobar" rsa-privkey)
-                         (sign/rsassa-pkcs15-sha256 "foobar" rsa-privkey))))
-
-    (testing "Sign/Verify using rsassa-pkcs"
-      (let [signature (sign/rsassa-pkcs15-sha256 "foobar" rsa-privkey)]
-        (is (true? (sign/rsassa-pkcs15-sha256-verify "foobar" signature rsa-pubkey)))))
-
-    (testing "Multiple sign using rsassa-pss"
-      (is (false? (Arrays/equals (sign/rsassa-pss-sha256 "foobar" rsa-privkey)
-                                 (sign/rsassa-pss-sha256 "foobar" rsa-privkey)))))
-
-    (testing "Sign/Verify using rsassa-pss"
-      (let [signature (sign/rsassa-pss-sha256 "foobar" rsa-privkey)]
-        (is (true? (sign/rsassa-pss-sha256-verify "foobar" signature rsa-pubkey)))))
-
-    (testing "Multiple sign using ecdsa"
-      (is (false? (Arrays/equals (sign/ecdsa-sha256 "foobar" ec-privkey)
-                                 (sign/ecdsa-sha256 "foobar" ec-privkey)))))
-
-    (testing "Sign/Verify using ecdsa"
-      (let [signature (sign/ecdsa-sha256 "foobar" ec-privkey)]
-        (is (true? (sign/ecdsa-sha256-verify "foobar" signature ec-pubkey)))))
-
-    (testing "Sign/Verify input stream"
-      (let [path "test/_files/pubkey.ecdsa.pem"
-            sig  (sign/ecdsa-sha256 (io/input-stream path) ec-privkey)]
-        (is (true? (sign/ecdsa-sha256-verify (io/input-stream path) sig ec-pubkey)))))
-
-    (testing "Sign/Verify file"
-      (let [path "test/_files/pubkey.ecdsa.pem"
-            sig  (sign/ecdsa-sha256 (java.io.File. path) ec-privkey)]
-        (is (true? (sign/ecdsa-sha256-verify (java.io.File. path) sig ec-pubkey)))))
-
-    (testing "Sign/Verify url"
-      (let [path "test/_files/pubkey.ecdsa.pem"
-            sig  (sign/ecdsa-sha256 (.toURL (java.io.File. path)) ec-privkey)]
-        (is (true? (sign/ecdsa-sha256-verify (.toURL (java.io.File. path)) sig ec-pubkey)))))
-
-    (testing "Sign/Verify uri"
-      (let [path "test/_files/pubkey.ecdsa.pem"
-            sig  (sign/ecdsa-sha256 (.toURI (java.io.File. path)) ec-privkey)]
-        (is (true? (sign/ecdsa-sha256-verify (.toURI (java.io.File. path)) sig ec-pubkey)))))))
-
-(deftest low-level-hmac-tests
-  (let [secretkey "my.secret.key"
-        path      "test/_files/pubkey.ecdsa.pem"]
-
-    (testing "Multiple sign using hmac sha256"
-      (is (Arrays/equals (hmac/hmac "foo" secretkey :sha256)
-                         (hmac/hmac "foo" secretkey :sha256))))
-
-    (testing "Sign/Verify string"
-      (let [sig (hmac/hmac "foo" secretkey :sha384)]
-        (is (true? (hmac/verify "foo" sig secretkey :sha384)))))
-
-    (testing "Sign/Verify input stream"
-      (let [sig (hmac/hmac (io/input-stream path) secretkey :sha512)]
-        (is (true? (hmac/verify (io/input-stream path) sig secretkey :sha512)))))
-
-    (testing "Sign/Verify file"
-      (let [sig (hmac/hmac (java.io.File. path) secretkey :sha512)]
-        (is (true? (hmac/verify (java.io.File. path) sig secretkey :sha512)))))
-
-    (testing "Sign/Verify url"
-      (let [sig (hmac/hmac (.toURL (java.io.File. path)) secretkey :sha512)]
-        (is (true? (hmac/verify (.toURL (java.io.File. path)) sig secretkey :sha512)))))
-
-    (testing "Sign/Verify uri"
-      (let [sig (hmac/hmac (.toURI (java.io.File. path)) secretkey :sha512)]
-        (is (true? (hmac/verify (.toURI (java.io.File. path)) sig secretkey :sha512)))))
-
-    (testing "Sign/Verify salted hmac with string"
-      (let [sig (shmac/shmac "foo" secretkey "salt" :sha256)]
-        (is (true? (shmac/verify "foo" sig secretkey "salt" :sha256)))))))
-
-(deftest high-level-sign-tests
+(deftest buddy-sign-generic
   (testing "Signing/Unsigning with default keys"
     (let [signed (gsign/sign "foo" secret)]
       (Thread/sleep 1000)
