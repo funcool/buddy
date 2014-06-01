@@ -1,7 +1,7 @@
 buddy documentation
 ===================
 Andrey Antukh, <niwi@niwi.be>
-0.1.2, 2014-05-01
+0.2.0, 2014-05-01
 
 :toc:
 :numbered:

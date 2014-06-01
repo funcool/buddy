@@ -1,5 +1,5 @@
-(defproject buddy "0.1.2-SNAPSHOT"
-  :description "Authentication, Authorization and Signing library."
+(defproject buddy "0.2.0-SNAPSHOT"
+  :description "Security library for Clojure"
   :url "https://github.com/niwibe/buddy"
   :license {:name "Apache 2.0"
             :url "http://www.apache.org/licenses/LICENSE-2.0.txt"}
