@@ -598,8 +598,8 @@ The best documentation for this part is the source code.
 High Level Library
 ------------------
 
-Message Signing
-~~~~~~~~~~~~~~~
+Generic Message Signing
+~~~~~~~~~~~~~~~~~~~~~~~
 
 The "signing framework" of _buddy_ is mainly based on django's
 link:https://docs.djangoproject.com/en/1.6/topics/signing/[Cryptographic
@@ -765,6 +765,59 @@ previously mentioned Digital Signature algorithms.
 
 ;; And unsign
 (def unsigned-data (unsign signed-data ec-pubkey {:alg :ec256}))
+----
+
+Json Web Signature/Token
+~~~~~~~~~~~~~~~~~~~~~~~~
+
+~*New in version:* 0.2~
+
+JSON Web Signature (JWS) represents content secured with digital
+signatures or Message Authentication Codes (MACs) using JavaScript
+Object Notation (JSON) based data structures.
+
+List of rfcs related to this feature:
+
+- http://tools.ietf.org/html/draft-ietf-oauth-json-web-token-20
+- http://tools.ietf.org/html/draft-ietf-jose-json-web-algorithms-26
+- http://tools.ietf.org/html/draft-ietf-jose-json-web-signature-26
+
+
+.Supported Algorithms
+[options="header"]
+|=====================================================================================
+|Algorithm name     | Hash algorithms   | Keywords           | Priv/Pub Key?
+|Elliptic Curve DSA | sha256, sha512    | `:es256`, `:es512` | Yes
+|RSASSA PSS         | sha256, sha512    | `:ps256`, `:ps512` | Yes
+|RSASSA PKCS1 v1_5  | sha256, sha512    | `:rs256`, `:rs256` | Yes
+|HMAC               | sha256*, sha512   | `:hs256`, `:hs256` | No
+|=====================================================================================
+
+NOTE: almost all specified algorithms in jws-algorithms rfc are implemented. Add
+support for missing algorithms is very easy to add possibly them will be added in
+the near future (pull-requests welcome).
+
+
+Signing data
+^^^^^^^^^^^^
+
+Due to the nature of storing format, the input is restricted mainly to json objects
+on the current version.
+
+.Example sign data using JWS
+[source, clojure]
+----
+(require '[buddy.sign.jws :as jws])
+
+;; Sign data using default `:hs256` algorithm that does not
+;; requres special priv/pub key.
+(def data (jws/sign {:userid 1} "secret"))
+
+;; data should contain string similar to:
+;; "eyJ0eXAiOiJKV1MiLCJhbGciOiJIUzI1NiJ9.eyJ1c2VyaWQiOjF9.zjenOuIAEG-..."
+
+(jws/unsign data "secret")
+;; => {:userid 1}
 ----
 
 
