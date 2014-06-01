@@ -393,13 +393,13 @@ link:http://www.ietf.org/rfc/rfc3447.txt[rfc3447.txt]
 [source, clojure]
 ----
 (require '[buddy.core.keys :as keys])
-(require '[buddy.core.sign :as sign])
+(require '[buddy.core.sign.rsapss :as rsapss])
 
 ;; Read private key
 (def rsaprivkey (keys/private-key "test/_files/privkey.3des.rsa.pem" "secret"))
 
 ;; Make signature
-(def signature (sign/rsassa-pss-sha256 "foo" rsaprivkey))
+(def signature (rsapss/rsapss "foo" rsaprivkey :sha256))
 
 ;; Now signature contains a byte[] with signature of "foo" string
 ----
@@ -411,7 +411,7 @@ link:http://www.ietf.org/rfc/rfc3447.txt[rfc3447.txt]
 (def rsapubkey (keys/private-key "test/_files/pubkey.3des.rsa.pem"))
 
 ;; Make verification
-(sign/rsassa-pss-sha256-verify "foo" signature rsapubkey))
+(rsapss/verify "foo" signature rsapubkey :sha256))
 ;; => true
 ----
 
@@ -429,13 +429,13 @@ link:http://www.ietf.org/rfc/rfc3447.txt[rfc3447.txt]
 [source, clojure]
 ----
 (require '[buddy.core.keys :as keys])
-(require '[buddy.core.sign :as sign])
+(require '[buddy.core.sign.rsapkcs :as rsapkcs])
 
 ;; Read private key
 (def rsaprivkey (keys/private-key "test/_files/privkey.3des.rsa.pem" "secret"))
 
 ;; Make signature
-(def signature (sign/rsassa-pkcs-sha256 "foo" rsaprivkey))
+(def signature (rsapkcs/rsapkcs15 "foo" rsaprivkey :sha256))
 
 ;; Now signature contains a byte[] with signature of "foo" string
 ----
@@ -447,7 +447,7 @@ link:http://www.ietf.org/rfc/rfc3447.txt[rfc3447.txt]
 (def rsapubkey (keys/private-key "test/_files/pubkey.3des.rsa.pem"))
 
 ;; Make verification
-(sign/rsassa-pkcs-sha256-verify "foo" signature rsapubkey))
+(rsapkcs/verify "foo" signature rsapubkey :sha256))
 ;; => true
 ----
 
@@ -462,13 +462,13 @@ Digital Signature Algorithm (DSA) which uses elliptic curve cryptography.
 [source, clojure]
 ----
 (require '[buddy.core.keys :as keys])
-(require '[buddy.core.sign :as sign])
+(require '[buddy.core.sign.ecdsa :as ecdsa])
 
 ;; Read private key
 (def ecdsaprivkey (keys/private-key "test/_files/privkey.ecdsa.pem" "secret"))
 
 ;; Make signature
-(def signature (sign/ecdsa-sha256 "foo" ecdsaprivkey))
+(def signature (ecdsa/ecdsa "foo" ecdsaprivkey :sha256))
 ----
 
 .Verify signature using ecdsa.
@@ -478,7 +478,7 @@ Digital Signature Algorithm (DSA) which uses elliptic curve cryptography.
 (def ecdsapubkey (keys/private-key "test/_files/pubkey.ecdsa.pem"))
 
 ;; Make verification
-(sign/ecdsa-sha256-verify "foo" signature ecdsapubkey))
+(ecdsa/verify "foo" signature ecdsapubkey :sha256))
 ;; => true
 ----
 
