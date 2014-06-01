@@ -59,7 +59,7 @@ key with null values and convert Dates to timestamps."
   (into {} (remove (comp nil? second) data)))
 
 (defn- make-headers
-  "Make jws header as json string"
+  "Encode jws header"
   [alg extra-headers]
   (-> (or extra-headers {})
       (merge {:alg (.toUpperCase (name alg)) :typ "JWS"})
@@ -68,7 +68,7 @@ key with null values and convert Dates to timestamps."
       (codecs/bytes->safebase64)))
 
 (defn- make-claims
-  "Make jws claims as json string"
+  "Encode jws claims."
   [input exp nbf iat]
   (-> (normalize-nil-claims {:exp exp :nbf nbf :iat iat})
       (normalize-date-claims)
@@ -78,44 +78,53 @@ key with null values and convert Dates to timestamps."
       (codecs/bytes->safebase64)))
 
 (defn- parse-header
-  [headerdata]
+  "Parse jws header."
+  [^String headerdata]
   (-> headerdata
       (codecs/safebase64->bytes)
       (codecs/bytes->str)
       (json/parse-string true)))
 
 (defn- parse-claims
-  [claimsdata]
+  "Parse jws claims"
+  [^String claimsdata]
   (-> claimsdata
       (codecs/safebase64->bytes)
       (codecs/bytes->str)
       (json/parse-string true)))
 
 (defn- parse-algorithm
+  "Parse algorithm name and return a
+internal keyword representation of it."
   [header]
   (let [algname (:alg header)]
     (keyword (.toLowerCase algname))))
 
 (defn- get-verifier-for-algorithm
+  "Get verifier function for algorithm name."
   [^Keyword alg]
   (when (contains? gsign/*signers-map* alg)
     (get-in gsign/*signers-map* [alg :verifier])))
 
-(defn- get-signer-for-algorith
+(defn- get-signer-for-algorithm
+  "Get signer function for algorithm name."
   [^Keyword alg]
   (when (contains? gsign/*signers-map* alg)
     (get-in gsign/*signers-map* [alg :signer])))
 
 (defn- safe-encode
-  [input]
+  "Properly encode string into
+safe url base64 encoding."
+  [^String input]
   (-> input
       (codecs/str->bytes)
       (codecs/bytes->safebase64)))
 
 (defn- make-signature
+  "Make a jws signature."
   [pkey alg header claims]
   (let [candidate (str/join "." [header claims])
-        signer    (get-signer-for-algorith alg)]
+        signer    (get-signer-for-algorithm alg)]
     (-> (signer candidate pkey)
         (codecs/bytes->safebase64))))
 
@@ -151,9 +160,3 @@ key with null values and convert Dates to timestamps."
                         (or (< (- now (:iat claims)) maxage) nil)
                         true)]
           claims)))))
-
-
-
-
-
-
