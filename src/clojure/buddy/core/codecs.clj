@@ -100,7 +100,7 @@ urlsafe base64 version."
       (base64->str)))
 
 (defn safebase64->bytes
-  "Given urlsafe base64 string decode it to bytes."
+  "Given urlsafe base64 string decode it to bytes array."
   [^String s]
   (-> (case (mod (count s) 4)
         2 (str s "==")
