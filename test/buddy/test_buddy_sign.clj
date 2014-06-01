@@ -16,12 +16,10 @@
   (:require [clojure.test :refer :all]
             [buddy.core.codecs :refer :all]
             [buddy.core.keys :refer :all]
-            [buddy.core.mac.hmac :as hmac]
-            [buddy.core.mac.shmac :as shmac]
-            [buddy.core.sign.rsapss :as rsapss]
-            [buddy.core.sign.rsapkcs15 :as rsapkcs]
-            [buddy.core.sign.ecdsa :as ecdsa]
             [buddy.sign.generic :as gsign]
+            [buddy.sign.jws :as jws]
+            [clj-time.coerce :as jodac]
+            [clj-time.core :as jodat]
             [clojure.java.io :as io])
   (:import java.util.Arrays))
 
@@ -57,6 +55,43 @@
 
   (testing "Signing/Unsigning complex clojure data"
     (let [signed (gsign/dumps {:foo 2 :bar 1} secret)]
-      (is (= {:foo 2 :bar 1} (gsign/loads signed secret)))))
-)
+      (is (= {:foo 2 :bar 1} (gsign/loads signed secret))))))
+
+(deftest buddy-sign-jws
+  (let [plainkey "secret"]
+    (testing "Pass exp as claim or parameter shoult return same result"
+      (let [candidate1 {"iss" "joe" :exp 1300819380}
+            candidate2 {"iss" "joe"}
+            result1    (jws/sign candidate1 plainkey)
+            result2    (jws/sign candidate2 plainkey {:exp 1300819380})]
+        (is (= result1 result2))))
+
+    (testing "Unsing simple jws"
+      (let [candidate1 {:foo "bar"}
+            signed1    (jws/sign candidate1 plainkey)
+            unsigned1   (jws/unsign signed1 plainkey)]
+        (is (= unsigned1 candidate1))))
+
+    (testing "Unsigning jws with exp"
+      (let [candidate1 {:foo "bar"}
+            now        (-> (jodat/now) (jws/to-timestamp))
+            exp        (+ now 2)
+            signed1    (jws/sign candidate1 plainkey {:exp exp})]
+        (let [unsigned1 (jws/unsign signed1 plainkey)]
+          (is (= unsigned1 (assoc candidate1 :exp exp))))
+        (Thread/sleep 2100)
+        (let [unsigned1 (jws/unsign signed1 plainkey)]
+          (is (nil? unsigned1)))))
+
+    (testing "Unsigning jws with nbf"
+      (let [candidate1 {:foo "bar"}
+            now        (-> (jodat/now) (jws/to-timestamp))
+            nbf        (+ now 2)
+            signed1    (jws/sign candidate1 plainkey {:nbf nbf})]
+        (let [unsigned1 (jws/unsign signed1 plainkey)]
+          (is (= unsigned1 (assoc candidate1 :nbf nbf))))
+        (Thread/sleep 2100)
+        (let [unsigned1 (jws/unsign signed1 plainkey)]
+          (is (nil? unsigned1)))))
+))
 
