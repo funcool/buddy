@@ -16,12 +16,8 @@
   (:require [clojure.test :refer :all]
             [buddy.core.codecs :refer :all]
             [buddy.core.keys :refer :all]
-            [buddy.core.mac.hmac :as hmac]
-            [buddy.core.mac.shmac :as shmac]
-            [buddy.core.sign.rsapss :as rsapss]
-            [buddy.core.sign.rsapkcs15 :as rsapkcs]
-            [buddy.core.sign.ecdsa :as ecdsa]
             [buddy.sign.generic :as gsign]
+            [buddy.sign.jws :as jws]
             [clojure.java.io :as io])
   (:import java.util.Arrays))
 
@@ -57,6 +53,15 @@
 
   (testing "Signing/Unsigning complex clojure data"
     (let [signed (gsign/dumps {:foo 2 :bar 1} secret)]
-      (is (= {:foo 2 :bar 1} (gsign/loads signed secret)))))
-)
+      (is (= {:foo 2 :bar 1} (gsign/loads signed secret))))))
+
+(deftest buddy-sign-jws
+  (let [plainkey "secret"]
+    (testing "Pass exp as claim or parameter shoult return same result"
+      (let [candidate1 {"iss" "joe" :exp 1300819380}
+            candidate2 {"iss" "joe"}
+            result1    (jws/sign candidate1 plainkey)
+            result2    (jws/sign candidate2 plainkey {:exp 1300819380})]
+        (is (= result1 result2))))
+))
 
