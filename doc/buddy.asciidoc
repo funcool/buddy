@@ -139,6 +139,7 @@ All hash algorithms are located in the `buddy.core.hash` namespace.
 | Tiger                | 192
 |===============================================
 
+
 Basic usage
 ^^^^^^^^^^^
 
@@ -196,13 +197,13 @@ function *digest*.
 Message authentication code algorithms
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-Buddy comes with two mac implementations: *HMac* and *Poly1305*.
+Buddy comes with three mac implementations: *HMac*, *SHMac* and *Poly1305*.
 
-HMac
-^^^^
+HMac & SHMac
+^^^^^^^^^^^^
 
-There are two variants of hmac: simple and salted. Both are available
-in the `buddy.core.mac.hmac` namespace.
+There are two variants of hmac: simple and salted. And are available
+in the `buddy.core.mac.hmac` and `buddy.core.mac.shmac` respectively.
 
 Basic usage
 +++++++++++
@@ -211,15 +212,16 @@ Basic usage
 ----
 ;; Import required namespaces
 (require '[buddy.core.mac.hmac :as hmac])
+(require '[buddy.core.mac.shmac :as shmac])
 (require '[buddy.core.codecs :refer :all])
 
 ;; Generate sha256 hmac over string
-(-> (hmac/hmac-sha256 "foo bar" "mysecretkey")
+(-> (hmac/hmac "foo bar" "mysecretkey" :sha256)
     (bytes->hex))
 ;; -> "61849448bdbb67b39d609471eead667e65b0d1b9e01b1c3bf7aa56b83e9c8083"
 
 ;; Same example but using salted variant
-(-> (hmac/salted-hmac-sha256 "foo bar" "salt" "mysecretkey")
+(-> (shmac/shmac "foo bar" "salt" "mysecretkey" :sha256)
     (bytes->hex))
 ;; -> "bd5f7a0040430a73f4845bac8f980c6398b4baae8a22efcc22038be0f4dd9678"
 ----
@@ -242,22 +244,18 @@ protocols and comes with default implementations for: String, byte[],
 
 ;; Generate hmac for file
 (-> (io/input-stream "/tmp/somefile")
-    (hmac/hmac-sha256 "mysecretkey")
+    (hmac/hmac "mysecretkey" :sha256)
     (bytes->hex))
 ;; -> "4cb793e600848da2053238003fce4c010233c49df3e6a04119b4287eb464c27e"
 ----
 
-You can extend it for your own types using `buddy.core.hmac/HMac` protocol:
+You can extend it for your own types using `buddy.core.mac.hmac/HMac` protocol:
 
 [source,clojure]
 ----
 (defprotocol HMac
   (make-hmac [data key algorithm]))
 ----
-
-[NOTE]
-Functions like *hmac-sha256* just alias the more generic functions
-*hmac* and *shmac*.
 
 
 Poly1305
