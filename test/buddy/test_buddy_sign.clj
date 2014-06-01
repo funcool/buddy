@@ -58,7 +58,12 @@
       (is (= {:foo 2 :bar 1} (gsign/loads signed secret))))))
 
 (deftest buddy-sign-jws
-  (let [plainkey "secret"]
+  (let [plainkey "secret"
+        rsa-privkey (private-key "test/_files/privkey.3des.rsa.pem" "secret")
+        rsa-pubkey  (public-key "test/_files/pubkey.3des.rsa.pem")
+        ec-privkey  (private-key "test/_files/privkey.ecdsa.pem" "secret")
+        ec-pubkey   (public-key "test/_files/pubkey.ecdsa.pem")]
+
     (testing "Pass exp as claim or parameter shoult return same result"
       (let [candidate1 {"iss" "joe" :exp 1300819380}
             candidate2 {"iss" "joe"}
@@ -93,5 +98,23 @@
         (Thread/sleep 2100)
         (let [unsigned1 (jws/unsign signed1 plainkey)]
           (is (nil? unsigned1)))))
+
+    (testing "Using :rs256 digital signature"
+      (let [candidate1  {:foo "bar"}
+            signed1     (jws/sign candidate1 rsa-privkey {:alg :rs256})
+            unsigned1   (jws/unsign signed1 rsa-pubkey {:alg :rs256})]
+        (is (= unsigned1 candidate1))))
+
+    (testing "Using :ps512 digital signature"
+      (let [candidate1  {:foo "bar"}
+            signed1     (jws/sign candidate1 rsa-privkey {:alg :ps512})
+            unsigned1   (jws/unsign signed1 rsa-pubkey {:alg :ps512})]
+        (is (= unsigned1 candidate1))))
+
+    (testing "Using :ec512 digital signature"
+      (let [candidate1 {:foo "bar"}
+            signed1    (jws/sign candidate1 ec-privkey {:alg :es512})
+            unsigned1  (jws/unsign signed1 ec-pubkey {:alg :es512})]
+        (is (= unsigned1 candidate1))))
 ))
 
