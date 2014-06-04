@@ -3,22 +3,20 @@
 
 (defn compile-rule
   "Receives a rule handler and return one callable that
-  can return true or false.
-  The handler can be a simple symbol:
+can return true or false.
+The handler can be a simple symbol:
 
-    my-function
+  my-function
 
-  Or logicaly combined hash-map:
+Or logicaly combined hash-map:
 
-    {:or [my-func1 my-func2]}
-    {:and [my-func1 my-func2]}
+  {:or [my-func1 my-func2]}
+  {:and [my-func1 my-func2]}
 
-  Also, logic combinators can be nested:
+Also, logic combinators can be nested:
 
-    {:or [my-func1 {:and [myfn3 myfn4]}]}
-
-  Note: The theorycaly limit of nesting is a recursion
-  stack of clojure/java."
+  {:or [my-func1 {:and [myfn3 myfn4]}]}
+"
   [handler]
   (if (map? handler)
     (cond
@@ -37,8 +35,8 @@
 
 (defn match-rules
   "Iterates over all rules and try match each one
-  in order. Return a first matched rule or nil.
-  This function is used by RegexAccessRules class."
+in order. Return a first matched rule or nil.
+This function is used by RegexAccessRules class."
   [request rules]
   (let [filterfn (fn [rule] (seq (re-matches (:pattern rule) (:uri request))))]
     (first (filter filterfn rules))))
@@ -46,8 +44,8 @@
 (defn apply-rule
   [request rule]
   "Compiles a rule and execute the rule handlers tree.
-  If result a boolean value: true for grant access and
-  false for deny."
+If result a boolean value: true for grant access and
+false for deny."
   (let [rulehandler (compile-rule (:handler rule))]
     (rulehandler request)))
 
@@ -61,15 +59,13 @@ library or similar. Example:
 
   (defroutes app
     (ANY \"/login\" [] login-ctrl)
-    (GET \"/admin\" [] (restrict admin-ctrl
-                                 :rule admin-access ;; Mandatory
-                                 ;; Optional (uses backend reject-handler instead)
-                                 :reject-handler my-reject-handler)
+    (GET \"/admin\" [] (restrict admin-ctrl {:rule admin-access ;; Mandatory
+                                             :reject-handler my-reject-handler)
 
 This decorator allow use same access rules but without
 any url matching algorithm but with disadvantage of
 accoupling your routers code with access rules."
-  [handler & {:keys [rule reject-handler]}]
+  [handler & [{:keys [rule reject-handler]}]]
   (fn [request]
     (if (apply-rule request {:handler rule})
       (handler request)

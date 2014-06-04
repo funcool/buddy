@@ -68,7 +68,7 @@ The handler function should accept the request as first
 parameter and must return true or false. Additionaly, if
 you are using authorization middleware, the handler funcion
 can raise unauthorized exception for fast return."
-  [handler & {:keys [rules policy reject-handler] :or {policy :allow}}]
+  [handler & [{:keys [rules policy reject-handler] :or {policy :allow}}]]
   (fn [request]
     (let [reject-handler (or reject-handler (fn [request] (throw-unauthorized)))
           request        (assoc request :access-rules {:reject-handler reject-handler

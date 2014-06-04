@@ -990,14 +990,18 @@ See xref:examples[examples section] for complete examples for this backend.
 Token
 ^^^^^
 
+
+Standard
+++++++++
+
 This backend works much like the basic auth backend with the difference that this works with
 tokens that can be unpredictable.
 
 It parses a token and passes it to auth-fn for authentication.
 
 
-Signed Token
-^^^^^^^^^^^^
+Signed/Stateless
+++++++++++++++++
 
 This backend is very similar to standard token backend previously explained, but instead
 of relying on auth-fn for identify a token, it uses stateless tokens (contains all needed
@@ -1006,8 +1010,7 @@ data in a token, without storing any information about token on database as ex..
 This backend relies on the security of the high level signing
 framework for user authentication.
 
-
-See xref:examples[examples section] for complete examples for this backend.
+Reference: http://lucumr.pocoo.org/2013/11/17/my-favorite-database/
 
 
 Authorization
@@ -1017,86 +1020,10 @@ _buddy_ also comes with an authorization system.
 
 The authorization system is split into two parts:
 
+- access rules system, using rules and logical combinators that applies to specific urls (matching
+  them using regular expressions) or specific handlers wrapping with the `restricted` decorator.
 - generic authorization system using exceptions for fast return and unauthorized-handler function
   for handle unauthorized requsts.
-- access rules system, using rules and logical combinators that applies to specific urls (matching
-  them using regular expressions) or specific handlers wrapping it with the `restricted` decorator.
-
-
-Generic authorization
-^^^^^^^^^^^^^^^^^^^^^
-
-This authorization system encapsulates your handlers/controllers in one try/catch block
-catching only notauthorized exceptions. So splitting unauthorized request handling code from
-your handlers/controllers in a separate function. Moreover, it permits fast return when
-not authorized request is detected.
-
-Like authentication system, authorization is also implemented using protocols. Taking advantage of
-it, all built-in authentication backends also implements this authorization protocol (`IAuthorization`).
-
-Some authentication backends require specific behavior in the authorization layer (like http-basic
-which should return `WWW-Authenticate` header when request is unauthorized). By default, all backends
-come with an specific implementation.
-
-You can overwrite the default behavior by passing your own exception handler through the
-`:unauthorized-handler` keyword parameter in the backend constructor.
-
-Below is a complete example setting up a basic/generic authorization
-system for your ring compatible web application:
-
-.Defining unauthorized handler
-[source,clojure]
-----
-(require '[buddy.auth :refer [authenticated? throw-unauthorized]])
-(require '[ring.util.response :refer (response redirect)])
-
-;; An unauthorized-handler is executed when `buddy.auth/throw-unauthorized`
-;; exception is raised and captured by generic authorization middleware:
-;; `wrap-authorization`. It always receives the current request and metadata
-;; hash-map that in most cases is empty.
-
-(defn my-unauthorized-handler
-  [request metadata]
-  (if (authenticated? request)
-    (response "Permission denied")
-    (redirect "/login")))
-----
-
-.Defining a simple handler that raises unauthorized exception when user is not authenticated
-[source,clojure]
-----
-;; This is a simple ring compatible handler
-(defn handler
-  [request]
-  (if (authenticated?)
-    (response "Hello World")
-    (throw-unauthorized)))
-----
-
-
-.Define the final handler
-[source,clojure]
-----
-(require '[buddy.auth.backends.httpbasic :refer [http-basic-backend]])
-(require '[buddy.auth.middleware :refer [wrap-authentication wrap-authorization]])
-
-;; Define the final handler wrapping it on authentication and
-;; authorization handler using the same backend and overwriting
-;; the default unathorized request behavior with own, previously
-;; defined function
-
-(def app
-  (let [backend (http-basic-backend
-                 :realm "API"
-                 :authfn my-auth-fn
-                 :unauthorized-handler my-unauthorized-handler)]
-    (-> handler
-        (wrap-authentication backend)
-        (wrap-authorization backend))))
-----
-
-NOTE: If you want know how it really works, see xref:how-it-works[How it works] section or
-take a look on examples.
 
 
 Access Rules System
@@ -1105,81 +1032,73 @@ Access Rules System
 Introduction
 ++++++++++++
 
-The access rules are another part of the authorization system, and
-consist of a list of rules for one or more uri's using regular
-expressions. One rule consists of a regular expression with its
-associated handler (function) for authorization logic.
+The access rules are another part of the authorization system, and consist of a list of rules
+for one or more uri's using regular expressions. One rule consists of a regular expression with its
+associated handler (function) with authorization logic.
 
-.Simple rule example
+.Simple rule definition example.
 [source,clojure]
 ----
 {:pattern #"^/admin/.*"
  :handler admin-access}
 ----
 
-Having the `admin-access` function like this:
+Function with authorization logic has the following appearance:
 
-[source,clojure]
+[source, clojure]
 ----
-(def users {:niwibe {:roles #{:admin}}
-            :pepe {:roles #{:user}}})
+(require '[buddy.auth :refer (authenticated?)])
 
-(defn admin-access
+(defn should-be-authenticated
   [request]
-  (let [identity (:identity request)]
-    (if (nil? identity) false
-      (let [roles (-> identity users :roles)]
-        (boolean (roles :admin))))))
+  (authenticated? request))
+
+(defn should-be-safe
+  [request]
+  (let [method (:method request)]
+    (if (or (= method :get) (= method :head))
+      true
+      false)))
 ----
 
-The handler function should receive a request and return true, false
-or throw unauthorized exception. Throwing unauthorized exception is a
-fast return method and no other handler is executed before it (only if
-handler is wrapped with `wrap-authorization` middleware).
+It should return a boolean value with true when request is authorized and false
+for unauthorized.
 
-In the previous example we have seen a simple handler associated with
-one regular expression, but _buddy_ access rules system allows combine
-more handlers using logical `:and` & `:or` combinators with nesting
-support.
-
-For example, suppose you want to allow access to a set of urls only to
-operators or administrators:
+Also, you can combine multiple rules using logical operators in an other rule:
 
 [source,clojure]
 ----
 {:pattern #"^/admin/.*"
- :handler {:or [admin-access operator-access]}}
+ :handler {:or [should-be-authenticated
+                should-be-safe]}}
 ----
 
-Or allow only when a user has both roles, operator and administrator:
-
-[source,clojure]
-----
-{:pattern #"^/admin/.*"
- :handler {:and [admin-access operator-access]}}
-----
-
-Even more, you want to only allow read-write access to administrators
-and operators, and read-only access to any authenticated user:
+You can nesting rules combinators as you want:
 
 [source,clojure]
 ----
 {:pattern #"^/admin/.*"
- :handler {:or [admin-access operator-access
-               {:and [safemethod-access authenticated-access]}]}}
+ :handler {:or [should-be-admin
+                {:and [should-be-safe
+                       should-be-authenticated]}]}}
 ----
 
 
 Usage
 +++++
 
-The access rules system is flexible and adapting it is very simple for
-many use cases.
+Now, knowing how rules can be defined, the question is, How can we use
+it for access control for routes?
 
-The simplest way to use access rules is by using the
-`wrap-access-rules` middleware with an ordered vector of
-rules. *Important:* rules are evaluated in order, therefore, put less
-restrictive regular expression at the end.
+In this case you have two ways:
+
+- Define a separated vector of handlers and pass it to authorization middleware
+- Use more granular `restricted` decorator/middleware for specific functions.
+
+
+For wrap separated defined access rules, you should use `wrap-access-rules` 
+buddy middleware. Here some examples of how to setup authorization for you ring
+app:
 
 .Define a list of rules
 [source,clojure]
@@ -1214,43 +1133,104 @@ restrictive regular expression at the end.
 ----
 (defn -main
   [& args]
-  (let [app (wrap-access-rules your-app-handler
-                               :rules rules
-                               :reject-handler reject-handler))]
+  (let [options {:rules rules :reject-handler reject-handler}
+        app     (wrap-access-rules your-app-handler options)]
     (run-jetty app {:port 9090}))
 ----
 
-An unauthorized exception is raised if no reject handler is
+NOTE: An unauthorized exception is raised if no reject handler is
 specified. These exceptions can be captured by generic authorization
 middleware.
 
-[NOTE]
-The current request uri not match any regular expresion, the default policy enter in
-action. The default policy in _buddy_ is `:allow` but you can change it to `:reject`
-using keyword `:policy` on wrap-access-rules middleware.
+NOTE: If request uri not match any regular expression, the default policy enter in
+action. Default policy in buddy is *allow* but you can change the default behavior
+specifiec `:reject` value to `:policy` option.
 
-An other way to use access rules is using `buddy.auth.accessrules/restrict`
-handler decorator that allows assign some rules to concrete handlers omiting
-any url matching.
 
-The usage of it can be easy, as shown with Compojure routes:
+If you don't want a external rules list and simple want apply some rules to specific
+ring views/handlers, your can use `restrict` decorator/middleware:
 
-[source,clojure]
+
+.Simple example using compojure routes.
+[source, clojure]
 ----
 (require '[buddy.auth.accessrules :refer [restrict]])
 
+(defn home-controller
+  [request]
+  {:body "Hello World" :status 200})
+
+
 (defroutes app
-  (GET "/" [] (restrict my-home-ctrl
-                        ;; Mandatory parameter
-                        :rule user-access
-                        ;; Optional parameter, in case if not passed
-                        ;; default is used (defined by `wrap-access-rules`
-                        ;; middleware) or `throw-unauthorized` is raised
-                        ;; if default isn't available
-                        :reject-handler reject-handler))
-  (GET "/admin" (restrict my-admin-ctrl
-                          :rule admin-access)))
+  (GET "/" [] (restrict home-controller {:rule should-be-authenticated
+                                         :reject-handler reject-handler}))
 ----
+
+
+Generic authorization
+^^^^^^^^^^^^^^^^^^^^^
+
+An other way to handle not authorized exceptions is using exceptions. It is less functional
+but in some sircumstances can work very well.
+
+But how it works? It is very simple, the authorization backend wraps everything in
+a try/catch block watching only specific exception, and in case of unauthorized exception
+is intercepted, executes a specific function for handle it or reraise the exception.
+
+With this approach you can define your own middlewared/decorators with custom authorization
+logic with fast skip raising not authorized exception using `throw-unauthorized` function.
+
+[source, clojure]
+----
+(require '[buddy.auth :refer [authenticated? throw-unauthorized]])
+(require '[ring.util.response :refer (response redirect)])
+
+(defn home-controller
+  [request]
+  (when (not (authenticated? request))
+    (throw-unauthorized {:message "Not authorized"}))
+  (response "Hello World"))
+----
+
+Like authentication system, authorization is also implemented using protocols. Taking advantage of
+it, all built-in authentication backends also implements this authorization protocol (`IAuthorization`):
+
+[NOTE]
+====
+Some authentication backends require specific behavior in the authorization layer (like http-basic
+which should return `WWW-Authenticate` header when request is unauthorized). By default, all backends
+come with an specific implementation.
+
+You can overwrite the default behavior by passing your own exception handler through the
+`:unauthorized-handler` keyword parameter in the backend constructor.
+====
+
+Below is a complete example setting up a basic/generic authorization
+system for your ring compatible web application:
+
+.Define the final handler
+[source,clojure]
+----
+(require '[buddy.auth.backends.httpbasic :refer [http-basic-backend]])
+(require '[buddy.auth.middleware :refer [wrap-authentication wrap-authorization]])
+
+;; Define the final handler wrapping it on authentication and
+;; authorization handler using the same backend and overwriting
+;; the default unathorized request behavior with own, previously
+;; defined function
+
+(def app
+  (let [backend (http-basic-backend
+                 {:realm "API"
+                  :authfn my-auth-fn
+                  :unauthorized-handler my-unauthorized-handler})]
+    (-> handler
+        (wrap-authentication backend)
+        (wrap-authorization backend))))
+----
+
+NOTE: If you want know how it really works, see xref:how-it-works[How it works] section or
+take a look on examples.
 
 
 Advanced Usage
