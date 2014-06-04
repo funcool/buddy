@@ -81,28 +81,28 @@
 
 (deftest access-rules-middleware
   (testing "default policy :allow"
-    (let [handler (wrap-access-rules simple-view :reject-handler reject-handler
-                                                 :rules []
-                                                 :policy :allow)
+    (let [handler (wrap-access-rules simple-view {:reject-handler reject-handler
+                                                  :rules []
+                                                  :policy :allow})
           request {:uri "/"}]
       (is (= (:status (handler request)) 200))))
   (testing "default policy :reject"
-    (let [handler (wrap-access-rules simple-view :reject-handler reject-handler
-                                                 :rules []
-                                                 :policy :reject)
+    (let [handler (wrap-access-rules simple-view {:reject-handler reject-handler
+                                                  :rules []
+                                                  :policy :reject})
           request {:uri "/"}]
       (is (= (:status (handler request)) 403))))
   (testing "rule policy"
     (let [rules   [{:pattern #".*" :handler (fn [_] false)}]
           handler (wrap-access-rules simple-view
-                                     :reject-handler reject-handler
-                                     :rules rules
-                                     :policy :allow)
+                                     {:reject-handler reject-handler
+                                      :rules rules
+                                      :policy :allow})
           request {:uri "/"}]
       (is (= (:status (handler request)) 403))))
   (testing "restrict decorator"
     (let [rule    (fn [_] false)
           handler (restrict simple-view
-                            :rule rule
-                            :reject-handler (fn [_] :rejected))]
+                            {:rule rule
+                             :reject-handler (fn [_] :rejected)})]
       (is (= (handler {}) :rejected)))))
