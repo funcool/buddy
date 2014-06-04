@@ -95,6 +95,7 @@ Then for buddy:
 </dependency>
 ----
 
+
 Get the Code
 ~~~~~~~~~~~~
 
@@ -875,13 +876,23 @@ and authorization. It mainly works with ring (and compojure, since it
 is ring-based) but in the future it can be extended for work with
 other libraries.
 
+
 Authentication
 ~~~~~~~~~~~~~~
 
-Authentication in buddy is implemented using clojure protocols for
-extensibility. If you are not happy with built-in auth backends you
-can implement your own and use it with buddy without too many
-problems.
+Buddy differs with other libraries because it takes very different approach for handling
+authentication. In first step, it clearly split authentication and authorization in two
+separated steps and in second step, implements it using "backends" and protocols for easy 
+extensibility.
+
+If you are not happy with builtin backends, you can implement your own and use it with
+buddy middlewares without any problem.
+
+Authentication in buddy, has two phases:
+
+- Parse: parsing incoming request headers, parameters etc...
+- Authenticate: having parsed data do authentication process, such as call auth function,
+  unsign self contained token, etc...
 
 .Here is a list of built-in authentication backends:
 [options="header"]
@@ -897,11 +908,10 @@ problems.
 HTTP Basic
 ^^^^^^^^^^
 
-The HTTP Basic authentication backend is one of the simplest and most
-insecure authentication systems, but it works well as a first
-introduction of authentication with _buddy_.
+The HTTP Basic authentication backend is one of the simplest and most insecure authentication 
+systems, but is a good first step for understand how buddy authentication works.
 
-.Simple handler definition
+.Simple ring handler/view for example purpose.
 [source,clojure]
 ----
 (require '[buddy.auth :refer (authenticated?)])
@@ -916,17 +926,17 @@ introduction of authentication with _buddy_.
     (response "Hello Anonymous")))
 ----
 
-.Middleware usage example
-[source,clojure]
+.Create an instance of authentication backend.
+[source, clojure]
 ----
-;; Import middleware function and backend constructor
-
 (require '[buddy.auth.backends.httpbasic :refer [http-basic-backend]])
-(require '[buddy.auth.middleware :refer [wrap-authentication]])
 
-;; This function always receives request and authdata, authdata
-;; can vary with other backends. For http basic backend, authdata
-;; parameter has the form {:username xxxx :password yyyy}
+;; Http Basic backend in this case requires one function with parameter
+;; that takes a responsability to identify the incoming request.
+
+;; The required function is caled in authentication of parsed data
+;; and it receives the current ring request and parsed data from parse
+;; phase of authentication.
 ;;
 ;; This function should return a non-nil value that
 ;; is automatically stored on :identity key on request
@@ -936,16 +946,32 @@ introduction of authentication with _buddy_.
   [request, authdata]
   (let [username (:username authdata)
         password (:password authdata)]
-    (search-user-on-db username password)))
+    username))
+
+(def backend (http-basic-backend :realm "MyApi" :authfn my-authfn))
+----
+
+
+Now having simple view function and backend defined, you should wrap it
+in a standard ring middleware way with buddy's authentication middleware.
+
+.Declare auth function and create ring app with wrapped handler.
+[source,clojure]
+----
+(require '[buddy.auth.middleware :refer [wrap-authentication]])
 
 ;; Define the main handler with *app* name wrapping it
 ;; with authentication middleware using an instance of
 ;; just created http-basic backend.
 
-(def app
-  (let [backend (http-basic-backend :realm "MyApi" :authfn my-authfn)]
-    (wrap-authentication handler backend)))
+;; Define app var with handler wrapped with buddy's authentication
+;; middleware using just previously defined backend.
+
+(def app (wrap-authentication handler backend))
 ----
+
+Now, all incoming request with basic auth header are properly parsed and
+request with `:identity` forwarded to real handler or next middleware.
 
 
 Session
