@@ -1,19 +1,22 @@
 Changelog
 =========
 
-Version 0.1.2
--------------
+Version 0.2.0b1
+---------------
 
-Date: unreleased
+Date: 2014-06-06
 
 - HMAC moved to buddy.core.mac.hmac (mantaining old ns for backward compatibility).
 - Add Poly1305 mac support.
-- Add chacha20 crypto algorithm support.
 - Changed generic sign output format (security improvements but backward incompatible)
 - Changed maxage parameter to more consistent max-age on token auth backend.
 - Make buddy.core.hash namespace more consistent with rest buddy api.
 - Make buddy.core.mac.hmac namespace more consistent with rest buddy api.
-- Add key derivation functions: HKDF, KDF1, KDF2, Counter mode KDF, Feedback mode KDF, Double Pipeline Iteration mode KDF.
+- Add key derivation functions: HKDF, KDF1, KDF2, Counter mode KDF, Feedback mode KDF, Double Pipeline
+  Iteration mode KDF.
+- Add Json Web Signature/Token support.
+- Add initial crypto support with: twofish (block cipher), chacha (stream cipher) and cfb, ctr and cbc block cipher
+  modes of operation.
 
 Version 0.1.1
 -------------
