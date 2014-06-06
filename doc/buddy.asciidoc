@@ -574,16 +574,95 @@ Hash-based KDF with Double-Pipeline Iteration Mode defined by the publicly avail
 NIST SP 800-108 specification.
 
 
-Block Ciphers
-~~~~~~~~~~~~~
+Ciphers
+~~~~~~~
 
-WIP
+Ciphers support in buddy is available on `buddy.core.crypto` namespace.
+
+Block Ciphers
+^^^^^^^^^^^^^
+In cryptography, a block cipher is a deterministic algorithm operating on fixed-length groups of bits,
+called blocks, with an unvarying transformation that is specified by a symmetric key.
+
+.This is a list of currently supported block ciphers in buddy
+[options="header"]
+|========================================
+|Algorithm name     | Keywords
+| Twofish           | `:twofish`
+|========================================
+
+Additionally, for good security, is mandatory to combine a block cipher with some cipher
+mode of operation.
+
+.This is a list of currently supported of cipher mode of operation
+[options="header"]
+|========================================
+|Algorithm name     | Keywords
+| SIC (CTR)         | `:ctr`, `:sic`
+| CBC               | `:cbc`
+| OFB               | `:ofb`
+|========================================
+
+Encrypt data using buddy's crypto primitives is almost easy. In case of block ciphers, you
+should know that block cipher and cipher mode you want to use.
+
+NOTE: currently buddy comes with limited number of ciphers and modes, but in near future
+should be added much more options.
+
+.Example encrypt
+[source, clojure]
+----
+(require '[buddy.core.crypto :as c])
+(require '[buddy.core.codecs :refer :all])
+
+(let [eng   (c/engine :twofish :cbc)
+      iv16  (make-random-bytes 16)
+      key32 (make-random-bytes 32)
+      data  (hex->bytes "000000000000000000000000000000AA")]
+  (c/initialize! eng {:key key32 :iv iv16 :op :encrypt})
+  (c/process-block! eng data))
+;; => #<byte[] [B@efadff9>
+----
 
 
 Stream Ciphers
-~~~~~~~~~~~~~~
+^^^^^^^^^^^^^^
 
-WIP
+Stream ciphers differes with block ciphers, that them works with arbitrary length input
+and not requires any additional mode of operation.
+
+.This is a list of currently supported of stream ciphers in buddy
+[options="header"]
+|========================================
+|Algorithm name     | Keywords
+| ChaCha           | `:chacha`
+|========================================
+
+
+
+
+.Example encrypt
+[source, clojure]
+----
+(require '[buddy.core.crypto :as c])
+(require '[buddy.core.codecs :refer :all])
+
+(let [eng   (c/stream-engine :chacha)
+      iv8   (make-random-bytes 8)
+      key32 (make-random-bytes 32)
+      data  (hex->bytes "0011")]
+  (c/initialize! eng {:key key32 :iv iv8 :op :encrypt})
+  (c/process-bytes! eng data))
+;; => #<byte[] [B@efadff9>
+----
+
+NOTE: the iv and key size depends estrictly on cipher engine, in this case, chacha
+engine requires 8 bytes iv.
+
+NOTE: for decrypt, only change `:op` value to `:decrypt`
+
+You can call `c/initialize` any times as you want, it simple reinitialize the engine.
+
 
 
 Codecs (binary -> string conversion)
@@ -882,7 +961,7 @@ Authentication
 
 Buddy differs with other libraries because it takes very different approach for handling
 authentication. In first step, it clearly split authentication and authorization in two
-separated steps and in second step, implements it using "backends" and protocols for easy 
+separated steps and in second step, implements it using "backends" and protocols for easy
 extensibility.
 
 If you are not happy with builtin backends, you can implement your own and use it with
@@ -908,7 +987,7 @@ Authentication in buddy, has two phases:
 HTTP Basic
 ^^^^^^^^^^
 
-The HTTP Basic authentication backend is one of the simplest and most insecure authentication 
+The HTTP Basic authentication backend is one of the simplest and most insecure authentication
 systems, but is a good first step for understand how buddy authentication works.
 
 .Simple ring handler/view for example purpose.
@@ -1096,7 +1175,7 @@ In this case you have two ways:
 - Use more granular `restricted` decorator/middleware for specific functions.
 
 
-For wrap separated defined access rules, you should use `wrap-access-rules` 
+For wrap separated defined access rules, you should use `wrap-access-rules`
 buddy middleware. Here some examples of how to setup authorization for you ring
 app:
 
