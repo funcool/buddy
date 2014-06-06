@@ -16,6 +16,7 @@
   *supported-modes* {:ecb #(identity %)
                      :cbc #(CBCBlockCipher. %)
                      :ctr #(SICBlockCipher. %)
+                     :sic #(SICBlockCipher. %)
                      :ofb #(OFBBlockCipher. %1 (* 8 (.getBlockSize %1)))})
 
 (def ^{:doc "Supported block ciphers."
