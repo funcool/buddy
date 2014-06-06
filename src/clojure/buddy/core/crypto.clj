@@ -33,7 +33,7 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (defprotocol Cipher
-  (initialize! [obj encrypt? params] "Initialize cipher"))
+  (initialize! [obj params] "Initialize cipher"))
 
 (defprotocol BlockCipher
   "Protocol that defines interface for all
@@ -59,9 +59,13 @@ clojure hash map."
     (KeyParameter. (:key params))))
 
 (defn- initialize-cipher!
-  [engine encrypt? params]
-  (let [cipher-params (make-block-cipher-params params)]
-    (.init engine encrypt? cipher-params)))
+  [engine params]
+  (let [encrypt (case (:op params)
+                  :encrypt true
+                  :decrypt false
+                  true)
+        cipher-params (make-block-cipher-params (dissoc params :op))]
+    (.init engine encrypt cipher-params)))
 
 (defn- process-block-with-block-cipher!
   [engine input]
@@ -78,8 +82,8 @@ clojure hash map."
 
 (extend-type CBCBlockCipher
   Cipher
-  (initialize! [engine encrypt? params]
-    (initialize-cipher! engine encrypt? params))
+  (initialize! [engine params]
+    (initialize-cipher! engine params))
 
   BlockCipher
   (process-block! [engine input]
@@ -87,8 +91,8 @@ clojure hash map."
 
 (extend-type SICBlockCipher
   Cipher
-  (initialize! [engine encrypt? params]
-    (initialize-cipher! engine encrypt? params))
+  (initialize! [engine params]
+    (initialize-cipher! engine params))
 
   BlockCipher
   (process-block! [engine input]
@@ -96,8 +100,8 @@ clojure hash map."
 
 (extend-type OFBBlockCipher
   Cipher
-  (initialize! [engine encrypt? params]
-    (initialize-cipher! engine encrypt? params))
+  (initialize! [engine params]
+    (initialize-cipher! engine params))
 
   BlockCipher
   (process-block! [engine input]
@@ -105,8 +109,8 @@ clojure hash map."
 
 (extend-type ChaChaEngine
   Cipher
-  (initialize! [engine encrypt? params]
-    (initialize-cipher! engine encrypt? params))
+  (initialize! [engine params]
+    (initialize-cipher! engine params))
 
   StreamCipher
   (process-bytes! [engine input]

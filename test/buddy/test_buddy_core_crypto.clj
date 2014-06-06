@@ -25,7 +25,7 @@
             expected2 (into-array Byte/TYPE [35 -47 36 126 -1 76 -88 -53 -77 120 -33 17 -125 105 -126 -76])]
 
         ;; Encrypt
-        (cr/initialize! engine true {:iv iv16 :key key})
+        (cr/initialize! engine {:iv iv16 :key key :op :encrypt})
         (let [result1 (cr/process-block! engine block16)
               result2 (cr/process-block! engine block16)]
           (is (bytes? result1))
@@ -34,7 +34,7 @@
           (is (Arrays/equals expected2 result2)))
 
         ;; Decrypt
-        (cr/initialize! engine false {:iv iv16 :key key})
+        (cr/initialize! engine {:iv iv16 :key key :op :decrypt})
         (let [result1 (cr/process-block! engine expected1)
               result2 (cr/process-block! engine expected2)]
           (is (Arrays/equals result1 block16))
@@ -44,13 +44,13 @@
       (let [engine    (cr/stream-engine :chacha)
             expected1 (into-array Byte/TYPE [14, 37, 45])
             expected2 (into-array Byte/TYPE [-5, 46, -80, -91, 19, -12])]
-        (cr/initialize! engine true {:iv iv8 :key key})
+        (cr/initialize! engine {:iv iv8 :key key :op :encrypt})
         (let [result1 (cr/process-bytes! engine block3)
               result2 (cr/process-bytes! engine block6)]
           (is (Arrays/equals result1 expected1))
           (is (Arrays/equals result2 expected2)))
 
-        (cr/initialize! engine false {:iv iv8 :key key})
+        (cr/initialize! engine {:iv iv8 :key key :op :decrypt})
         (let [result1 (cr/process-bytes! engine expected1)
               result2 (cr/process-bytes! engine expected2)]
           (is (Arrays/equals result1 block3))
