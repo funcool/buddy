@@ -22,7 +22,7 @@ asciidoc.install(2);
 <span id="author">Andrey Antukh,</span><br>
 <span id="email" class="monospaced">&lt;<a href="mailto:niwi@niwi.be">niwi@niwi.be</a>&gt;</span><br>
 <span id="revnumber">version 0.2.0b1,</span>
-<span id="revdate">2014-06-06</span>
+<span id="revdate">2014-07-08</span>
 <div id="toc">
   <div id="toctitle">Table of Contents</div>
   <noscript><p><b>JavaScript must be enabled in your browser to display the table of contents.</b></p></noscript>
@@ -165,633 +165,10 @@ it as a dependency in your <strong><em>project.clj</em></strong>:</p></div>
 </div>
 </div>
 <div class="sect1">
-<h2 id="_core_library">4. Core library</h2>
-<div class="sectionbody">
-<div class="paragraph"><p>Buddy has a low-level interface and a high-level interface.</p></div>
-<div class="paragraph"><p>The low-level interface is located in the <span class="monospaced">buddy.core</span> namespace and
-has implementations for:</p></div>
-<div class="ulist"><ul>
-<li>
-<p>
-cryptographic hash algorithms
-</p>
-</li>
-<li>
-<p>
-key derivation algorithms
-</p>
-</li>
-<li>
-<p>
-digital signatures
-</p>
-</li>
-<li>
-<p>
-message authentication (mac)
-</p>
-</li>
-<li>
-<p>
-cryptographic algorithms (block &amp; stream ciphers)
-</p>
-</li>
-</ul></div>
-<div class="sect2">
-<h3 id="_cryptographic_hash_algorithms">4.1. Cryptographic hash algorithms</h3>
-<div class="paragraph"><p>All hash algorithms are located in the <span class="monospaced">buddy.core.hash</span> namespace.</p></div>
-<table class="tableblock frame-all grid-all"
-style="
-width:100%;
-">
-<caption class="title">Table 1. Available hash algorithms</caption>
-<col style="width:50%;">
-<col style="width:50%;">
-<thead>
-<tr>
-<th class="tableblock halign-left valign-top" > Hash algorithm name  </th>
-<th class="tableblock halign-left valign-top" > Digest size</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td class="tableblock halign-left valign-top" ><p class="tableblock">SHA1</p></td>
-<td class="tableblock halign-left valign-top" ><p class="tableblock">160</p></td>
-</tr>
-<tr>
-<td class="tableblock halign-left valign-top" ><p class="tableblock">SHA2</p></td>
-<td class="tableblock halign-left valign-top" ><p class="tableblock">256, 384, 512</p></td>
-</tr>
-<tr>
-<td class="tableblock halign-left valign-top" ><p class="tableblock">SHA3</p></td>
-<td class="tableblock halign-left valign-top" ><p class="tableblock">256, 384, 512</p></td>
-</tr>
-<tr>
-<td class="tableblock halign-left valign-top" ><p class="tableblock">MD5</p></td>
-<td class="tableblock halign-left valign-top" ><p class="tableblock">128</p></td>
-</tr>
-<tr>
-<td class="tableblock halign-left valign-top" ><p class="tableblock">Tiger</p></td>
-<td class="tableblock halign-left valign-top" ><p class="tableblock">192</p></td>
-</tr>
-</tbody>
-</table>
-<div class="sect3">
-<h4 id="_basic_usage">4.1.1. Basic usage</h4>
-<div class="listingblock">
-<div class="title">Import namespace example:</div>
-<div class="content"><div class="highlight"><pre><span class="p">(</span><span class="nf">require</span> <span class="o">&#39;</span><span class="p">[</span><span class="nv">buddy.core.hash</span> <span class="ss">:as</span> <span class="nv">hash</span><span class="p">])</span>
-<span class="p">(</span><span class="nf">require</span> <span class="o">&#39;</span><span class="p">[</span><span class="nv">buddy.core.codecs</span> <span class="ss">:refer</span> <span class="ss">:all</span><span class="p">])</span>
-</pre></div></div></div>
-<div class="listingblock">
-<div class="title">Usage examples:</div>
-<div class="content"><div class="highlight"><pre><span class="p">(</span><span class="nf">hash/sha256</span> <span class="s">&quot;foo bar&quot;</span><span class="p">)</span>
-<span class="c1">;; -&gt; #&lt;byte[] [B@162a657e&gt;</span>
-
-<span class="p">(</span><span class="nb">-&gt; </span><span class="p">(</span><span class="nf">hash/sha256</span> <span class="s">&quot;foo bar&quot;</span><span class="p">)</span>
-    <span class="p">(</span><span class="nf">bytes-&gt;hex</span><span class="p">))</span>
-<span class="c1">;; -&gt; &quot;fbc1a9f858ea9e177916964bd88c3d37b91a1e84412765e29950777f265c4b75&quot;</span>
-</pre></div></div></div>
-</div>
-<div class="sect3">
-<h4 id="_advanced_usage">4.1.2. Advanced usage</h4>
-<div class="paragraph"><p>Hash functions are implemented using protocols and can be extended
-to other types. The default implementations come with support
-for file-like objects (<strong>File</strong>, <strong>URL</strong>, URI* and <strong>InputStream</strong>).</p></div>
-<div class="listingblock">
-<div class="title">Make hash of file example:</div>
-<div class="content"><div class="highlight"><pre><span class="c1">;; Additional import for easy open files</span>
-<span class="p">(</span><span class="nf">require</span> <span class="o">&#39;</span><span class="p">[</span><span class="nv">clojure.java.io</span> <span class="ss">:as</span> <span class="nv">io</span><span class="p">])</span>
-
-<span class="p">(</span><span class="nb">-&gt; </span><span class="p">(</span><span class="nf">hash/sha256</span> <span class="p">(</span><span class="nf">io/input-stream</span> <span class="s">&quot;/tmp/some-file&quot;</span><span class="p">))</span>
-    <span class="p">(</span><span class="nf">bytes-&gt;hex</span><span class="p">))</span>
-<span class="c1">;; -&gt; &quot;bba878639499c8449f69efbfc699413eebfaf41d4b7a7faa560bfaf7e93a43dd&quot;</span>
-</pre></div></div></div>
-<div class="paragraph"><p>You can extend it for your own types using the
-<strong>buddy.core.hash/Digest</strong> protocol:</p></div>
-<div class="listingblock">
-<div class="content"><div class="highlight"><pre><span class="p">(</span><span class="kd">defprotocol </span><span class="nv">Digest</span>
-  <span class="p">(</span><span class="nf">make-digest</span> <span class="p">[</span><span class="nv">data</span> <span class="nv">algorithm</span><span class="p">]))</span>
-</pre></div></div></div>
-<div class="admonitionblock">
-<table><tr>
-<td class="icon">
-<div class="title">Note</div>
-</td>
-<td class="content">Functions like <strong>sha256</strong> are aliases for the more generic
-function <strong>digest</strong>.</td>
-</tr></table>
-</div>
-</div>
-</div>
-<div class="sect2">
-<h3 id="_message_authentication_code_algorithms">4.2. Message authentication code algorithms</h3>
-<div class="paragraph"><p>Buddy comes with three mac implementations: <strong>HMac</strong>, <strong>SHMac</strong> and <strong>Poly1305</strong>.</p></div>
-<div class="sect3">
-<h4 id="_hmac_amp_shmac">4.2.1. HMac &amp; SHMac</h4>
-<div class="paragraph"><p>There are two variants of hmac: simple and salted. And are available
-in the <span class="monospaced">buddy.core.mac.hmac</span> and <span class="monospaced">buddy.core.mac.shmac</span> respectively.</p></div>
-<div class="sect4">
-<h5 id="_basic_usage_2">Basic usage</h5>
-<div class="listingblock">
-<div class="content"><div class="highlight"><pre><span class="c1">;; Import required namespaces</span>
-<span class="p">(</span><span class="nf">require</span> <span class="o">&#39;</span><span class="p">[</span><span class="nv">buddy.core.mac.hmac</span> <span class="ss">:as</span> <span class="nv">hmac</span><span class="p">])</span>
-<span class="p">(</span><span class="nf">require</span> <span class="o">&#39;</span><span class="p">[</span><span class="nv">buddy.core.mac.shmac</span> <span class="ss">:as</span> <span class="nv">shmac</span><span class="p">])</span>
-<span class="p">(</span><span class="nf">require</span> <span class="o">&#39;</span><span class="p">[</span><span class="nv">buddy.core.codecs</span> <span class="ss">:refer</span> <span class="ss">:all</span><span class="p">])</span>
-
-<span class="c1">;; Generate sha256 hmac over string</span>
-<span class="p">(</span><span class="nb">-&gt; </span><span class="p">(</span><span class="nf">hmac/hmac</span> <span class="s">&quot;foo bar&quot;</span> <span class="s">&quot;mysecretkey&quot;</span> <span class="ss">:sha256</span><span class="p">)</span>
-    <span class="p">(</span><span class="nf">bytes-&gt;hex</span><span class="p">))</span>
-<span class="c1">;; -&gt; &quot;61849448bdbb67b39d609471eead667e65b0d1b9e01b1c3bf7aa56b83e9c8083&quot;</span>
-
-<span class="c1">;; Same example but using salted variant</span>
-<span class="p">(</span><span class="nb">-&gt; </span><span class="p">(</span><span class="nf">shmac/shmac</span> <span class="s">&quot;foo bar&quot;</span> <span class="s">&quot;salt&quot;</span> <span class="s">&quot;mysecretkey&quot;</span> <span class="ss">:sha256</span><span class="p">)</span>
-    <span class="p">(</span><span class="nf">bytes-&gt;hex</span><span class="p">))</span>
-<span class="c1">;; -&gt; &quot;bd5f7a0040430a73f4845bac8f980c6398b4baae8a22efcc22038be0f4dd9678&quot;</span>
-</pre></div></div></div>
-<div class="paragraph"><p>The key parameter can be any type that implements the <strong>ByteArray</strong> protocol
-defined in the <span class="monospaced">buddy.core.codecs</span> namespace. It comes with default implementations for
-<span class="monospaced">byte[]</span> and <span class="monospaced">java.lang.String</span>.</p></div>
-</div>
-<div class="sect4">
-<h5 id="_advanced_usage_2">Advanced usage</h5>
-<div class="paragraph"><p>Like hash functions, hmac is implemented using Clojure
-protocols and comes with default implementations for: String, byte[],
-<strong>File</strong>, <strong>URL</strong>, <strong>URI</strong> and <strong>InputStream</strong>.</p></div>
-<div class="listingblock">
-<div class="content"><div class="highlight"><pre><span class="p">(</span><span class="nf">require</span> <span class="o">&#39;</span><span class="p">[</span><span class="nv">clojure.java.io</span> <span class="ss">:as</span> <span class="nv">io</span><span class="p">])</span>
-
-<span class="c1">;; Generate hmac for file</span>
-<span class="p">(</span><span class="nb">-&gt; </span><span class="p">(</span><span class="nf">io/input-stream</span> <span class="s">&quot;/tmp/somefile&quot;</span><span class="p">)</span>
-    <span class="p">(</span><span class="nf">hmac/hmac</span> <span class="s">&quot;mysecretkey&quot;</span> <span class="ss">:sha256</span><span class="p">)</span>
-    <span class="p">(</span><span class="nf">bytes-&gt;hex</span><span class="p">))</span>
-<span class="c1">;; -&gt; &quot;4cb793e600848da2053238003fce4c010233c49df3e6a04119b4287eb464c27e&quot;</span>
-</pre></div></div></div>
-<div class="paragraph"><p>You can extend it for your own types using <span class="monospaced">buddy.core.mac.hmac/HMac</span> protocol:</p></div>
-<div class="listingblock">
-<div class="content"><div class="highlight"><pre><span class="p">(</span><span class="kd">defprotocol </span><span class="nv">HMac</span>
-  <span class="p">(</span><span class="nf">make-hmac</span> <span class="p">[</span><span class="nv">data</span> <span class="nb">key </span><span class="nv">algorithm</span><span class="p">]))</span>
-</pre></div></div></div>
-</div>
-</div>
-<div class="sect3">
-<h4 id="_poly1305">4.2.2. Poly1305</h4>
-<div class="paragraph"><p>Poly1305 is a cryptographic message authentication code
-(MAC) written by Daniel J. Bernstein. It can be used to verify the
-data integrity and the authenticity of a message.</p></div>
-<div class="paragraph"><p>The security of Poly1305 is very close to the block cipher algorithm.
-As a result, the only way for an attacker to break Poly1305 is to break
-the cipher.</p></div>
-<div class="paragraph"><p>Poly1305 offers cipher replaceability. If anything goes wrong with
-one, it can be substituted by another with identical security
-guarantees.</p></div>
-<div class="paragraph"><p>Unlike <strong>HMac</strong>, it requires an initialization vector (IV). An IV is
-like a salt. It should be generated using a strong random number
-generator for security guarantees. Also, the IV should be of the same
-length as the chosen cipher block size.</p></div>
-<div class="sect4">
-<h5 id="_basic_usage_3">Basic usage</h5>
-<div class="paragraph"><p>The default specification talks about AES as default block cipher,
-but buddy comes with support for three block ciphers: AES, Serpent
-and Twofish.</p></div>
-<div class="listingblock">
-<div class="title">Make mac using Serpent block cipher with random IV</div>
-<div class="content"><div class="highlight"><pre><span class="p">(</span><span class="nf">require</span> <span class="o">&#39;</span><span class="p">[</span><span class="nv">buddy.core.codecs</span> <span class="ss">:refe</span> <span class="p">[</span><span class="nv">bytes-&gt;hex</span><span class="p">]])</span>
-<span class="p">(</span><span class="nf">require</span> <span class="o">&#39;</span><span class="p">[</span><span class="nv">buddy.core.mac.poly1305</span> <span class="ss">:as</span> <span class="nv">poly</span><span class="p">])</span>
-<span class="p">(</span><span class="nf">require</span> <span class="o">&#39;</span><span class="p">[</span><span class="nv">buddy.core.keys</span> <span class="ss">:refer</span> <span class="p">[</span><span class="nv">make-random-bytes</span><span class="p">]])</span>
-
-<span class="p">(</span><span class="k">let </span><span class="p">[</span><span class="nv">iv</span>  <span class="p">(</span><span class="nf">make-random-bytes</span> <span class="mi">16</span><span class="p">)</span>
-      <span class="nv">mac</span> <span class="p">(</span><span class="nf">poly/poly1305</span> <span class="s">&quot;some-data&quot;</span> <span class="s">&quot;mysecret&quot;</span> <span class="nv">iv</span> <span class="ss">:serpent</span><span class="p">)]</span>
-  <span class="p">(</span><span class="nb">println </span><span class="p">(</span><span class="nf">bytes-&gt;hex</span> <span class="nv">mac</span><span class="p">)))</span>
-<span class="c1">;; =&gt; &quot;1976b1c490c306e7304a59dfacee4207&quot;</span>
-</pre></div></div></div>
-</div>
-</div>
-</div>
-<div class="sect2">
-<h3 id="_public_private_keypairs">4.3. Public/Private keypairs</h3>
-<div class="paragraph"><p>Before explaining digital signatures, you need to read public/private
-keypairs and convert them to usable objects. Buddy has limited support
-for reading:</p></div>
-<div class="ulist"><ul>
-<li>
-<p>
-RSA keypair
-</p>
-</li>
-<li>
-<p>
-ECDSA keypair
-</p>
-</li>
-</ul></div>
-<div class="sect3">
-<h4 id="_rsa_keypair">4.3.1. RSA Keypair</h4>
-<div class="paragraph"><p>An RSA keypair is obviously used for RSA encryption/decryption, but it
-is also used for making digital signatures with RSA-derived
-algorithms.</p></div>
-<div class="listingblock">
-<div class="title">Read keys</div>
-<div class="content"><div class="highlight"><pre><span class="p">(</span><span class="nf">require</span> <span class="o">&#39;</span><span class="p">[</span><span class="nv">buddy.core.keys</span> <span class="ss">:as</span> <span class="nv">keys</span><span class="p">])</span>
-
-<span class="c1">;; The last parameter is optional and is only mandatory</span>
-<span class="c1">;; if a private key is encrypted.</span>
-<span class="p">(</span><span class="k">def </span><span class="nv">privkey</span> <span class="p">(</span><span class="nf">keys/private-key</span> <span class="s">&quot;test/_files/privkey.3des.rsa.pem&quot;</span> <span class="s">&quot;secret&quot;</span><span class="p">)</span>
-<span class="p">(</span><span class="k">def </span><span class="nv">pubkey</span> <span class="p">(</span><span class="nf">keys/public-key</span> <span class="s">&quot;test/_files/pubkey.3des.rsa.pem&quot;</span><span class="p">))</span>
-</pre></div></div></div>
-<div class="listingblock">
-<div class="title">Generate a RSA Keypair using openssl.</div>
-<div class="content"><div class="highlight"><pre><span class="c"># Generate AES-256 encrypted private key</span>
-openssl genrsa -aes256 -out privkey.pem 2048
-
-<span class="c"># Generate public key from previously created private key.</span>
-openssl rsa -pubout -in privkey.pem -out pubkey.pem
-</pre></div></div></div>
-</div>
-<div class="sect3">
-<h4 id="_ecdsa_keypair">4.3.2. ECDSA Keypair</h4>
-<div class="paragraph"><p>Like RSA keypairs, ECDSA is also used for making digital signatures
-and can be read like in the RSA examples.</p></div>
-<div class="listingblock">
-<div class="title">Read keys.</div>
-<div class="content"><div class="highlight"><pre><span class="p">(</span><span class="nf">require</span> <span class="o">&#39;</span><span class="p">[</span><span class="nv">buddy.core.keys</span> <span class="ss">:as</span> <span class="nv">keys</span><span class="p">])</span>
-
-<span class="c1">;; The last parameter is optional and is only mandatory</span>
-<span class="c1">;; if a private key is encrypted.</span>
-<span class="p">(</span><span class="k">def </span><span class="nv">privkey</span> <span class="p">(</span><span class="nf">keys/private-key</span> <span class="s">&quot;test/_files/privkey.ecdsa.pem&quot;</span> <span class="s">&quot;secret&quot;</span><span class="p">)</span>
-<span class="p">(</span><span class="k">def </span><span class="nv">pubkey</span> <span class="p">(</span><span class="nf">keys/public-key</span> <span class="s">&quot;test/_files/pubkey.ecdsa.pem&quot;</span><span class="p">))</span>
-</pre></div></div></div>
-<div class="listingblock">
-<div class="title">Generate a ECDSA Keypair using openssl.</div>
-<div class="content"><div class="highlight"><pre><span class="c"># Generate a params file</span>
-openssl ecparam -name prime256v1 -out ecparams.pem
-
-<span class="c"># Generate a private key from params file</span>
-openssl ecparam -in ecparams.pem -genkey -noout -out ecprivkey.pem
-
-<span class="c"># Generate a public key from private key</span>
-openssl ec -in ecprivkey.pem -pubout -out ecpubkey.pem
-</pre></div></div></div>
-</div>
-</div>
-<div class="sect2">
-<h3 id="_digital_signatures">4.4. Digital Signatures</h3>
-<div class="paragraph"><p>Digital Signatures differ from Mac as Mac values are both generated
-and verified using the same secret key. Digital Signatures require a
-public/private keypair. It signs using a private key and verifies a
-signature using a public key.</p></div>
-<div class="sect3">
-<h4 id="_rsassa_pss">4.4.1. RSASSA PSS</h4>
-<div class="paragraph"><p>RSASSA-PSS is an improved probabilistic signature scheme with
-appendix. What that means is that you can use a private RSA key
-to sign data in combination with some random input.</p></div>
-<div class="paragraph"><p><a href="http://www.ietf.org/rfc/rfc3447.txt">rfc3447.txt</a></p></div>
-<div class="listingblock">
-<div class="title">Sign sample string using rsassa-pss.</div>
-<div class="content"><div class="highlight"><pre><span class="p">(</span><span class="nf">require</span> <span class="o">&#39;</span><span class="p">[</span><span class="nv">buddy.core.keys</span> <span class="ss">:as</span> <span class="nv">keys</span><span class="p">])</span>
-<span class="p">(</span><span class="nf">require</span> <span class="o">&#39;</span><span class="p">[</span><span class="nv">buddy.core.sign.rsapss</span> <span class="ss">:as</span> <span class="nv">rsapss</span><span class="p">])</span>
-
-<span class="c1">;; Read private key</span>
-<span class="p">(</span><span class="k">def </span><span class="nv">rsaprivkey</span> <span class="p">(</span><span class="nf">keys/private-key</span> <span class="s">&quot;test/_files/privkey.3des.rsa.pem&quot;</span> <span class="s">&quot;secret&quot;</span><span class="p">))</span>
-
-<span class="c1">;; Make signature</span>
-<span class="p">(</span><span class="k">def </span><span class="nv">signature</span> <span class="p">(</span><span class="nf">rsapss/rsapss</span> <span class="s">&quot;foo&quot;</span> <span class="nv">rsaprivkey</span> <span class="ss">:sha256</span><span class="p">))</span>
-
-<span class="c1">;; Now signature contains a byte[] with signature of &quot;foo&quot; string</span>
-</pre></div></div></div>
-<div class="listingblock">
-<div class="title">Verify signature using rsassa-pss.</div>
-<div class="content"><div class="highlight"><pre><span class="c1">;; Read private key</span>
-<span class="p">(</span><span class="k">def </span><span class="nv">rsapubkey</span> <span class="p">(</span><span class="nf">keys/private-key</span> <span class="s">&quot;test/_files/pubkey.3des.rsa.pem&quot;</span><span class="p">))</span>
-
-<span class="c1">;; Make verification</span>
-<span class="p">(</span><span class="nf">rsapss/verify</span> <span class="s">&quot;foo&quot;</span> <span class="nv">signature</span> <span class="nv">rsapubkey</span> <span class="ss">:sha256</span><span class="p">))</span>
-<span class="c1">;; =&gt; true</span>
-</pre></div></div></div>
-</div>
-<div class="sect3">
-<h4 id="_rsassa_pkcs1_v1_5">4.4.2. RSASSA PKCS1 v1.5</h4>
-<div class="paragraph"><p>RSASSA-PSS is an probabilistic signature scheme with appendix.
-What that means is that you can use a private RSA key to sign data.</p></div>
-<div class="paragraph"><p><a href="http://www.ietf.org/rfc/rfc3447.txt">rfc3447.txt</a></p></div>
-<div class="listingblock">
-<div class="title">Sign sample string using rsassa-pkcs.</div>
-<div class="content"><div class="highlight"><pre><span class="p">(</span><span class="nf">require</span> <span class="o">&#39;</span><span class="p">[</span><span class="nv">buddy.core.keys</span> <span class="ss">:as</span> <span class="nv">keys</span><span class="p">])</span>
-<span class="p">(</span><span class="nf">require</span> <span class="o">&#39;</span><span class="p">[</span><span class="nv">buddy.core.sign.rsapkcs</span> <span class="ss">:as</span> <span class="nv">rsapkcs</span><span class="p">])</span>
-
-<span class="c1">;; Read private key</span>
-<span class="p">(</span><span class="k">def </span><span class="nv">rsaprivkey</span> <span class="p">(</span><span class="nf">keys/private-key</span> <span class="s">&quot;test/_files/privkey.3des.rsa.pem&quot;</span> <span class="s">&quot;secret&quot;</span><span class="p">))</span>
-
-<span class="c1">;; Make signature</span>
-<span class="p">(</span><span class="k">def </span><span class="nv">signature</span> <span class="p">(</span><span class="nf">rsapkcs/rsapkcs15</span> <span class="s">&quot;foo&quot;</span> <span class="nv">rsaprivkey</span> <span class="ss">:sha256</span><span class="p">))</span>
-
-<span class="c1">;; Now signature contains a byte[] with signature of &quot;foo&quot; string</span>
-</pre></div></div></div>
-<div class="listingblock">
-<div class="title">Verify signature using rsassa-pkcs.</div>
-<div class="content"><div class="highlight"><pre><span class="c1">;; Read private key</span>
-<span class="p">(</span><span class="k">def </span><span class="nv">rsapubkey</span> <span class="p">(</span><span class="nf">keys/private-key</span> <span class="s">&quot;test/_files/pubkey.3des.rsa.pem&quot;</span><span class="p">))</span>
-
-<span class="c1">;; Make verification</span>
-<span class="p">(</span><span class="nf">rsapkcs/verify</span> <span class="s">&quot;foo&quot;</span> <span class="nv">signature</span> <span class="nv">rsapubkey</span> <span class="ss">:sha256</span><span class="p">))</span>
-<span class="c1">;; =&gt; true</span>
-</pre></div></div></div>
-</div>
-<div class="sect3">
-<h4 id="_eliptic_curve_dsa">4.4.3. Eliptic Curve DSA</h4>
-<div class="paragraph"><p>Elliptic Curve Digital Signature Algorithm (ECDSA) is a variant of the
-Digital Signature Algorithm (DSA) which uses elliptic curve cryptography.</p></div>
-<div class="listingblock">
-<div class="title">Sign sample string using ecdsa.</div>
-<div class="content"><div class="highlight"><pre><span class="p">(</span><span class="nf">require</span> <span class="o">&#39;</span><span class="p">[</span><span class="nv">buddy.core.keys</span> <span class="ss">:as</span> <span class="nv">keys</span><span class="p">])</span>
-<span class="p">(</span><span class="nf">require</span> <span class="o">&#39;</span><span class="p">[</span><span class="nv">buddy.core.sign.ecdsa</span> <span class="ss">:as</span> <span class="nv">ecdsa</span><span class="p">])</span>
-
-<span class="c1">;; Read private key</span>
-<span class="p">(</span><span class="k">def </span><span class="nv">ecdsaprivkey</span> <span class="p">(</span><span class="nf">keys/private-key</span> <span class="s">&quot;test/_files/privkey.ecdsa.pem&quot;</span> <span class="s">&quot;secret&quot;</span><span class="p">))</span>
-
-<span class="c1">;; Make signature</span>
-<span class="p">(</span><span class="k">def </span><span class="nv">signature</span> <span class="p">(</span><span class="nf">ecdsa/ecdsa</span> <span class="s">&quot;foo&quot;</span> <span class="nv">ecdsaprivkey</span> <span class="ss">:sha256</span><span class="p">))</span>
-</pre></div></div></div>
-<div class="listingblock">
-<div class="title">Verify signature using ecdsa.</div>
-<div class="content"><div class="highlight"><pre><span class="c1">;; Read private key</span>
-<span class="p">(</span><span class="k">def </span><span class="nv">ecdsapubkey</span> <span class="p">(</span><span class="nf">keys/private-key</span> <span class="s">&quot;test/_files/pubkey.ecdsa.pem&quot;</span><span class="p">))</span>
-
-<span class="c1">;; Make verification</span>
-<span class="p">(</span><span class="nf">ecdsa/verify</span> <span class="s">&quot;foo&quot;</span> <span class="nv">signature</span> <span class="nv">ecdsapubkey</span> <span class="ss">:sha256</span><span class="p">))</span>
-<span class="c1">;; =&gt; true</span>
-</pre></div></div></div>
-</div>
-</div>
-<div class="sect2">
-<h3 id="_key_derivation_functions">4.5. Key Derivation Functions</h3>
-<div class="paragraph"><p>Key derivation functions are often used in conjunction with non-secret parameters
-to derive one or more keys from a common secret value.</p></div>
-<div class="paragraph"><p><strong>buddy</strong> commes with several of them:</p></div>
-<table class="tableblock frame-all grid-all"
-style="
-width:100%;
-">
-<caption class="title">Table 2. Supported key derivation functions.</caption>
-<col style="width:33%;">
-<col style="width:33%;">
-<col style="width:33%;">
-<thead>
-<tr>
-<th class="tableblock halign-left valign-top" >Algorithm name </th>
-<th class="tableblock halign-left valign-top" > Constructor              </th>
-<th class="tableblock halign-left valign-top" > Notes</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td class="tableblock halign-left valign-top" ><p class="tableblock">HKDF</p></td>
-<td class="tableblock halign-left valign-top" ><p class="tableblock"><span class="monospaced">buddy.core.kdf/hkdf</span></p></td>
-<td class="tableblock halign-left valign-top" ><p class="tableblock">HMAC based KDF</p></td>
-</tr>
-<tr>
-<td class="tableblock halign-left valign-top" ><p class="tableblock">KDF1</p></td>
-<td class="tableblock halign-left valign-top" ><p class="tableblock"><span class="monospaced">buddy.core.kdf/kdf1</span></p></td>
-<td class="tableblock halign-left valign-top" ><p class="tableblock"></p></td>
-</tr>
-<tr>
-<td class="tableblock halign-left valign-top" ><p class="tableblock">KDF2</p></td>
-<td class="tableblock halign-left valign-top" ><p class="tableblock"><span class="monospaced">buddy.core.kdf/kdf2</span></p></td>
-<td class="tableblock halign-left valign-top" ><p class="tableblock"></p></td>
-</tr>
-<tr>
-<td class="tableblock halign-left valign-top" ><p class="tableblock">CMKDF</p></td>
-<td class="tableblock halign-left valign-top" ><p class="tableblock"><span class="monospaced">buddy.core.kdf/cmkdf</span></p></td>
-<td class="tableblock halign-left valign-top" ><p class="tableblock">Counter Mode KDF</p></td>
-</tr>
-<tr>
-<td class="tableblock halign-left valign-top" ><p class="tableblock">FMKDF</p></td>
-<td class="tableblock halign-left valign-top" ><p class="tableblock"><span class="monospaced">buddy.core.kdf/fmkdf</span></p></td>
-<td class="tableblock halign-left valign-top" ><p class="tableblock">Feedback Mode KDF</p></td>
-</tr>
-<tr>
-<td class="tableblock halign-left valign-top" ><p class="tableblock">DPIMKDF</p></td>
-<td class="tableblock halign-left valign-top" ><p class="tableblock"><span class="monospaced">buddy.core.kdf/dpimkdf</span></p></td>
-<td class="tableblock halign-left valign-top" ><p class="tableblock">Double-Pipeline Iteration Mode KDF</p></td>
-</tr>
-</tbody>
-</table>
-<div class="admonitionblock">
-<table><tr>
-<td class="icon">
-<div class="title">Note</div>
-</td>
-<td class="content">All key derivation functions work with byte arrays. For the
- following examples, the functions in <span class="monospaced">buddy.core.codecs</span> convert
- strings to byte arrays.</td>
-</tr></table>
-</div>
-<div class="sect3">
-<h4 id="_hkdf">4.5.1. HKDF</h4>
-<div class="paragraph"><p>HMAC-based Extract-and-Expand Key Derivation Function (HKDF) is implemented according to IETF RFC 5869</p></div>
-<div class="listingblock">
-<div class="title">Example using hkdf</div>
-<div class="content"><div class="highlight"><pre><span class="p">(</span><span class="nf">require</span> <span class="o">&#39;</span><span class="p">[</span><span class="nv">buddy.core.codecs</span> <span class="ss">:refer</span> <span class="ss">:all</span><span class="p">])</span>
-<span class="p">(</span><span class="nf">require</span> <span class="o">&#39;</span><span class="p">[</span><span class="nv">buddy.core.kdf</span> <span class="ss">:as</span> <span class="nv">kdf</span><span class="p">])</span>
-
-<span class="c1">;; Using hkdf derivation functions. It requires a</span>
-<span class="c1">;; key, salt and optionally info field that can</span>
-<span class="c1">;; contain any random data.</span>
-
-<span class="p">(</span><span class="k">let </span><span class="p">[</span><span class="nv">kfn</span> <span class="p">(</span><span class="nf">kdf/hkdf</span> <span class="p">(</span><span class="nf">str-&gt;bytes</span> <span class="s">&quot;mysecretkey&quot;</span><span class="p">)</span>
-                    <span class="p">(</span><span class="nf">str-&gt;bytes</span> <span class="s">&quot;mypublicsalt&quot;</span><span class="p">)</span>
-                    <span class="nv">nil</span> <span class="c1">;; info parameter can be nil</span>
-                    <span class="ss">:sha256</span><span class="p">)]</span>
-  <span class="p">(</span><span class="nb">-&gt; </span><span class="p">(</span><span class="nf">kdf/generate-bytes!</span> <span class="nv">kfn</span> <span class="mi">8</span><span class="p">)</span>
-      <span class="p">(</span><span class="nf">bytes-&gt;hex</span><span class="p">)))</span>
-<span class="c1">;; =&gt; &quot;0faba553152fce4f&quot;</span>
-</pre></div></div></div>
-</div>
-<div class="sect3">
-<h4 id="_kdf1_2">4.5.2. KDF1/2</h4>
-<div class="paragraph"><p>KDF1/2 hash-based key derivation functions for derived keys and ivs as defined by IEEE P1363a/ISO 18033.</p></div>
-<div class="listingblock">
-<div class="title">Example using kdf1 or kdf2</div>
-<div class="content"><div class="highlight"><pre><span class="p">(</span><span class="nf">require</span> <span class="o">&#39;</span><span class="p">[</span><span class="nv">buddy.core.codecs</span> <span class="ss">:refer</span> <span class="ss">:all</span><span class="p">])</span>
-<span class="p">(</span><span class="nf">require</span> <span class="o">&#39;</span><span class="p">[</span><span class="nv">buddy.core.kdf</span> <span class="ss">:as</span> <span class="nv">kdf</span><span class="p">])</span>
-
-<span class="c1">;; kdf1 and kdf2 are very similar and have the same</span>
-<span class="c1">;; constructor signature. Requires: key data, salt</span>
-<span class="c1">;; and hash algorithm keyword.</span>
-
-<span class="p">(</span><span class="k">let </span><span class="p">[</span><span class="nv">kfn</span> <span class="p">(</span><span class="nf">kdf/kdf2</span> <span class="p">(</span><span class="nf">str-&gt;bytes</span> <span class="s">&quot;mysecretkey&quot;</span><span class="p">)</span> <span class="p">(</span><span class="nf">str-&gt;bytes</span> <span class="s">&quot;mypublicsalt&quot;</span><span class="p">)</span> <span class="ss">:sha256</span><span class="p">)]</span>
-  <span class="p">(</span><span class="nb">-&gt; </span><span class="p">(</span><span class="nf">kdf/generate-bytes!</span> <span class="nv">kfn</span> <span class="mi">8</span><span class="p">)</span>
-      <span class="p">(</span><span class="nf">bytes-&gt;hex</span><span class="p">)))</span>
-<span class="c1">;; =&gt; &quot;0faba553152fce4f&quot;</span>
-</pre></div></div></div>
-</div>
-<div class="sect3">
-<h4 id="_counter_mode_kdf">4.5.3. Counter Mode KDF</h4>
-<div class="paragraph"><p>Hash-based KDF with counter mode defined by the publicly available NIST SP 800-108 specification.</p></div>
-</div>
-<div class="sect3">
-<h4 id="_feedback_mode_kdf">4.5.4. Feedback Mode KDF</h4>
-<div class="paragraph"><p>Hash-based KDF with feedback mode defined by the publicly available NIST SP 800-108 specification.</p></div>
-</div>
-<div class="sect3">
-<h4 id="_double_pipeline_iteration_mode_kdf">4.5.5. Double-Pipeline Iteration Mode KDF</h4>
-<div class="paragraph"><p>Hash-based KDF with Double-Pipeline Iteration Mode defined by the publicly available
-NIST SP 800-108 specification.</p></div>
-</div>
-</div>
-<div class="sect2">
-<h3 id="_ciphers">4.6. Ciphers</h3>
-<div class="paragraph"><p>Ciphers support in buddy is available on <span class="monospaced">buddy.core.crypto</span> namespace.</p></div>
-<div class="sect3">
-<h4 id="_block_ciphers">4.6.1. Block Ciphers</h4>
-<div class="paragraph"><p>In cryptography, a block cipher is a deterministic algorithm operating on fixed-length groups of bits,
-called blocks, with an unvarying transformation that is specified by a symmetric key.</p></div>
-<table class="tableblock frame-all grid-all"
-style="
-width:100%;
-">
-<caption class="title">Table 3. This is a list of currently supported block ciphers in buddy</caption>
-<col style="width:50%;">
-<col style="width:50%;">
-<thead>
-<tr>
-<th class="tableblock halign-left valign-top" >Algorithm name     </th>
-<th class="tableblock halign-left valign-top" > Keywords</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td class="tableblock halign-left valign-top" ><p class="tableblock">Twofish</p></td>
-<td class="tableblock halign-left valign-top" ><p class="tableblock"><span class="monospaced">:twofish</span></p></td>
-</tr>
-</tbody>
-</table>
-<div class="paragraph"><p>Additionally, for good security, is mandatory to combine a block cipher with some cipher
-mode of operation.</p></div>
-<table class="tableblock frame-all grid-all"
-style="
-width:100%;
-">
-<caption class="title">Table 4. This is a list of currently supported of cipher mode of operation</caption>
-<col style="width:50%;">
-<col style="width:50%;">
-<thead>
-<tr>
-<th class="tableblock halign-left valign-top" >Algorithm name     </th>
-<th class="tableblock halign-left valign-top" > Keywords</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td class="tableblock halign-left valign-top" ><p class="tableblock">SIC (CTR)</p></td>
-<td class="tableblock halign-left valign-top" ><p class="tableblock"><span class="monospaced">:ctr</span>, <span class="monospaced">:sic</span></p></td>
-</tr>
-<tr>
-<td class="tableblock halign-left valign-top" ><p class="tableblock">CBC</p></td>
-<td class="tableblock halign-left valign-top" ><p class="tableblock"><span class="monospaced">:cbc</span></p></td>
-</tr>
-<tr>
-<td class="tableblock halign-left valign-top" ><p class="tableblock">OFB</p></td>
-<td class="tableblock halign-left valign-top" ><p class="tableblock"><span class="monospaced">:ofb</span></p></td>
-</tr>
-</tbody>
-</table>
-<div class="paragraph"><p>Encrypt data using buddy&#8217;s crypto primitives is almost easy. In case of block ciphers, you
-should know that block cipher and cipher mode you want to use.</p></div>
-<div class="admonitionblock">
-<table><tr>
-<td class="icon">
-<div class="title">Note</div>
-</td>
-<td class="content">currently buddy comes with limited number of ciphers and modes, but in near future
-should be added much more options.</td>
-</tr></table>
-</div>
-<div class="listingblock">
-<div class="title">Example encrypt</div>
-<div class="content"><div class="highlight"><pre><span class="p">(</span><span class="nf">require</span> <span class="o">&#39;</span><span class="p">[</span><span class="nv">buddy.core.crypto</span> <span class="ss">:as</span> <span class="nv">c</span><span class="p">])</span>
-<span class="p">(</span><span class="nf">require</span> <span class="o">&#39;</span><span class="p">[</span><span class="nv">buddy.core.codecs</span> <span class="ss">:refer</span> <span class="ss">:all</span><span class="p">])</span>
-
-<span class="p">(</span><span class="k">let </span><span class="p">[</span><span class="nv">eng</span>   <span class="p">(</span><span class="nf">c/engine</span> <span class="ss">:twofish</span> <span class="ss">:cbc</span><span class="p">)</span>
-      <span class="nv">iv16</span>  <span class="p">(</span><span class="nf">make-random-bytes</span> <span class="mi">16</span><span class="p">)</span>
-      <span class="nv">key32</span> <span class="p">(</span><span class="nf">make-random-bytes</span> <span class="mi">32</span><span class="p">)</span>
-      <span class="nv">data</span>  <span class="p">(</span><span class="nf">hex-&gt;bytes</span> <span class="s">&quot;000000000000000000000000000000AA&quot;</span><span class="p">)]</span>
-  <span class="p">(</span><span class="nf">c/initialize!</span> <span class="nv">eng</span> <span class="p">{</span><span class="ss">:key</span> <span class="nv">key32</span> <span class="ss">:iv</span> <span class="nv">iv16</span> <span class="ss">:op</span> <span class="ss">:encrypt</span><span class="p">})</span>
-  <span class="p">(</span><span class="nf">c/process-block!</span> <span class="nv">eng</span> <span class="nv">data</span><span class="p">))</span>
-<span class="c1">;; =&gt; #&lt;byte[] [B@efadff9&gt;</span>
-</pre></div></div></div>
-</div>
-<div class="sect3">
-<h4 id="_stream_ciphers">4.6.2. Stream Ciphers</h4>
-<div class="paragraph"><p>Stream ciphers differes with block ciphers, that them works with arbitrary length input
-and not requires any additional mode of operation.</p></div>
-<table class="tableblock frame-all grid-all"
-style="
-width:100%;
-">
-<caption class="title">Table 5. This is a list of currently supported of stream ciphers in buddy</caption>
-<col style="width:50%;">
-<col style="width:50%;">
-<thead>
-<tr>
-<th class="tableblock halign-left valign-top" >Algorithm name     </th>
-<th class="tableblock halign-left valign-top" > Keywords</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td class="tableblock halign-left valign-top" ><p class="tableblock">ChaCha</p></td>
-<td class="tableblock halign-left valign-top" ><p class="tableblock"><span class="monospaced">:chacha</span></p></td>
-</tr>
-</tbody>
-</table>
-<div class="listingblock">
-<div class="title">Example encrypt</div>
-<div class="content"><div class="highlight"><pre><span class="p">(</span><span class="nf">require</span> <span class="o">&#39;</span><span class="p">[</span><span class="nv">buddy.core.crypto</span> <span class="ss">:as</span> <span class="nv">c</span><span class="p">])</span>
-<span class="p">(</span><span class="nf">require</span> <span class="o">&#39;</span><span class="p">[</span><span class="nv">buddy.core.codecs</span> <span class="ss">:refer</span> <span class="ss">:all</span><span class="p">])</span>
-
-<span class="p">(</span><span class="k">let </span><span class="p">[</span><span class="nv">eng</span>   <span class="p">(</span><span class="nf">c/stream-engine</span> <span class="ss">:chacha</span><span class="p">)</span>
-      <span class="nv">iv8</span>   <span class="p">(</span><span class="nf">make-random-bytes</span> <span class="mi">8</span><span class="p">)</span>
-      <span class="nv">key32</span> <span class="p">(</span><span class="nf">make-random-bytes</span> <span class="mi">32</span><span class="p">)</span>
-      <span class="nv">data</span>  <span class="p">(</span><span class="nf">hex-&gt;bytes</span> <span class="s">&quot;0011&quot;</span><span class="p">)]</span>
-  <span class="p">(</span><span class="nf">c/initialize!</span> <span class="nv">eng</span> <span class="p">{</span><span class="ss">:key</span> <span class="nv">key32</span> <span class="ss">:iv</span> <span class="nv">iv8</span> <span class="ss">:op</span> <span class="ss">:encrypt</span><span class="p">})</span>
-  <span class="p">(</span><span class="nf">c/process-bytes!</span> <span class="nv">eng</span> <span class="nv">data</span><span class="p">))</span>
-<span class="c1">;; =&gt; #&lt;byte[] [B@efadff9&gt;</span>
-</pre></div></div></div>
-<div class="admonitionblock">
-<table><tr>
-<td class="icon">
-<div class="title">Note</div>
-</td>
-<td class="content">the iv and key size depends estrictly on cipher engine, in this case, chacha
-engine requires 8 bytes iv.</td>
-</tr></table>
-</div>
-<div class="admonitionblock">
-<table><tr>
-<td class="icon">
-<div class="title">Note</div>
-</td>
-<td class="content">for decrypt, only change <span class="monospaced">:op</span> value to <span class="monospaced">:decrypt</span></td>
-</tr></table>
-</div>
-<div class="paragraph"><p>You can call <span class="monospaced">c/initialize</span> any times as you want, it simple reinitialize the engine.</p></div>
-</div>
-</div>
-<div class="sect2">
-<h3 id="_codecs_binary_8594_string_conversion">4.7. Codecs (binary &#8594; string conversion)</h3>
-<div class="paragraph"><p>Implements some useful and widely used around all buddy library functions
-for converting between strings, bytes, hex encoded strings and base64
-encoded strings.</p></div>
-<div class="paragraph"><p>The best documentation for this part is the source code.</p></div>
-</div>
-</div>
-</div>
-<div class="sect1">
-<h2 id="_high_level_library">5. High Level Library</h2>
+<h2 id="_common_web_security">4. Common Web Security</h2>
 <div class="sectionbody">
 <div class="sect2">
-<h3 id="_generic_message_signing">5.1. Generic Message Signing</h3>
+<h3 id="_generic_message_signing">4.1. Generic Message Signing</h3>
 <div class="paragraph"><p>The "signing framework" of <em>buddy</em> is mainly based on django&#8217;s
 <a href="https://docs.djangoproject.com/en/1.6/topics/signing/">Cryptographic
 signing</a> library but extended with various signing algorithms and cryptography
@@ -826,7 +203,7 @@ Self contained token generation for use it on completely stateless token based a
 style="
 width:100%;
 ">
-<caption class="title">Table 6. Supported Algorithms</caption>
+<caption class="title">Table 1. Supported Algorithms</caption>
 <col style="width:25%;">
 <col style="width:25%;">
 <col style="width:25%;">
@@ -879,7 +256,7 @@ Digital Signature instead of hmac, you must have a key pair (public and private)
 </tr></table>
 </div>
 <div class="sect3">
-<h4 id="_using_low_level_api">5.1.1. Using low level api</h4>
+<h4 id="_using_low_level_api">4.1.1. Using low level api</h4>
 <div class="paragraph"><p>There are four signing functions in <strong><span class="monospaced">buddy.sign.generic</span></strong> namespace: <span class="monospaced">sign</span>,
 <span class="monospaced">unsign</span>, <span class="monospaced">loads</span> and <span class="monospaced">dumps</span>.</p></div>
 <div class="paragraph"><p><span class="monospaced">sign</span> and <span class="monospaced">unsign</span> are low level and work primarily with strings.</p></div>
@@ -913,7 +290,7 @@ invalidate signed messages based on their age.</p></div>
 </pre></div></div></div>
 </div>
 <div class="sect3">
-<h4 id="_protecting_complex_data_structures">5.1.2. Protecting complex data structures</h4>
+<h4 id="_protecting_complex_data_structures">4.1.2. Protecting complex data structures</h4>
 <div class="paragraph"><p>If you wish to protect a native data structure (hash-map, hash-set,
 list, vector, etc&#8230;)  you can do so using the signing <span class="monospaced">dumps</span> and
 <span class="monospaced">loads</span> functions.</p></div>
@@ -944,7 +321,7 @@ more complex data.</p></div>
 </div>
 </div>
 <div class="sect3">
-<h4 id="_using_digital_signature_algorithms">5.1.3. Using Digital Signature algorithms</h4>
+<h4 id="_using_digital_signature_algorithms">4.1.3. Using Digital Signature algorithms</h4>
 <div class="paragraph"><p>For use anyone of digital signature algorithms you must have a private/public key. If you
 don&#8217;t have one, don&#8217;t worry - it&#8217;s very easy to generate one using <strong>openssl</strong>.</p></div>
 <div class="sect4">
@@ -994,7 +371,7 @@ previously mentioned Digital Signature algorithms.</p></div>
 </div>
 </div>
 <div class="sect2">
-<h3 id="_json_web_signature_token">5.2. Json Web Signature/Token</h3>
+<h3 id="_json_web_signature_token">4.2. Json Web Signature/Token</h3>
 <div class="paragraph"><p><sub><strong>New in version:</strong> 0.2</sub></p></div>
 <div class="paragraph"><p>JSON Web Signature (JWS) represents content secured with digital
 signatures or Message Authentication Codes (MACs) using JavaScript
@@ -1021,7 +398,7 @@ Object Notation (JSON) based data structures.</p></div>
 style="
 width:100%;
 ">
-<caption class="title">Table 7. Supported Algorithms</caption>
+<caption class="title">Table 2. Supported Algorithms</caption>
 <col style="width:25%;">
 <col style="width:25%;">
 <col style="width:25%;">
@@ -1072,7 +449,7 @@ the near future (pull-requests welcome).</td>
 </tr></table>
 </div>
 <div class="sect3">
-<h4 id="_signing_data">5.2.1. Signing data</h4>
+<h4 id="_signing_data">4.2.1. Signing data</h4>
 <div class="paragraph"><p>Due to the nature of storing format, the input is restricted mainly to json objects
 on the current version.</p></div>
 <div class="listingblock">
@@ -1092,7 +469,7 @@ on the current version.</p></div>
 </div>
 </div>
 <div class="sect2">
-<h3 id="_password_hashers">5.3. Password Hashers</h3>
+<h3 id="_password_hashers">4.3. Password Hashers</h3>
 <div class="paragraph"><p>Another important part of a good authentication/authorization library
 is providing some facilities for generating secure passwords.</p></div>
 <div class="paragraph"><p><em>buddy</em> comes with a few functions for generating and verifying
@@ -1102,7 +479,7 @@ bcrypt and pbkdf2.</p></div>
 style="
 width:100%;
 ">
-<caption class="title">Table 8. Supported password hashers algorithms</caption>
+<caption class="title">Table 3. Supported password hashers algorithms</caption>
 <col style="width:33%;">
 <col style="width:33%;">
 <col style="width:33%;">
@@ -1169,14 +546,14 @@ work with strings instead of bytes (unlike cryptographic hash functions).</p></d
 </div>
 </div>
 <div class="sect1">
-<h2 id="_web_extensions">6. Web extensions</h2>
+<h2 id="_authentication_middleware_for_ring_compojure">5. Authentication Middleware for Ring/Compojure</h2>
 <div class="sectionbody">
 <div class="paragraph"><p>Additionally, buddy commes with web library support for authentication
 and authorization. It mainly works with ring (and compojure, since it
 is ring-based) but in the future it can be extended for work with
 other libraries.</p></div>
 <div class="sect2">
-<h3 id="_authentication">6.1. Authentication</h3>
+<h3 id="_authentication">5.1. Authentication</h3>
 <div class="paragraph"><p>Buddy differs with other libraries because it takes very different approach for handling
 authentication. In first step, it clearly split authentication and authorization in two
 separated steps and in second step, implements it using "backends" and protocols for easy
@@ -1201,7 +578,7 @@ Authenticate: having parsed data do authentication process, such as call auth fu
 style="
 width:100%;
 ">
-<caption class="title">Table 9. Here is a list of built-in authentication backends:</caption>
+<caption class="title">Table 4. Here is a list of built-in authentication backends:</caption>
 <col style="width:33%;">
 <col style="width:33%;">
 <col style="width:33%;">
@@ -1236,7 +613,7 @@ width:100%;
 </tbody>
 </table>
 <div class="sect3">
-<h4 id="_http_basic">6.1.1. HTTP Basic</h4>
+<h4 id="_http_basic">5.1.1. HTTP Basic</h4>
 <div class="paragraph"><p>The HTTP Basic authentication backend is one of the simplest and most insecure authentication
 systems, but is a good first step for understand how buddy authentication works.</p></div>
 <div class="listingblock">
@@ -1294,7 +671,7 @@ in a standard ring middleware way with buddy&#8217;s authentication middleware.<
 request with <span class="monospaced">:identity</span> forwarded to real handler or next middleware.</p></div>
 </div>
 <div class="sect3">
-<h4 id="_session">6.1.2. Session</h4>
+<h4 id="_session">5.1.2. Session</h4>
 <div class="paragraph"><p>The session backend has the simplest implementation because it relies
 entirely on ring session support.</p></div>
 <div class="paragraph"><p>It checks the <span class="monospaced">:identity</span> key on session to authenticate the user with its
@@ -1303,7 +680,7 @@ value.</p></div>
 <div class="paragraph"><p>See <a href="#examples">examples section</a> for complete examples for this backend.</p></div>
 </div>
 <div class="sect3">
-<h4 id="_token">6.1.3. Token</h4>
+<h4 id="_token">5.1.3. Token</h4>
 <div class="sect4">
 <h5 id="_standard">Standard</h5>
 <div class="paragraph"><p>This backend works much like the basic auth backend with the difference that this works with
@@ -1322,7 +699,7 @@ framework for user authentication.</p></div>
 </div>
 </div>
 <div class="sect2">
-<h3 id="_authorization">6.2. Authorization</h3>
+<h3 id="_authorization">5.2. Authorization</h3>
 <div class="paragraph"><p><em>buddy</em> also comes with an authorization system.</p></div>
 <div class="paragraph"><p>The authorization system is split into two parts:</p></div>
 <div class="ulist"><ul>
@@ -1340,7 +717,7 @@ generic authorization system using exceptions for fast return and unauthorized-h
 </li>
 </ul></div>
 <div class="sect3">
-<h4 id="_access_rules_system">6.2.1. Access Rules System</h4>
+<h4 id="_access_rules_system">5.2.1. Access Rules System</h4>
 <div class="sect4">
 <h5 id="_introduction_2">Introduction</h5>
 <div class="paragraph"><p>The access rules are another part of the authorization system, and consist of a list of rules
@@ -1472,7 +849,7 @@ ring views/handlers, your can use <span class="monospaced">restrict</span> decor
 </div>
 </div>
 <div class="sect3">
-<h4 id="_generic_authorization">6.2.2. Generic authorization</h4>
+<h4 id="_generic_authorization">5.2.2. Generic authorization</h4>
 <div class="paragraph"><p>An other way to handle not authorized exceptions is using exceptions. It is less functional
 but in some sircumstances can work very well.</p></div>
 <div class="paragraph"><p>But how it works? It is very simple, the authorization backend wraps everything in
@@ -1537,6 +914,629 @@ take a look on examples.</td>
 </tr></table>
 </div>
 </div>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_cryptographic_api">6. Cryptographic Api</h2>
+<div class="sectionbody">
+<div class="paragraph"><p>Buddy has a low-level interface and a high-level interface.</p></div>
+<div class="paragraph"><p>The low-level interface is located in the <span class="monospaced">buddy.core</span> namespace and
+has implementations for:</p></div>
+<div class="ulist"><ul>
+<li>
+<p>
+cryptographic hash algorithms
+</p>
+</li>
+<li>
+<p>
+key derivation algorithms
+</p>
+</li>
+<li>
+<p>
+digital signatures
+</p>
+</li>
+<li>
+<p>
+message authentication (mac)
+</p>
+</li>
+<li>
+<p>
+cryptographic algorithms (block &amp; stream ciphers)
+</p>
+</li>
+</ul></div>
+<div class="sect2">
+<h3 id="_cryptographic_hash_algorithms">6.1. Cryptographic hash algorithms</h3>
+<div class="paragraph"><p>All hash algorithms are located in the <span class="monospaced">buddy.core.hash</span> namespace.</p></div>
+<table class="tableblock frame-all grid-all"
+style="
+width:100%;
+">
+<caption class="title">Table 5. Available hash algorithms</caption>
+<col style="width:50%;">
+<col style="width:50%;">
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top" > Hash algorithm name  </th>
+<th class="tableblock halign-left valign-top" > Digest size</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top" ><p class="tableblock">SHA1</p></td>
+<td class="tableblock halign-left valign-top" ><p class="tableblock">160</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top" ><p class="tableblock">SHA2</p></td>
+<td class="tableblock halign-left valign-top" ><p class="tableblock">256, 384, 512</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top" ><p class="tableblock">SHA3</p></td>
+<td class="tableblock halign-left valign-top" ><p class="tableblock">256, 384, 512</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top" ><p class="tableblock">MD5</p></td>
+<td class="tableblock halign-left valign-top" ><p class="tableblock">128</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top" ><p class="tableblock">Tiger</p></td>
+<td class="tableblock halign-left valign-top" ><p class="tableblock">192</p></td>
+</tr>
+</tbody>
+</table>
+<div class="sect3">
+<h4 id="_basic_usage">6.1.1. Basic usage</h4>
+<div class="listingblock">
+<div class="title">Import namespace example:</div>
+<div class="content"><div class="highlight"><pre><span class="p">(</span><span class="nf">require</span> <span class="o">&#39;</span><span class="p">[</span><span class="nv">buddy.core.hash</span> <span class="ss">:as</span> <span class="nv">hash</span><span class="p">])</span>
+<span class="p">(</span><span class="nf">require</span> <span class="o">&#39;</span><span class="p">[</span><span class="nv">buddy.core.codecs</span> <span class="ss">:refer</span> <span class="ss">:all</span><span class="p">])</span>
+</pre></div></div></div>
+<div class="listingblock">
+<div class="title">Usage examples:</div>
+<div class="content"><div class="highlight"><pre><span class="p">(</span><span class="nf">hash/sha256</span> <span class="s">&quot;foo bar&quot;</span><span class="p">)</span>
+<span class="c1">;; -&gt; #&lt;byte[] [B@162a657e&gt;</span>
+
+<span class="p">(</span><span class="nb">-&gt; </span><span class="p">(</span><span class="nf">hash/sha256</span> <span class="s">&quot;foo bar&quot;</span><span class="p">)</span>
+    <span class="p">(</span><span class="nf">bytes-&gt;hex</span><span class="p">))</span>
+<span class="c1">;; -&gt; &quot;fbc1a9f858ea9e177916964bd88c3d37b91a1e84412765e29950777f265c4b75&quot;</span>
+</pre></div></div></div>
+</div>
+<div class="sect3">
+<h4 id="_advanced_usage">6.1.2. Advanced usage</h4>
+<div class="paragraph"><p>Hash functions are implemented using protocols and can be extended
+to other types. The default implementations come with support
+for file-like objects (<strong>File</strong>, <strong>URL</strong>, URI* and <strong>InputStream</strong>).</p></div>
+<div class="listingblock">
+<div class="title">Make hash of file example:</div>
+<div class="content"><div class="highlight"><pre><span class="c1">;; Additional import for easy open files</span>
+<span class="p">(</span><span class="nf">require</span> <span class="o">&#39;</span><span class="p">[</span><span class="nv">clojure.java.io</span> <span class="ss">:as</span> <span class="nv">io</span><span class="p">])</span>
+
+<span class="p">(</span><span class="nb">-&gt; </span><span class="p">(</span><span class="nf">hash/sha256</span> <span class="p">(</span><span class="nf">io/input-stream</span> <span class="s">&quot;/tmp/some-file&quot;</span><span class="p">))</span>
+    <span class="p">(</span><span class="nf">bytes-&gt;hex</span><span class="p">))</span>
+<span class="c1">;; -&gt; &quot;bba878639499c8449f69efbfc699413eebfaf41d4b7a7faa560bfaf7e93a43dd&quot;</span>
+</pre></div></div></div>
+<div class="paragraph"><p>You can extend it for your own types using the
+<strong>buddy.core.hash/Digest</strong> protocol:</p></div>
+<div class="listingblock">
+<div class="content"><div class="highlight"><pre><span class="p">(</span><span class="kd">defprotocol </span><span class="nv">Digest</span>
+  <span class="p">(</span><span class="nf">make-digest</span> <span class="p">[</span><span class="nv">data</span> <span class="nv">algorithm</span><span class="p">]))</span>
+</pre></div></div></div>
+<div class="admonitionblock">
+<table><tr>
+<td class="icon">
+<div class="title">Note</div>
+</td>
+<td class="content">Functions like <strong>sha256</strong> are aliases for the more generic
+function <strong>digest</strong>.</td>
+</tr></table>
+</div>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_message_authentication_code_algorithms">6.2. Message authentication code algorithms</h3>
+<div class="paragraph"><p>Buddy comes with three mac implementations: <strong>HMac</strong>, <strong>SHMac</strong> and <strong>Poly1305</strong>.</p></div>
+<div class="sect3">
+<h4 id="_hmac_amp_shmac">6.2.1. HMac &amp; SHMac</h4>
+<div class="paragraph"><p>There are two variants of hmac: simple and salted. And are available
+in the <span class="monospaced">buddy.core.mac.hmac</span> and <span class="monospaced">buddy.core.mac.shmac</span> respectively.</p></div>
+<div class="sect4">
+<h5 id="_basic_usage_2">Basic usage</h5>
+<div class="listingblock">
+<div class="content"><div class="highlight"><pre><span class="c1">;; Import required namespaces</span>
+<span class="p">(</span><span class="nf">require</span> <span class="o">&#39;</span><span class="p">[</span><span class="nv">buddy.core.mac.hmac</span> <span class="ss">:as</span> <span class="nv">hmac</span><span class="p">])</span>
+<span class="p">(</span><span class="nf">require</span> <span class="o">&#39;</span><span class="p">[</span><span class="nv">buddy.core.mac.shmac</span> <span class="ss">:as</span> <span class="nv">shmac</span><span class="p">])</span>
+<span class="p">(</span><span class="nf">require</span> <span class="o">&#39;</span><span class="p">[</span><span class="nv">buddy.core.codecs</span> <span class="ss">:refer</span> <span class="ss">:all</span><span class="p">])</span>
+
+<span class="c1">;; Generate sha256 hmac over string</span>
+<span class="p">(</span><span class="nb">-&gt; </span><span class="p">(</span><span class="nf">hmac/hmac</span> <span class="s">&quot;foo bar&quot;</span> <span class="s">&quot;mysecretkey&quot;</span> <span class="ss">:sha256</span><span class="p">)</span>
+    <span class="p">(</span><span class="nf">bytes-&gt;hex</span><span class="p">))</span>
+<span class="c1">;; -&gt; &quot;61849448bdbb67b39d609471eead667e65b0d1b9e01b1c3bf7aa56b83e9c8083&quot;</span>
+
+<span class="c1">;; Same example but using salted variant</span>
+<span class="p">(</span><span class="nb">-&gt; </span><span class="p">(</span><span class="nf">shmac/shmac</span> <span class="s">&quot;foo bar&quot;</span> <span class="s">&quot;salt&quot;</span> <span class="s">&quot;mysecretkey&quot;</span> <span class="ss">:sha256</span><span class="p">)</span>
+    <span class="p">(</span><span class="nf">bytes-&gt;hex</span><span class="p">))</span>
+<span class="c1">;; -&gt; &quot;bd5f7a0040430a73f4845bac8f980c6398b4baae8a22efcc22038be0f4dd9678&quot;</span>
+</pre></div></div></div>
+<div class="paragraph"><p>The key parameter can be any type that implements the <strong>ByteArray</strong> protocol
+defined in the <span class="monospaced">buddy.core.codecs</span> namespace. It comes with default implementations for
+<span class="monospaced">byte[]</span> and <span class="monospaced">java.lang.String</span>.</p></div>
+</div>
+<div class="sect4">
+<h5 id="_advanced_usage_2">Advanced usage</h5>
+<div class="paragraph"><p>Like hash functions, hmac is implemented using Clojure
+protocols and comes with default implementations for: String, byte[],
+<strong>File</strong>, <strong>URL</strong>, <strong>URI</strong> and <strong>InputStream</strong>.</p></div>
+<div class="listingblock">
+<div class="content"><div class="highlight"><pre><span class="p">(</span><span class="nf">require</span> <span class="o">&#39;</span><span class="p">[</span><span class="nv">clojure.java.io</span> <span class="ss">:as</span> <span class="nv">io</span><span class="p">])</span>
+
+<span class="c1">;; Generate hmac for file</span>
+<span class="p">(</span><span class="nb">-&gt; </span><span class="p">(</span><span class="nf">io/input-stream</span> <span class="s">&quot;/tmp/somefile&quot;</span><span class="p">)</span>
+    <span class="p">(</span><span class="nf">hmac/hmac</span> <span class="s">&quot;mysecretkey&quot;</span> <span class="ss">:sha256</span><span class="p">)</span>
+    <span class="p">(</span><span class="nf">bytes-&gt;hex</span><span class="p">))</span>
+<span class="c1">;; -&gt; &quot;4cb793e600848da2053238003fce4c010233c49df3e6a04119b4287eb464c27e&quot;</span>
+</pre></div></div></div>
+<div class="paragraph"><p>You can extend it for your own types using <span class="monospaced">buddy.core.mac.hmac/HMac</span> protocol:</p></div>
+<div class="listingblock">
+<div class="content"><div class="highlight"><pre><span class="p">(</span><span class="kd">defprotocol </span><span class="nv">HMac</span>
+  <span class="p">(</span><span class="nf">make-hmac</span> <span class="p">[</span><span class="nv">data</span> <span class="nb">key </span><span class="nv">algorithm</span><span class="p">]))</span>
+</pre></div></div></div>
+</div>
+</div>
+<div class="sect3">
+<h4 id="_poly1305">6.2.2. Poly1305</h4>
+<div class="paragraph"><p>Poly1305 is a cryptographic message authentication code
+(MAC) written by Daniel J. Bernstein. It can be used to verify the
+data integrity and the authenticity of a message.</p></div>
+<div class="paragraph"><p>The security of Poly1305 is very close to the block cipher algorithm.
+As a result, the only way for an attacker to break Poly1305 is to break
+the cipher.</p></div>
+<div class="paragraph"><p>Poly1305 offers cipher replaceability. If anything goes wrong with
+one, it can be substituted by another with identical security
+guarantees.</p></div>
+<div class="paragraph"><p>Unlike <strong>HMac</strong>, it requires an initialization vector (IV). An IV is
+like a salt. It should be generated using a strong random number
+generator for security guarantees. Also, the IV should be of the same
+length as the chosen cipher block size.</p></div>
+<div class="sect4">
+<h5 id="_basic_usage_3">Basic usage</h5>
+<div class="paragraph"><p>The default specification talks about AES as default block cipher,
+but buddy comes with support for three block ciphers: AES, Serpent
+and Twofish.</p></div>
+<div class="listingblock">
+<div class="title">Make mac using Serpent block cipher with random IV</div>
+<div class="content"><div class="highlight"><pre><span class="p">(</span><span class="nf">require</span> <span class="o">&#39;</span><span class="p">[</span><span class="nv">buddy.core.codecs</span> <span class="ss">:refe</span> <span class="p">[</span><span class="nv">bytes-&gt;hex</span><span class="p">]])</span>
+<span class="p">(</span><span class="nf">require</span> <span class="o">&#39;</span><span class="p">[</span><span class="nv">buddy.core.mac.poly1305</span> <span class="ss">:as</span> <span class="nv">poly</span><span class="p">])</span>
+<span class="p">(</span><span class="nf">require</span> <span class="o">&#39;</span><span class="p">[</span><span class="nv">buddy.core.keys</span> <span class="ss">:refer</span> <span class="p">[</span><span class="nv">make-random-bytes</span><span class="p">]])</span>
+
+<span class="p">(</span><span class="k">let </span><span class="p">[</span><span class="nv">iv</span>  <span class="p">(</span><span class="nf">make-random-bytes</span> <span class="mi">16</span><span class="p">)</span>
+      <span class="nv">mac</span> <span class="p">(</span><span class="nf">poly/poly1305</span> <span class="s">&quot;some-data&quot;</span> <span class="s">&quot;mysecret&quot;</span> <span class="nv">iv</span> <span class="ss">:serpent</span><span class="p">)]</span>
+  <span class="p">(</span><span class="nb">println </span><span class="p">(</span><span class="nf">bytes-&gt;hex</span> <span class="nv">mac</span><span class="p">)))</span>
+<span class="c1">;; =&gt; &quot;1976b1c490c306e7304a59dfacee4207&quot;</span>
+</pre></div></div></div>
+</div>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_public_private_keypairs">6.3. Public/Private keypairs</h3>
+<div class="paragraph"><p>Before explaining digital signatures, you need to read public/private
+keypairs and convert them to usable objects. Buddy has limited support
+for reading:</p></div>
+<div class="ulist"><ul>
+<li>
+<p>
+RSA keypair
+</p>
+</li>
+<li>
+<p>
+ECDSA keypair
+</p>
+</li>
+</ul></div>
+<div class="sect3">
+<h4 id="_rsa_keypair">6.3.1. RSA Keypair</h4>
+<div class="paragraph"><p>An RSA keypair is obviously used for RSA encryption/decryption, but it
+is also used for making digital signatures with RSA-derived
+algorithms.</p></div>
+<div class="listingblock">
+<div class="title">Read keys</div>
+<div class="content"><div class="highlight"><pre><span class="p">(</span><span class="nf">require</span> <span class="o">&#39;</span><span class="p">[</span><span class="nv">buddy.core.keys</span> <span class="ss">:as</span> <span class="nv">keys</span><span class="p">])</span>
+
+<span class="c1">;; The last parameter is optional and is only mandatory</span>
+<span class="c1">;; if a private key is encrypted.</span>
+<span class="p">(</span><span class="k">def </span><span class="nv">privkey</span> <span class="p">(</span><span class="nf">keys/private-key</span> <span class="s">&quot;test/_files/privkey.3des.rsa.pem&quot;</span> <span class="s">&quot;secret&quot;</span><span class="p">)</span>
+<span class="p">(</span><span class="k">def </span><span class="nv">pubkey</span> <span class="p">(</span><span class="nf">keys/public-key</span> <span class="s">&quot;test/_files/pubkey.3des.rsa.pem&quot;</span><span class="p">))</span>
+</pre></div></div></div>
+<div class="listingblock">
+<div class="title">Generate a RSA Keypair using openssl.</div>
+<div class="content"><div class="highlight"><pre><span class="c"># Generate AES-256 encrypted private key</span>
+openssl genrsa -aes256 -out privkey.pem 2048
+
+<span class="c"># Generate public key from previously created private key.</span>
+openssl rsa -pubout -in privkey.pem -out pubkey.pem
+</pre></div></div></div>
+</div>
+<div class="sect3">
+<h4 id="_ecdsa_keypair">6.3.2. ECDSA Keypair</h4>
+<div class="paragraph"><p>Like RSA keypairs, ECDSA is also used for making digital signatures
+and can be read like in the RSA examples.</p></div>
+<div class="listingblock">
+<div class="title">Read keys.</div>
+<div class="content"><div class="highlight"><pre><span class="p">(</span><span class="nf">require</span> <span class="o">&#39;</span><span class="p">[</span><span class="nv">buddy.core.keys</span> <span class="ss">:as</span> <span class="nv">keys</span><span class="p">])</span>
+
+<span class="c1">;; The last parameter is optional and is only mandatory</span>
+<span class="c1">;; if a private key is encrypted.</span>
+<span class="p">(</span><span class="k">def </span><span class="nv">privkey</span> <span class="p">(</span><span class="nf">keys/private-key</span> <span class="s">&quot;test/_files/privkey.ecdsa.pem&quot;</span> <span class="s">&quot;secret&quot;</span><span class="p">)</span>
+<span class="p">(</span><span class="k">def </span><span class="nv">pubkey</span> <span class="p">(</span><span class="nf">keys/public-key</span> <span class="s">&quot;test/_files/pubkey.ecdsa.pem&quot;</span><span class="p">))</span>
+</pre></div></div></div>
+<div class="listingblock">
+<div class="title">Generate a ECDSA Keypair using openssl.</div>
+<div class="content"><div class="highlight"><pre><span class="c"># Generate a params file</span>
+openssl ecparam -name prime256v1 -out ecparams.pem
+
+<span class="c"># Generate a private key from params file</span>
+openssl ecparam -in ecparams.pem -genkey -noout -out ecprivkey.pem
+
+<span class="c"># Generate a public key from private key</span>
+openssl ec -in ecprivkey.pem -pubout -out ecpubkey.pem
+</pre></div></div></div>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_digital_signatures">6.4. Digital Signatures</h3>
+<div class="paragraph"><p>Digital Signatures differ from Mac as Mac values are both generated
+and verified using the same secret key. Digital Signatures require a
+public/private keypair. It signs using a private key and verifies a
+signature using a public key.</p></div>
+<div class="sect3">
+<h4 id="_rsassa_pss">6.4.1. RSASSA PSS</h4>
+<div class="paragraph"><p>RSASSA-PSS is an improved probabilistic signature scheme with
+appendix. What that means is that you can use a private RSA key
+to sign data in combination with some random input.</p></div>
+<div class="paragraph"><p><a href="http://www.ietf.org/rfc/rfc3447.txt">rfc3447.txt</a></p></div>
+<div class="listingblock">
+<div class="title">Sign sample string using rsassa-pss.</div>
+<div class="content"><div class="highlight"><pre><span class="p">(</span><span class="nf">require</span> <span class="o">&#39;</span><span class="p">[</span><span class="nv">buddy.core.keys</span> <span class="ss">:as</span> <span class="nv">keys</span><span class="p">])</span>
+<span class="p">(</span><span class="nf">require</span> <span class="o">&#39;</span><span class="p">[</span><span class="nv">buddy.core.sign.rsapss</span> <span class="ss">:as</span> <span class="nv">rsapss</span><span class="p">])</span>
+
+<span class="c1">;; Read private key</span>
+<span class="p">(</span><span class="k">def </span><span class="nv">rsaprivkey</span> <span class="p">(</span><span class="nf">keys/private-key</span> <span class="s">&quot;test/_files/privkey.3des.rsa.pem&quot;</span> <span class="s">&quot;secret&quot;</span><span class="p">))</span>
+
+<span class="c1">;; Make signature</span>
+<span class="p">(</span><span class="k">def </span><span class="nv">signature</span> <span class="p">(</span><span class="nf">rsapss/rsapss</span> <span class="s">&quot;foo&quot;</span> <span class="nv">rsaprivkey</span> <span class="ss">:sha256</span><span class="p">))</span>
+
+<span class="c1">;; Now signature contains a byte[] with signature of &quot;foo&quot; string</span>
+</pre></div></div></div>
+<div class="listingblock">
+<div class="title">Verify signature using rsassa-pss.</div>
+<div class="content"><div class="highlight"><pre><span class="c1">;; Read private key</span>
+<span class="p">(</span><span class="k">def </span><span class="nv">rsapubkey</span> <span class="p">(</span><span class="nf">keys/private-key</span> <span class="s">&quot;test/_files/pubkey.3des.rsa.pem&quot;</span><span class="p">))</span>
+
+<span class="c1">;; Make verification</span>
+<span class="p">(</span><span class="nf">rsapss/verify</span> <span class="s">&quot;foo&quot;</span> <span class="nv">signature</span> <span class="nv">rsapubkey</span> <span class="ss">:sha256</span><span class="p">))</span>
+<span class="c1">;; =&gt; true</span>
+</pre></div></div></div>
+</div>
+<div class="sect3">
+<h4 id="_rsassa_pkcs1_v1_5">6.4.2. RSASSA PKCS1 v1.5</h4>
+<div class="paragraph"><p>RSASSA-PSS is an probabilistic signature scheme with appendix.
+What that means is that you can use a private RSA key to sign data.</p></div>
+<div class="paragraph"><p><a href="http://www.ietf.org/rfc/rfc3447.txt">rfc3447.txt</a></p></div>
+<div class="listingblock">
+<div class="title">Sign sample string using rsassa-pkcs.</div>
+<div class="content"><div class="highlight"><pre><span class="p">(</span><span class="nf">require</span> <span class="o">&#39;</span><span class="p">[</span><span class="nv">buddy.core.keys</span> <span class="ss">:as</span> <span class="nv">keys</span><span class="p">])</span>
+<span class="p">(</span><span class="nf">require</span> <span class="o">&#39;</span><span class="p">[</span><span class="nv">buddy.core.sign.rsapkcs</span> <span class="ss">:as</span> <span class="nv">rsapkcs</span><span class="p">])</span>
+
+<span class="c1">;; Read private key</span>
+<span class="p">(</span><span class="k">def </span><span class="nv">rsaprivkey</span> <span class="p">(</span><span class="nf">keys/private-key</span> <span class="s">&quot;test/_files/privkey.3des.rsa.pem&quot;</span> <span class="s">&quot;secret&quot;</span><span class="p">))</span>
+
+<span class="c1">;; Make signature</span>
+<span class="p">(</span><span class="k">def </span><span class="nv">signature</span> <span class="p">(</span><span class="nf">rsapkcs/rsapkcs15</span> <span class="s">&quot;foo&quot;</span> <span class="nv">rsaprivkey</span> <span class="ss">:sha256</span><span class="p">))</span>
+
+<span class="c1">;; Now signature contains a byte[] with signature of &quot;foo&quot; string</span>
+</pre></div></div></div>
+<div class="listingblock">
+<div class="title">Verify signature using rsassa-pkcs.</div>
+<div class="content"><div class="highlight"><pre><span class="c1">;; Read private key</span>
+<span class="p">(</span><span class="k">def </span><span class="nv">rsapubkey</span> <span class="p">(</span><span class="nf">keys/private-key</span> <span class="s">&quot;test/_files/pubkey.3des.rsa.pem&quot;</span><span class="p">))</span>
+
+<span class="c1">;; Make verification</span>
+<span class="p">(</span><span class="nf">rsapkcs/verify</span> <span class="s">&quot;foo&quot;</span> <span class="nv">signature</span> <span class="nv">rsapubkey</span> <span class="ss">:sha256</span><span class="p">))</span>
+<span class="c1">;; =&gt; true</span>
+</pre></div></div></div>
+</div>
+<div class="sect3">
+<h4 id="_eliptic_curve_dsa">6.4.3. Eliptic Curve DSA</h4>
+<div class="paragraph"><p>Elliptic Curve Digital Signature Algorithm (ECDSA) is a variant of the
+Digital Signature Algorithm (DSA) which uses elliptic curve cryptography.</p></div>
+<div class="listingblock">
+<div class="title">Sign sample string using ecdsa.</div>
+<div class="content"><div class="highlight"><pre><span class="p">(</span><span class="nf">require</span> <span class="o">&#39;</span><span class="p">[</span><span class="nv">buddy.core.keys</span> <span class="ss">:as</span> <span class="nv">keys</span><span class="p">])</span>
+<span class="p">(</span><span class="nf">require</span> <span class="o">&#39;</span><span class="p">[</span><span class="nv">buddy.core.sign.ecdsa</span> <span class="ss">:as</span> <span class="nv">ecdsa</span><span class="p">])</span>
+
+<span class="c1">;; Read private key</span>
+<span class="p">(</span><span class="k">def </span><span class="nv">ecdsaprivkey</span> <span class="p">(</span><span class="nf">keys/private-key</span> <span class="s">&quot;test/_files/privkey.ecdsa.pem&quot;</span> <span class="s">&quot;secret&quot;</span><span class="p">))</span>
+
+<span class="c1">;; Make signature</span>
+<span class="p">(</span><span class="k">def </span><span class="nv">signature</span> <span class="p">(</span><span class="nf">ecdsa/ecdsa</span> <span class="s">&quot;foo&quot;</span> <span class="nv">ecdsaprivkey</span> <span class="ss">:sha256</span><span class="p">))</span>
+</pre></div></div></div>
+<div class="listingblock">
+<div class="title">Verify signature using ecdsa.</div>
+<div class="content"><div class="highlight"><pre><span class="c1">;; Read private key</span>
+<span class="p">(</span><span class="k">def </span><span class="nv">ecdsapubkey</span> <span class="p">(</span><span class="nf">keys/private-key</span> <span class="s">&quot;test/_files/pubkey.ecdsa.pem&quot;</span><span class="p">))</span>
+
+<span class="c1">;; Make verification</span>
+<span class="p">(</span><span class="nf">ecdsa/verify</span> <span class="s">&quot;foo&quot;</span> <span class="nv">signature</span> <span class="nv">ecdsapubkey</span> <span class="ss">:sha256</span><span class="p">))</span>
+<span class="c1">;; =&gt; true</span>
+</pre></div></div></div>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_key_derivation_functions">6.5. Key Derivation Functions</h3>
+<div class="paragraph"><p>Key derivation functions are often used in conjunction with non-secret parameters
+to derive one or more keys from a common secret value.</p></div>
+<div class="paragraph"><p><strong>buddy</strong> commes with several of them:</p></div>
+<table class="tableblock frame-all grid-all"
+style="
+width:100%;
+">
+<caption class="title">Table 6. Supported key derivation functions.</caption>
+<col style="width:33%;">
+<col style="width:33%;">
+<col style="width:33%;">
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top" >Algorithm name </th>
+<th class="tableblock halign-left valign-top" > Constructor              </th>
+<th class="tableblock halign-left valign-top" > Notes</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top" ><p class="tableblock">HKDF</p></td>
+<td class="tableblock halign-left valign-top" ><p class="tableblock"><span class="monospaced">buddy.core.kdf/hkdf</span></p></td>
+<td class="tableblock halign-left valign-top" ><p class="tableblock">HMAC based KDF</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top" ><p class="tableblock">KDF1</p></td>
+<td class="tableblock halign-left valign-top" ><p class="tableblock"><span class="monospaced">buddy.core.kdf/kdf1</span></p></td>
+<td class="tableblock halign-left valign-top" ><p class="tableblock"></p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top" ><p class="tableblock">KDF2</p></td>
+<td class="tableblock halign-left valign-top" ><p class="tableblock"><span class="monospaced">buddy.core.kdf/kdf2</span></p></td>
+<td class="tableblock halign-left valign-top" ><p class="tableblock"></p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top" ><p class="tableblock">CMKDF</p></td>
+<td class="tableblock halign-left valign-top" ><p class="tableblock"><span class="monospaced">buddy.core.kdf/cmkdf</span></p></td>
+<td class="tableblock halign-left valign-top" ><p class="tableblock">Counter Mode KDF</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top" ><p class="tableblock">FMKDF</p></td>
+<td class="tableblock halign-left valign-top" ><p class="tableblock"><span class="monospaced">buddy.core.kdf/fmkdf</span></p></td>
+<td class="tableblock halign-left valign-top" ><p class="tableblock">Feedback Mode KDF</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top" ><p class="tableblock">DPIMKDF</p></td>
+<td class="tableblock halign-left valign-top" ><p class="tableblock"><span class="monospaced">buddy.core.kdf/dpimkdf</span></p></td>
+<td class="tableblock halign-left valign-top" ><p class="tableblock">Double-Pipeline Iteration Mode KDF</p></td>
+</tr>
+</tbody>
+</table>
+<div class="admonitionblock">
+<table><tr>
+<td class="icon">
+<div class="title">Note</div>
+</td>
+<td class="content">All key derivation functions work with byte arrays. For the
+ following examples, the functions in <span class="monospaced">buddy.core.codecs</span> convert
+ strings to byte arrays.</td>
+</tr></table>
+</div>
+<div class="sect3">
+<h4 id="_hkdf">6.5.1. HKDF</h4>
+<div class="paragraph"><p>HMAC-based Extract-and-Expand Key Derivation Function (HKDF) is implemented according to IETF RFC 5869</p></div>
+<div class="listingblock">
+<div class="title">Example using hkdf</div>
+<div class="content"><div class="highlight"><pre><span class="p">(</span><span class="nf">require</span> <span class="o">&#39;</span><span class="p">[</span><span class="nv">buddy.core.codecs</span> <span class="ss">:refer</span> <span class="ss">:all</span><span class="p">])</span>
+<span class="p">(</span><span class="nf">require</span> <span class="o">&#39;</span><span class="p">[</span><span class="nv">buddy.core.kdf</span> <span class="ss">:as</span> <span class="nv">kdf</span><span class="p">])</span>
+
+<span class="c1">;; Using hkdf derivation functions. It requires a</span>
+<span class="c1">;; key, salt and optionally info field that can</span>
+<span class="c1">;; contain any random data.</span>
+
+<span class="p">(</span><span class="k">let </span><span class="p">[</span><span class="nv">kfn</span> <span class="p">(</span><span class="nf">kdf/hkdf</span> <span class="p">(</span><span class="nf">str-&gt;bytes</span> <span class="s">&quot;mysecretkey&quot;</span><span class="p">)</span>
+                    <span class="p">(</span><span class="nf">str-&gt;bytes</span> <span class="s">&quot;mypublicsalt&quot;</span><span class="p">)</span>
+                    <span class="nv">nil</span> <span class="c1">;; info parameter can be nil</span>
+                    <span class="ss">:sha256</span><span class="p">)]</span>
+  <span class="p">(</span><span class="nb">-&gt; </span><span class="p">(</span><span class="nf">kdf/generate-bytes!</span> <span class="nv">kfn</span> <span class="mi">8</span><span class="p">)</span>
+      <span class="p">(</span><span class="nf">bytes-&gt;hex</span><span class="p">)))</span>
+<span class="c1">;; =&gt; &quot;0faba553152fce4f&quot;</span>
+</pre></div></div></div>
+</div>
+<div class="sect3">
+<h4 id="_kdf1_2">6.5.2. KDF1/2</h4>
+<div class="paragraph"><p>KDF1/2 hash-based key derivation functions for derived keys and ivs as defined by IEEE P1363a/ISO 18033.</p></div>
+<div class="listingblock">
+<div class="title">Example using kdf1 or kdf2</div>
+<div class="content"><div class="highlight"><pre><span class="p">(</span><span class="nf">require</span> <span class="o">&#39;</span><span class="p">[</span><span class="nv">buddy.core.codecs</span> <span class="ss">:refer</span> <span class="ss">:all</span><span class="p">])</span>
+<span class="p">(</span><span class="nf">require</span> <span class="o">&#39;</span><span class="p">[</span><span class="nv">buddy.core.kdf</span> <span class="ss">:as</span> <span class="nv">kdf</span><span class="p">])</span>
+
+<span class="c1">;; kdf1 and kdf2 are very similar and have the same</span>
+<span class="c1">;; constructor signature. Requires: key data, salt</span>
+<span class="c1">;; and hash algorithm keyword.</span>
+
+<span class="p">(</span><span class="k">let </span><span class="p">[</span><span class="nv">kfn</span> <span class="p">(</span><span class="nf">kdf/kdf2</span> <span class="p">(</span><span class="nf">str-&gt;bytes</span> <span class="s">&quot;mysecretkey&quot;</span><span class="p">)</span> <span class="p">(</span><span class="nf">str-&gt;bytes</span> <span class="s">&quot;mypublicsalt&quot;</span><span class="p">)</span> <span class="ss">:sha256</span><span class="p">)]</span>
+  <span class="p">(</span><span class="nb">-&gt; </span><span class="p">(</span><span class="nf">kdf/generate-bytes!</span> <span class="nv">kfn</span> <span class="mi">8</span><span class="p">)</span>
+      <span class="p">(</span><span class="nf">bytes-&gt;hex</span><span class="p">)))</span>
+<span class="c1">;; =&gt; &quot;0faba553152fce4f&quot;</span>
+</pre></div></div></div>
+</div>
+<div class="sect3">
+<h4 id="_counter_mode_kdf">6.5.3. Counter Mode KDF</h4>
+<div class="paragraph"><p>Hash-based KDF with counter mode defined by the publicly available NIST SP 800-108 specification.</p></div>
+</div>
+<div class="sect3">
+<h4 id="_feedback_mode_kdf">6.5.4. Feedback Mode KDF</h4>
+<div class="paragraph"><p>Hash-based KDF with feedback mode defined by the publicly available NIST SP 800-108 specification.</p></div>
+</div>
+<div class="sect3">
+<h4 id="_double_pipeline_iteration_mode_kdf">6.5.5. Double-Pipeline Iteration Mode KDF</h4>
+<div class="paragraph"><p>Hash-based KDF with Double-Pipeline Iteration Mode defined by the publicly available
+NIST SP 800-108 specification.</p></div>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_ciphers">6.6. Ciphers</h3>
+<div class="paragraph"><p>Ciphers support in buddy is available on <span class="monospaced">buddy.core.crypto</span> namespace.</p></div>
+<div class="sect3">
+<h4 id="_block_ciphers">6.6.1. Block Ciphers</h4>
+<div class="paragraph"><p>In cryptography, a block cipher is a deterministic algorithm operating on fixed-length groups of bits,
+called blocks, with an unvarying transformation that is specified by a symmetric key.</p></div>
+<table class="tableblock frame-all grid-all"
+style="
+width:100%;
+">
+<caption class="title">Table 7. This is a list of currently supported block ciphers in buddy</caption>
+<col style="width:50%;">
+<col style="width:50%;">
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top" >Algorithm name     </th>
+<th class="tableblock halign-left valign-top" > Keywords</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top" ><p class="tableblock">Twofish</p></td>
+<td class="tableblock halign-left valign-top" ><p class="tableblock"><span class="monospaced">:twofish</span></p></td>
+</tr>
+</tbody>
+</table>
+<div class="paragraph"><p>Additionally, for good security, is mandatory to combine a block cipher with some cipher
+mode of operation.</p></div>
+<table class="tableblock frame-all grid-all"
+style="
+width:100%;
+">
+<caption class="title">Table 8. This is a list of currently supported of cipher mode of operation</caption>
+<col style="width:50%;">
+<col style="width:50%;">
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top" >Algorithm name     </th>
+<th class="tableblock halign-left valign-top" > Keywords</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top" ><p class="tableblock">SIC (CTR)</p></td>
+<td class="tableblock halign-left valign-top" ><p class="tableblock"><span class="monospaced">:ctr</span>, <span class="monospaced">:sic</span></p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top" ><p class="tableblock">CBC</p></td>
+<td class="tableblock halign-left valign-top" ><p class="tableblock"><span class="monospaced">:cbc</span></p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top" ><p class="tableblock">OFB</p></td>
+<td class="tableblock halign-left valign-top" ><p class="tableblock"><span class="monospaced">:ofb</span></p></td>
+</tr>
+</tbody>
+</table>
+<div class="paragraph"><p>Encrypt data using buddy&#8217;s crypto primitives is almost easy. In case of block ciphers, you
+should know that block cipher and cipher mode you want to use.</p></div>
+<div class="admonitionblock">
+<table><tr>
+<td class="icon">
+<div class="title">Note</div>
+</td>
+<td class="content">currently buddy comes with limited number of ciphers and modes, but in near future
+should be added much more options.</td>
+</tr></table>
+</div>
+<div class="listingblock">
+<div class="title">Example encrypt</div>
+<div class="content"><div class="highlight"><pre><span class="p">(</span><span class="nf">require</span> <span class="o">&#39;</span><span class="p">[</span><span class="nv">buddy.core.crypto</span> <span class="ss">:as</span> <span class="nv">c</span><span class="p">])</span>
+<span class="p">(</span><span class="nf">require</span> <span class="o">&#39;</span><span class="p">[</span><span class="nv">buddy.core.codecs</span> <span class="ss">:refer</span> <span class="ss">:all</span><span class="p">])</span>
+
+<span class="p">(</span><span class="k">let </span><span class="p">[</span><span class="nv">eng</span>   <span class="p">(</span><span class="nf">c/engine</span> <span class="ss">:twofish</span> <span class="ss">:cbc</span><span class="p">)</span>
+      <span class="nv">iv16</span>  <span class="p">(</span><span class="nf">make-random-bytes</span> <span class="mi">16</span><span class="p">)</span>
+      <span class="nv">key32</span> <span class="p">(</span><span class="nf">make-random-bytes</span> <span class="mi">32</span><span class="p">)</span>
+      <span class="nv">data</span>  <span class="p">(</span><span class="nf">hex-&gt;bytes</span> <span class="s">&quot;000000000000000000000000000000AA&quot;</span><span class="p">)]</span>
+  <span class="p">(</span><span class="nf">c/initialize!</span> <span class="nv">eng</span> <span class="p">{</span><span class="ss">:key</span> <span class="nv">key32</span> <span class="ss">:iv</span> <span class="nv">iv16</span> <span class="ss">:op</span> <span class="ss">:encrypt</span><span class="p">})</span>
+  <span class="p">(</span><span class="nf">c/process-block!</span> <span class="nv">eng</span> <span class="nv">data</span><span class="p">))</span>
+<span class="c1">;; =&gt; #&lt;byte[] [B@efadff9&gt;</span>
+</pre></div></div></div>
+</div>
+<div class="sect3">
+<h4 id="_stream_ciphers">6.6.2. Stream Ciphers</h4>
+<div class="paragraph"><p>Stream ciphers differes with block ciphers, that them works with arbitrary length input
+and not requires any additional mode of operation.</p></div>
+<table class="tableblock frame-all grid-all"
+style="
+width:100%;
+">
+<caption class="title">Table 9. This is a list of currently supported of stream ciphers in buddy</caption>
+<col style="width:50%;">
+<col style="width:50%;">
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top" >Algorithm name     </th>
+<th class="tableblock halign-left valign-top" > Keywords</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top" ><p class="tableblock">ChaCha</p></td>
+<td class="tableblock halign-left valign-top" ><p class="tableblock"><span class="monospaced">:chacha</span></p></td>
+</tr>
+</tbody>
+</table>
+<div class="listingblock">
+<div class="title">Example encrypt</div>
+<div class="content"><div class="highlight"><pre><span class="p">(</span><span class="nf">require</span> <span class="o">&#39;</span><span class="p">[</span><span class="nv">buddy.core.crypto</span> <span class="ss">:as</span> <span class="nv">c</span><span class="p">])</span>
+<span class="p">(</span><span class="nf">require</span> <span class="o">&#39;</span><span class="p">[</span><span class="nv">buddy.core.codecs</span> <span class="ss">:refer</span> <span class="ss">:all</span><span class="p">])</span>
+
+<span class="p">(</span><span class="k">let </span><span class="p">[</span><span class="nv">eng</span>   <span class="p">(</span><span class="nf">c/stream-engine</span> <span class="ss">:chacha</span><span class="p">)</span>
+      <span class="nv">iv8</span>   <span class="p">(</span><span class="nf">make-random-bytes</span> <span class="mi">8</span><span class="p">)</span>
+      <span class="nv">key32</span> <span class="p">(</span><span class="nf">make-random-bytes</span> <span class="mi">32</span><span class="p">)</span>
+      <span class="nv">data</span>  <span class="p">(</span><span class="nf">hex-&gt;bytes</span> <span class="s">&quot;0011&quot;</span><span class="p">)]</span>
+  <span class="p">(</span><span class="nf">c/initialize!</span> <span class="nv">eng</span> <span class="p">{</span><span class="ss">:key</span> <span class="nv">key32</span> <span class="ss">:iv</span> <span class="nv">iv8</span> <span class="ss">:op</span> <span class="ss">:encrypt</span><span class="p">})</span>
+  <span class="p">(</span><span class="nf">c/process-bytes!</span> <span class="nv">eng</span> <span class="nv">data</span><span class="p">))</span>
+<span class="c1">;; =&gt; #&lt;byte[] [B@efadff9&gt;</span>
+</pre></div></div></div>
+<div class="admonitionblock">
+<table><tr>
+<td class="icon">
+<div class="title">Note</div>
+</td>
+<td class="content">the iv and key size depends estrictly on cipher engine, in this case, chacha
+engine requires 8 bytes iv.</td>
+</tr></table>
+</div>
+<div class="admonitionblock">
+<table><tr>
+<td class="icon">
+<div class="title">Note</div>
+</td>
+<td class="content">for decrypt, only change <span class="monospaced">:op</span> value to <span class="monospaced">:decrypt</span></td>
+</tr></table>
+</div>
+<div class="paragraph"><p>You can call <span class="monospaced">c/initialize</span> any times as you want, it simple reinitialize the engine.</p></div>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_codecs_binary_8594_string_conversion">6.7. Codecs (binary &#8594; string conversion)</h3>
+<div class="paragraph"><p>Implements some useful and widely used around all buddy library functions
+for converting between strings, bytes, hex encoded strings and base64
+encoded strings.</p></div>
+<div class="paragraph"><p>The best documentation for this part is the source code.</p></div>
 </div>
 </div>
 </div>
@@ -1735,7 +1735,7 @@ limitations under the License.
 <div id="footer">
 <div id="footer-text">
 Version 0.2.0b1<br>
-Last updated 2014-06-06 20:25:15 CEST
+Last updated 2014-07-08 21:39:05 CEST
 </div>
 </div>
 </body>
