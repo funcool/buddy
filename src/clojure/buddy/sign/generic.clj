@@ -64,7 +64,7 @@
 (defn sign
   "Sign arbitrary length string/byte array."
   [^String input pkey & [{:keys [sep alg]
-                                  :or {sep ":" alg :hs256}}]]
+                          :or {sep ":" alg :hs256}}]]
   {:pre [(alg *signers-map*)]}
   (maybe-let [input (->byte-array input)
               salt  (make-random-bytes 8)

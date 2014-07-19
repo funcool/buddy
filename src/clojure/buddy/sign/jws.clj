@@ -12,7 +12,6 @@
 ;; See the License for the specific language governing permissions and
 ;; limitations under the License.
 
-
 ;; Links to rfcs:
 ;; - http://tools.ietf.org/html/draft-ietf-oauth-json-web-token-19
 ;; - http://tools.ietf.org/html/draft-ietf-jose-json-web-signature-25
@@ -31,8 +30,8 @@
 
 (defprotocol ITimestamp
   "Default protocol for convert any tipe to
-unix timestamp with default implementation for
-java.util.Date"
+  unix timestamp with default implementation for
+  java.util.Date"
   (to-timestamp [obj] "Covert to timestamp"))
 
 (extend-protocol ITimestamp
@@ -54,7 +53,7 @@ java.util.Date"
 
 (defn- normalize-nil-claims
   "Given a raw headers, try normalize it removing any
-key with null values and convert Dates to timestamps."
+  key with null values and convert Dates to timestamps."
   [data]
   (into {} (remove (comp nil? second) data)))
 
@@ -95,7 +94,7 @@ key with null values and convert Dates to timestamps."
 
 (defn- parse-algorithm
   "Parse algorithm name and return a
-internal keyword representation of it."
+  internal keyword representation of it."
   [header]
   (let [algname (:alg header)]
     (keyword (.toLowerCase algname))))
@@ -114,7 +113,7 @@ internal keyword representation of it."
 
 (defn- safe-encode
   "Properly encode string into
-safe url base64 encoding."
+  safe url base64 encoding."
   [^String input]
   (-> input
       (codecs/str->bytes)
