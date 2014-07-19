@@ -113,15 +113,27 @@ InputStream, File, URL and URI."
   (verify-hmac [^java.net.URI input ^bytes signature ^String key ^Keyword alg]
     (verify-hmac-for-stream (io/input-stream input) signature key alg)))
 
-
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; High level interface
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (defn hmac
+  "Make hmac for arbitrary input.
+
+  Example:
+    (hmac \"foo bar\" \"secret\" :sha256)
+    ;; => #<byte[] [B@465d154e>
+  "
   [input key ^Keyword alg]
   (make-hmac input key alg))
 
 (defn verify
+  "Verify hmac for artbitrary input and signature.
+
+  Example:
+    (let [signature (hex->bytes \"61849448bdbb67b39d609471eead6...\")]
+      (verify \"foo bar\" signature \"secret\" :sha256))
+    ;; => true
+  "
   [input ^bytes signature key ^Keyword alg]
   (verify-hmac input signature key alg))
