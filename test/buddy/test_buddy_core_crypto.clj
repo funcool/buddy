@@ -40,6 +40,20 @@
           (is (Arrays/equals result1 block16))
           (is (Arrays/equals result2 block16)))))
 
+    (testing "Aes in :cbc mode"
+      (let [engine   (cr/engine :aes :cbc)
+            expected (into-array Byte/TYPE [-121 104 86 98 109 -110 53 104 119 -94
+                                            -124 -105 92 39 -30 -30])]
+        ;; Encrypt
+        (cr/initialize! engine {:iv iv16 :key key :op :encrypt})
+        (let [result (cr/process-block! engine block16)]
+          (is (Arrays/equals result expected)))
+
+        ;; Decrypt
+        (cr/initialize! engine {:iv iv16 :key key :op :decrypt})
+        (let [result (cr/process-block! engine expected)]
+          (is (Arrays/equals result block16)))))
+
     (testing "ChaCha Streaming Cipher"
       (let [engine    (cr/stream-engine :chacha)
             expected1 (into-array Byte/TYPE [14, 37, 45])

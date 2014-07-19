@@ -1,6 +1,8 @@
 (ns buddy.core.crypto
   "Modes implementation"
   (:import org.bouncycastle.crypto.engines.TwofishEngine
+           org.bouncycastle.crypto.engines.BlowfishEngine
+           org.bouncycastle.crypto.engines.AESEngine
            org.bouncycastle.crypto.engines.ChaChaEngine
            org.bouncycastle.crypto.modes.CBCBlockCipher
            org.bouncycastle.crypto.modes.SICBlockCipher
@@ -21,7 +23,9 @@
 
 (def ^{:doc "Supported block ciphers."
        :dynamic true}
-  *supported-block-ciphers* {:twofish #(TwofishEngine.)})
+  *supported-block-ciphers* {:twofish #(TwofishEngine.)
+                             :blowfish #(BlowfishEngine.)
+                             :aes #(AESEngine.)})
 
 (def ^{:doc "Supported block ciphers."
        :dynamic true}
