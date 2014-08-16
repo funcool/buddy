@@ -67,7 +67,7 @@ it as a dependency in your *_project.clj_*:
 ._in project.clj_
 [source,clojure]
 ----
-[buddy "0.2.0b1"]
+[buddy "0.2.0b2"]
 ----
 
 Maven
@@ -90,7 +90,7 @@ Then for buddy:
 <dependency>
     <groupId>buddy</groupId>
     <artifactId>buddy</artifactId>
-    <version>0.2.0b1</version>
+    <version>0.2.0b2</version>
 </dependency>
 ----
 
