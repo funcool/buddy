@@ -38,7 +38,7 @@
 
 (defn get-github-accesstoken
   "Given authorization code, request access token
-to github and returns it."
+  to github and returns it."
   [code]
   (let [params  {:client_id github-client-id
                  :client_secret github-client-secret
@@ -49,7 +49,7 @@ to github and returns it."
 
 (defn get-user-repositories
   "Given access token, get current logged user
-repositories list."
+  repositories list."
   [token]
   (let [response (client/get github-api-user-repos-url {:query-params {:access_token token} :accept :json})]
     (json/read-str (:body response) :key-fn keyword)))
