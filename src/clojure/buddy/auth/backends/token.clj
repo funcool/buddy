@@ -67,8 +67,8 @@
             (status 401))))))
 
 (defn signed-token-backend
-  [& [{:keys [pkey unauthorized-handler max-age]}]]
-  (->SignedTokenBackend pkey unauthorized-handler max-age))
+  [& [{:keys [privkey unauthorized-handler max-age]}]]
+  (->SignedTokenBackend privkey unauthorized-handler max-age))
 
 (defn token-backend
   [& [{:keys [authfn unauthorized-handler]}]]
