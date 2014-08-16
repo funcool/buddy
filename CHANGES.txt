@@ -1,6 +1,14 @@
 Changelog
 =========
 
+Version 0.2.0b2
+---------------
+
+Date: unreleased
+
+- Remove inconsistences in parameters to authentication backends.
+- Remove inconsistences in parameters on wrap-access-rules middleware.
+
 Version 0.2.0b1
 ---------------
 
