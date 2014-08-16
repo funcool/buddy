@@ -132,7 +132,7 @@ nothing more."
   [& args]
   (let [;; Create session backend overwritting its
         ;; default unauthorized request handler
-        backend (session-backend :unauthorized-handler unauthorized-handler)
+        backend (session-backend {:unauthorized-handler unauthorized-handler})
         ;; Define default access rules.
         ;; :handler can be any function that receives
         ;; request and returns a boolean value
@@ -142,7 +142,7 @@ nothing more."
         ;; Create app with buddy middlewares
         app (-> app
                 (wrap-params)
-                (wrap-access-rules :rules rules :policy :allow)
+                (wrap-access-rules {:rules rules :policy :allow})
                 (wrap-authorization backend)
                 (wrap-authentication backend)
                 (wrap-session))]
