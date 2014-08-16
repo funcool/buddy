@@ -501,25 +501,23 @@ See xref:examples[examples section] for complete examples for this backend.
 Token
 ^^^^^
 
-
 Standard
 ++++++++
 
 This backend works much like the basic auth backend with the difference that this works with
 tokens that can be unpredictable.
 
-It parses a token and passes it to auth-fn for authentication.
+It parses a token and passes it to _authfn_ for authentication.
 
 
 Signed/Stateless
 ++++++++++++++++
 
 This backend is very similar to standard token backend previously explained, but instead
-of relying on auth-fn for identify a token, it uses stateless tokens (contains all needed
+of relying on _authfn_ for identify a token, it uses stateless tokens (contains all needed
 data in a token, without storing any information about token on database as ex...).
 
-This backend relies on the security of the high level signing
-framework for user authentication.
+This backend relies on the security of the high level signing framework for user authentication.
 
 Reference: http://lucumr.pocoo.org/2013/11/17/my-favorite-database/
 
