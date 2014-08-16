@@ -459,7 +459,7 @@ systems, but is a good first step for understand how buddy authentication works.
         password (:password authdata)]
     username))
 
-(def backend (http-basic-backend :realm "MyApi" :authfn my-authfn))
+(def backend (http-basic-backend {:realm "MyApi" :authfn my-authfn}))
 ----
 
 

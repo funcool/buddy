@@ -47,12 +47,12 @@
         (-> (response "Unauthorized")
             (status 401))))))
 
-(defrecord TokenBackend [authenticate-handler unauthorized-handler]
+(defrecord TokenBackend [authfn unauthorized-handler]
   proto/Authentication
   (parse [_ request]
     (parse-authorization-header request))
   (authenticate [_ request token]
-    (let [rsq (when authenticate-handler (authenticate-handler request token))]
+    (let [rsq (when authfn (authfn request token))]
       (if (response? rsq) rsq
         (assoc request :identity rsq))))
 
@@ -67,9 +67,9 @@
             (status 401))))))
 
 (defn signed-token-backend
-  [pkey & {:keys [unauthorized-handler max-age]}]
+  [& [{:keys [pkey unauthorized-handler max-age]}]]
   (->SignedTokenBackend pkey unauthorized-handler max-age))
 
 (defn token-backend
-  [authenticate-handler & {:keys [unauthorized-handler]}]
-  (->TokenBackend authenticate-handler unauthorized-handler))
+  [& [{:keys [authfn unauthorized-handler]}]]
+  (->TokenBackend authfn unauthorized-handler))

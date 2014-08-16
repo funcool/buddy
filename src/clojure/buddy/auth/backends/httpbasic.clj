@@ -56,5 +56,5 @@
 (defn http-basic-backend
   "Given some options, create a new instance
   of HttpBasicBackend and return it."
-  [& {:keys [realm authfn unauthorized-handler] :or {realm "Buddy Auth"}}]
+  [& [{:keys [realm authfn unauthorized-handler] :or {realm "Buddy Auth"}}]]
   (->HttpBasicBackend realm authfn unauthorized-handler))

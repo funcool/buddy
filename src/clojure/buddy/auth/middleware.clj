@@ -46,6 +46,10 @@
           (catch UnauthorizedAccessException e
             (proto/handle-unauthorized backend request (.-metadata e))))))))
 
+(defn- default-reject-handler
+  [req]
+  (throw-unauthorized))
+
 (defn wrap-access-rules
   "An other ring middleware that helps define
   access rules for ring handler.
@@ -69,12 +73,13 @@
   you are using authorization middleware, the handler funcion
   can raise unauthorized exception for fast return.
   "
-  [handler & [{:keys [rules policy reject-handler] :or {policy :allow}}]]
+  [handler & [{:keys [policy reject-handler rules]
+               :or {policy :allow reject-handler default-reject-handler}}]]
   (fn [request]
-    (let [reject-handler (or reject-handler (fn [request] (throw-unauthorized)))
-          request        (assoc request :access-rules {:reject-handler reject-handler
-                                                       :rules rules
-                                                       :policy policy})]
+    (let [options {:reject-handler reject-handler
+                   :rules rules
+                   :policy policy}
+          request (assoc request :access-rules options)]
       (if (not rules)
         (handler request)
         (if-let [match (accessrules/match-rules request rules)]

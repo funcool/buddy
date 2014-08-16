@@ -38,5 +38,5 @@
 (defn session-backend
   "Given some options, create a new instance
   of HttpBasicBackend and return it."
-  [& {:keys [unauthorized-handler]}]
+  [& [{:keys [unauthorized-handler]}]]
   (->SessionBackend unauthorized-handler))
