@@ -923,7 +923,7 @@ and Twofish.
 .Make mac using Serpent block cipher with random IV
 [source, clojure]
 ----
-(require '[buddy.core.codecs :refe [bytes->hex]])
+(require '[buddy.core.codecs :refer [bytes->hex]])
 (require '[buddy.core.mac.poly1305 :as poly])
 (require '[buddy.core.keys :refer [make-random-bytes]])
 
