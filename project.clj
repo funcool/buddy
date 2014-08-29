@@ -5,7 +5,7 @@
             :url "http://www.apache.org/licenses/LICENSE-2.0.txt"}
   :dependencies [[org.clojure/clojure "1.6.0"]
                  [org.clojure/algo.monads "0.1.5"]
-                 [ring/ring-core "1.2.2"]
+                 [ring/ring-core "1.3.1"]
                  [commons-codec/commons-codec "1.9"]
                  [com.taoensso/nippy "2.6.3"]
                  [clojurewerkz/scrypt "1.1.0"]
@@ -25,8 +25,8 @@
              :bench {:dependencies [[criterium "0.4.3"]]
                      :source-paths ["benchmarks/"]
                      :main ^:skip-aot buddy.benchmarks}
-             :example {:dependencies [[compojure "1.1.6"]
-                                      [ring "1.2.2"]]}
+             :example {:dependencies [[compojure "1.1.8"]
+                                      [ring "1.3.1"]]}
              :sessionexample [:example
                               {:source-paths ["examples/sessionexample/src"]
                                :resource-paths ["examples/sessionexample/resources"]
