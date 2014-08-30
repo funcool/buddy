@@ -9,7 +9,7 @@
                  [commons-codec/commons-codec "1.9"]
                  [com.taoensso/nippy "2.6.3"]
                  [clojurewerkz/scrypt "1.1.0"]
-                 [clj-time "0.7.0"]
+                 [clj-time "0.8.0"]
                  [swiss-arrows "1.0.0"]
                  [cheshire "5.3.1"]
                  [org.bouncycastle/bcprov-jdk15on "1.50"]
