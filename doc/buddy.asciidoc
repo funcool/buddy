@@ -181,8 +181,8 @@ invalidate signed messages based on their age.
 .Invalidate signed data using timestamp
 [source,clojure]
 ----
-;; Unsign with maxago (15min)
-(def unsigned-data (unsign signed-data "my-secret-key" {:maxago (* 60 15 1000)}))
+;; Unsign with max-age (15min)
+(def unsigned-data (unsign signed-data "my-secret-key" {:max-age (* 15 60)}))
 
 ;; unsigned-data should contain a nil value if the signing date is
 ;; older than 15 min.
