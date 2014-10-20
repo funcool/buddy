@@ -21,8 +21,8 @@ asciidoc.install(2);
 <h1>buddy documentation</h1>
 <span id="author">Andrey Antukh,</span><br>
 <span id="email" class="monospaced">&lt;<a href="mailto:niwi@niwi.be">niwi@niwi.be</a>&gt;</span><br>
-<span id="revnumber">version 0.2.0b1,</span>
-<span id="revdate">2014-07-08</span>
+<span id="revnumber">version 0.2.0b2,</span>
+<span id="revdate">2014-08-16</span>
 <div id="toc">
   <div id="toctitle">Table of Contents</div>
   <noscript><p><b>JavaScript must be enabled in your browser to display the table of contents.</b></p></noscript>
@@ -133,7 +133,7 @@ JDK8
 it as a dependency in your <strong><em>project.clj</em></strong>:</p></div>
 <div class="listingblock">
 <div class="title"><em>in project.clj</em></div>
-<div class="content"><div class="highlight"><pre><span class="p">[</span><span class="nv">buddy</span> <span class="s">&quot;0.2.0b1&quot;</span><span class="p">]</span>
+<div class="content"><div class="highlight"><pre><span class="p">[</span><span class="nv">buddy</span> <span class="s">&quot;0.2.0b2&quot;</span><span class="p">]</span>
 </pre></div></div></div>
 </div>
 <div class="sect2">
@@ -150,7 +150,7 @@ it as a dependency in your <strong><em>project.clj</em></strong>:</p></div>
 <div class="content"><div class="highlight"><pre><span class="nt">&lt;dependency&gt;</span>
     <span class="nt">&lt;groupId&gt;</span>buddy<span class="nt">&lt;/groupId&gt;</span>
     <span class="nt">&lt;artifactId&gt;</span>buddy<span class="nt">&lt;/artifactId&gt;</span>
-    <span class="nt">&lt;version&gt;</span>0.2.0b1<span class="nt">&lt;/version&gt;</span>
+    <span class="nt">&lt;version&gt;</span>0.2.0b2<span class="nt">&lt;/version&gt;</span>
 <span class="nt">&lt;/dependency&gt;</span>
 </pre></div></div></div>
 </div>
@@ -282,8 +282,8 @@ string and separating the signature with a predefined separator (default
 invalidate signed messages based on their age.</p></div>
 <div class="listingblock">
 <div class="title">Invalidate signed data using timestamp</div>
-<div class="content"><div class="highlight"><pre><span class="c1">;; Unsign with maxago (15min)</span>
-<span class="p">(</span><span class="k">def </span><span class="nv">unsigned-data</span> <span class="p">(</span><span class="nf">unsign</span> <span class="nv">signed-data</span> <span class="s">&quot;my-secret-key&quot;</span> <span class="p">{</span><span class="ss">:maxago</span> <span class="p">(</span><span class="nb">* </span><span class="mi">60</span> <span class="mi">15</span> <span class="mi">1000</span><span class="p">)}))</span>
+<div class="content"><div class="highlight"><pre><span class="c1">;; Unsign with max-age (15min)</span>
+<span class="p">(</span><span class="k">def </span><span class="nv">unsigned-data</span> <span class="p">(</span><span class="nf">unsign</span> <span class="nv">signed-data</span> <span class="s">&quot;my-secret-key&quot;</span> <span class="p">{</span><span class="ss">:max-age</span> <span class="p">(</span><span class="nb">* </span><span class="mi">15</span> <span class="mi">60</span><span class="p">)}))</span>
 
 <span class="c1">;; unsigned-data should contain a nil value if the signing date is</span>
 <span class="c1">;; older than 15 min.</span>
@@ -650,7 +650,7 @@ systems, but is a good first step for understand how buddy authentication works.
         <span class="nv">password</span> <span class="p">(</span><span class="ss">:password</span> <span class="nv">authdata</span><span class="p">)]</span>
     <span class="nv">username</span><span class="p">))</span>
 
-<span class="p">(</span><span class="k">def </span><span class="nv">backend</span> <span class="p">(</span><span class="nf">http-basic-backend</span> <span class="ss">:realm</span> <span class="s">&quot;MyApi&quot;</span> <span class="ss">:authfn</span> <span class="nv">my-authfn</span><span class="p">))</span>
+<span class="p">(</span><span class="k">def </span><span class="nv">backend</span> <span class="p">(</span><span class="nf">http-basic-backend</span> <span class="p">{</span><span class="ss">:realm</span> <span class="s">&quot;MyApi&quot;</span> <span class="ss">:authfn</span> <span class="nv">my-authfn</span><span class="p">}))</span>
 </pre></div></div></div>
 <div class="paragraph"><p>Now having simple view function and backend defined, you should wrap it
 in a standard ring middleware way with buddy&#8217;s authentication middleware.</p></div>
@@ -685,15 +685,14 @@ value.</p></div>
 <h5 id="_standard">Standard</h5>
 <div class="paragraph"><p>This backend works much like the basic auth backend with the difference that this works with
 tokens that can be unpredictable.</p></div>
-<div class="paragraph"><p>It parses a token and passes it to auth-fn for authentication.</p></div>
+<div class="paragraph"><p>It parses a token and passes it to <em>authfn</em> for authentication.</p></div>
 </div>
 <div class="sect4">
 <h5 id="_signed_stateless">Signed/Stateless</h5>
 <div class="paragraph"><p>This backend is very similar to standard token backend previously explained, but instead
-of relying on auth-fn for identify a token, it uses stateless tokens (contains all needed
+of relying on <em>authfn</em> for identify a token, it uses stateless tokens (contains all needed
 data in a token, without storing any information about token on database as ex&#8230;).</p></div>
-<div class="paragraph"><p>This backend relies on the security of the high level signing
-framework for user authentication.</p></div>
+<div class="paragraph"><p>This backend relies on the security of the high level signing framework for user authentication.</p></div>
 <div class="paragraph"><p>Reference: <a href="http://lucumr.pocoo.org/2013/11/17/my-favorite-database/">http://lucumr.pocoo.org/2013/11/17/my-favorite-database/</a></p></div>
 </div>
 </div>
@@ -1109,7 +1108,7 @@ but buddy comes with support for three block ciphers: AES, Serpent
 and Twofish.</p></div>
 <div class="listingblock">
 <div class="title">Make mac using Serpent block cipher with random IV</div>
-<div class="content"><div class="highlight"><pre><span class="p">(</span><span class="nf">require</span> <span class="o">&#39;</span><span class="p">[</span><span class="nv">buddy.core.codecs</span> <span class="ss">:refe</span> <span class="p">[</span><span class="nv">bytes-&gt;hex</span><span class="p">]])</span>
+<div class="content"><div class="highlight"><pre><span class="p">(</span><span class="nf">require</span> <span class="o">&#39;</span><span class="p">[</span><span class="nv">buddy.core.codecs</span> <span class="ss">:refer</span> <span class="p">[</span><span class="nv">bytes-&gt;hex</span><span class="p">]])</span>
 <span class="p">(</span><span class="nf">require</span> <span class="o">&#39;</span><span class="p">[</span><span class="nv">buddy.core.mac.poly1305</span> <span class="ss">:as</span> <span class="nv">poly</span><span class="p">])</span>
 <span class="p">(</span><span class="nf">require</span> <span class="o">&#39;</span><span class="p">[</span><span class="nv">buddy.core.keys</span> <span class="ss">:refer</span> <span class="p">[</span><span class="nv">make-random-bytes</span><span class="p">]])</span>
 
@@ -1734,8 +1733,8 @@ limitations under the License.
 <div id="footnotes"><hr></div>
 <div id="footer">
 <div id="footer-text">
-Version 0.2.0b1<br>
-Last updated 2014-07-08 21:39:05 CEST
+Version 0.2.0b2<br>
+Last updated 2014-10-21 01:02:19 CEST
 </div>
 </div>
 </body>
