@@ -1,10 +1,11 @@
 buddy documentation
 ===================
 Andrey Antukh, <niwi@niwi.be>
-0.2.0b2, 2014-08-16
-
-:toc:
+0.2.0
+:toc: left
 :numbered:
+:source-highlighter: pygments
+:pygments-style: friendly
 
 
 Introduction
@@ -24,17 +25,6 @@ Obviously backed by battle tested link:http://www.bouncycastle.org/specification
 library and with 93% of test coverage.
 
 link:api/index.html[API reference documentation.]
-
-
-Philosophy
-~~~~~~~~~
-
-Four most important rules:
-
-- Beautiful is better than ugly
-- Explicit is better than implicit
-- Simple is better than complex
-- Readability counts
 
 
 Project Maturity
@@ -67,7 +57,7 @@ it as a dependency in your *_project.clj_*:
 ._in project.clj_
 [source,clojure]
 ----
-[buddy "0.2.0b2"]
+[buddy "0.2.0"]
 ----
 
 Maven
@@ -90,7 +80,7 @@ Then for buddy:
 <dependency>
     <groupId>buddy</groupId>
     <artifactId>buddy</artifactId>
-    <version>0.2.0b2</version>
+    <version>0.2.0</version>
 </dependency>
 ----
 
@@ -379,8 +369,8 @@ work with strings instead of bytes (unlike cryptographic hash functions).
 ====
 
 
-Authentication Middleware for Ring/Compojure
---------------------------------------------
+Authentication for Ring & Compojure
+-----------------------------------
 
 Additionally, buddy commes with web library support for authentication
 and authorization. It mainly works with ring (and compojure, since it
@@ -828,8 +818,8 @@ Functions like *sha256* are aliases for the more generic
 function *digest*.
 
 
-Message authentication code algorithms
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+Mac algorithms
+~~~~~~~~~~~~~~
 
 Buddy comes with three mac implementations: *HMac*, *SHMac* and *Poly1305*.
 
@@ -1137,9 +1127,12 @@ to derive one or more keys from a common secret value.
 |DPIMKDF        | `buddy.core.kdf/dpimkdf` | Double-Pipeline Iteration Mode KDF
 |==============================================================================
 
-NOTE: All key derivation functions work with byte arrays. For the
- following examples, the functions in `buddy.core.codecs` convert
- strings to byte arrays.
+[NOTE]
+====
+All key derivation functions work with byte arrays. For the
+following examples, the functions in `buddy.core.codecs` convert
+strings to byte arrays.
+====
 
 
 HKDF
@@ -1193,6 +1186,7 @@ Counter Mode KDF
 ^^^^^^^^^^^^^^^^
 
 Hash-based KDF with counter mode defined by the publicly available NIST SP 800-108 specification.
+
 
 Feedback Mode KDF
 ^^^^^^^^^^^^^^^^^
@@ -1272,8 +1266,6 @@ and not requires any additional mode of operation.
 |========================================
 
 
-
-
 .Example encrypt
 [source, clojure]
 ----
@@ -1297,17 +1289,14 @@ NOTE: for decrypt, only change `:op` value to `:decrypt`
 You can call `c/initialize` any times as you want, it simple reinitialize the engine.
 
 
-
-Codecs (binary -> string conversion)
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+Codecs
+~~~~~~
 
 Implements some useful and widely used around all buddy library functions
 for converting between strings, bytes, hex encoded strings and base64
 encoded strings.
 
 The best documentation for this part is the source code.
-
-
 
 
 Advanced Usage
@@ -1422,22 +1411,68 @@ library dedicated to that.
 
 Surely not! Because there is already exists one good link:https://github.com/greglook/clj-pgp[library for that].
 
-License
--------
+How to Contribute?
+------------------
 
+Philosophy
+~~~~~~~~~~
+
+Five most important rules:
+
+- Beautiful is better than ugly.
+- Explicit is better than implicit.
+- Simple is better than complex.
+- Complex is better than complicated.
+- Readability counts.
+
+All contributions to _buddy_ should keep these important rules in mind.
+
+
+Procedure
+~~~~~~~~~
+
+_buddy_ unlike Clojure and other Clojure contrib libs, does not have many
+restrictions for contributions. Just follow the following steps depending on the
+situation:
+
+**Bugfix**:
+
+- Fork the GitHub repo.
+- Fix a bug/typo on a new branch.
+- Make a pull-request to master.
+
+**New feature**:
+
+- Open new issue with the new feature proposal.
+- If it is accepted, follow the same steps as "bugfix".
+
+
+License
+~~~~~~~
 [source,text]
 ----
-Copyright 2014 Andrey Antukh <niwi@niwi.be>
+Copyright (c) 2014, Andrey Antukh
 
-Licensed under the Apache License, Version 2.0 (the "License")
-you may not use this file except in compliance with the License.
-You may obtain a copy of the License at
+All rights reserved.
 
-    http://www.apache.org/licenses/LICENSE-2.0
+Redistribution and use in source and binary forms, with or without
+modification, are permitted provided that the following conditions are met:
 
-Unless required by applicable law or agreed to in writing, software
-distributed under the License is distributed on an "AS IS" BASIS,
-WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-See the License for the specific language governing permissions and
-limitations under the License.
+* Redistributions of source code must retain the above copyright notice, this
+  list of conditions and the following disclaimer.
+
+* Redistributions in binary form must reproduce the above copyright notice,
+  this list of conditions and the following disclaimer in the documentation
+  and/or other materials provided with the distribution.
+
+THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
+AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
+IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
+DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE LIABLE
+FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL
+DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR
+SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER
+CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY,
+OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
+OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 ----
