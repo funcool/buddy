@@ -7,7 +7,7 @@
                  [org.clojure/algo.monads "0.1.5"]
                  [ring/ring-core "1.3.1"]
                  [commons-codec/commons-codec "1.9"]
-                 [com.taoensso/nippy "2.6.3"]
+                 [com.taoensso/nippy "2.7.0"]
                  [clojurewerkz/scrypt "1.1.0"]
                  [clj-time "0.8.0"]
                  [swiss-arrows "1.0.0"]
@@ -16,7 +16,7 @@
                  [org.bouncycastle/bcpkix-jdk15on "1.50"]]
   :source-paths ["src/clojure"]
   :java-source-paths ["src/java"]
-  :plugins [[codox "0.8.9"]
+  :plugins [[codox "0.8.10"]
             [lein-cloverage "1.0.2"]]
   :codox {:output-dir "doc/api"
           :src-dir-uri "http://github.com/niwibe/buddy/blob/master/"
