@@ -1,8 +1,8 @@
 (defproject buddy "0.2.0b2"
   :description "Security library for Clojure"
   :url "https://github.com/niwibe/buddy"
-  :license {:name "Apache 2.0"
-            :url "http://www.apache.org/licenses/LICENSE-2.0.txt"}
+  :license {:name "BSD (2-Clause)"
+            :url "http://opensource.org/licenses/BSD-2-Clause"}
   :dependencies [[org.clojure/clojure "1.6.0"]
                  [org.clojure/algo.monads "0.1.5"]
                  [ring/ring-core "1.3.1"]
