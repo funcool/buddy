@@ -12,16 +12,14 @@
 ;; See the License for the specific language governing permissions and
 ;; limitations under the License.
 
-(ns buddy.test-buddy-core
+(ns buddy.test-buddy-core-hashers
   (:require [clojure.test :refer :all]
             [buddy.core.codecs :refer :all]
-            ;; [buddy.core.keys :refer :all]
             [buddy.hashers.pbkdf2 :as pbkdf2]
             [buddy.hashers.bcrypt :as bcrypt]
             [buddy.hashers.sha256 :as sha256]
             [buddy.hashers.md5 :as md5]
             [buddy.hashers.scrypt :as scrypt]))
-            ;; [clojure.java.io :as io])o
 
 (deftest buddy-hashers
   (testing "Test low level api for encrypt/verify pbkdf2"
