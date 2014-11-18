@@ -1,7 +1,7 @@
 buddy documentation
 ===================
 Andrey Antukh, <niwi@niwi.be>
-0.2.0
+0.2.1
 :toc: left
 :numbered:
 :source-highlighter: pygments
@@ -57,7 +57,7 @@ it as a dependency in your *_project.clj_*:
 ._in project.clj_
 [source,clojure]
 ----
-[buddy "0.2.0"]
+[buddy "0.2.1"]
 ----
 
 Maven
@@ -80,7 +80,7 @@ Then for buddy:
 <dependency>
     <groupId>buddy</groupId>
     <artifactId>buddy</artifactId>
-    <version>0.2.0</version>
+    <version>0.2.1</version>
 </dependency>
 ----
 

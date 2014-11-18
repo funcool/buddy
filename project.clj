@@ -1,4 +1,4 @@
-(defproject buddy "0.2.0"
+(defproject buddy "0.2.1"
   :description "Security library for Clojure"
   :url "https://github.com/niwibe/buddy"
   :license {:name "BSD (2-Clause)"
