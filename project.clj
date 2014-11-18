@@ -16,6 +16,7 @@
                  [org.bouncycastle/bcpkix-jdk15on "1.51"]]
   :source-paths ["src/clojure"]
   :java-source-paths ["src/java"]
+  :javac-options ["-target" "1.7" "-source" "1.7" "-Xlint:-options"]
   :plugins [[codox "0.8.10"]
             [lein-cloverage "1.0.2"]]
   :codox {:output-dir "doc/api"
