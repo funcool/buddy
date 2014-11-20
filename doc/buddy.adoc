@@ -1,7 +1,7 @@
 buddy documentation
 ===================
 Andrey Antukh, <niwi@niwi.be>
-0.2.1
+0.2.3
 :toc: left
 :numbered:
 :source-highlighter: pygments
