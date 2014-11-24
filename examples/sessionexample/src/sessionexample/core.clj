@@ -81,7 +81,7 @@
   [& args]
   (let [;; Create new backend overwriting the default exception
         ;; handler for authorization handler.
-        backend (session-backend :unauthorized-handler unauthorized-handler)
+        backend (session-backend {:unauthorized-handler unauthorized-handler})
 
         ;; Wrap a routers handler with some middlewares
         ;; such as authorization, authentication, params
