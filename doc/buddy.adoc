@@ -1365,24 +1365,6 @@ To run examples, you should be in the project's root directory.
 Execute `lein with-profile examplename run` where examplename can be
 `sessionexample` or `oauthexample`.
 
-
-How to contribute
------------------
-
-_buddy_ does not have many restrictions for contributing.
-
-*For Bugfix*:
-
-- Fork github repo.
-- Fix a bug/typo on new branch.
-- Make a pull-request to master.
-
-*For New feature*:
-
-- Open a new issue with new feature purpose.
-- If it is accepted, follow same steps as "bugfix".
-
-
 FAQ
 ---
 
