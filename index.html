@@ -480,7 +480,7 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 <h1>buddy documentation</h1>
 <div class="details">
 <span id="author" class="author">Andrey Antukh, &lt;niwi@niwi.be&gt;</span><br>
-<span id="revdate">0.2.0</span>
+<span id="revdate">0.2.3</span>
 </div>
 <div id="toc" class="toc2">
 <div id="toctitle">Table of Contents</div>
@@ -525,13 +525,12 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 </ul>
 </li>
 <li><a href="#_examples">8. Examples</a></li>
-<li><a href="#_how_to_contribute">9. How to contribute</a></li>
-<li><a href="#_faq">10. FAQ</a></li>
-<li><a href="#_how_to_contribute_2">11. How to Contribute?</a>
+<li><a href="#_faq">9. FAQ</a></li>
+<li><a href="#_how_to_contribute">10. How to Contribute?</a>
 <ul class="sectlevel2">
-<li><a href="#_philosophy">11.1. Philosophy</a></li>
-<li><a href="#_procedure">11.2. Procedure</a></li>
-<li><a href="#_license">11.3. License</a></li>
+<li><a href="#_philosophy">10.1. Philosophy</a></li>
+<li><a href="#_procedure">10.2. Procedure</a></li>
+<li><a href="#_license">10.3. License</a></li>
 </ul>
 </li>
 </ul>
@@ -539,7 +538,7 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 </div>
 <div id="content">
 <div class="sect1">
-<h2 id="_introduction">1. Introduction</h2>
+<h2 id="_introduction"><a class="link" href="#_introduction">1. Introduction</a></h2>
 <div class="sectionbody">
 <div class="paragraph">
 <p><em>buddy</em> is a complete security library for clojure with support for:</p>
@@ -579,7 +578,7 @@ library and with 93% of test coverage.</p>
 </div>
 </div>
 <div class="sect1">
-<h2 id="_project_maturity">2. Project Maturity</h2>
+<h2 id="_project_maturity"><a class="link" href="#_project_maturity">2. Project Maturity</a></h2>
 <div class="sectionbody">
 <div class="paragraph">
 <p>Since <em>buddy</em> is a young project there can be some API breakage.</p>
@@ -587,13 +586,13 @@ library and with 93% of test coverage.</p>
 </div>
 </div>
 <div class="sect1">
-<h2 id="_install">3. Install</h2>
+<h2 id="_install"><a class="link" href="#_install">3. Install</a></h2>
 <div class="sectionbody">
 <div class="paragraph">
 <p>This section covers installing <em>buddy</em>.</p>
 </div>
 <div class="sect2">
-<h3 id="_requirements">3.1. Requirements</h3>
+<h3 id="_requirements"><a class="link" href="#_requirements">3.1. Requirements</a></h3>
 <div class="paragraph">
 <p><em>buddy</em> has support for these jvm versions:</p>
 </div>
@@ -609,7 +608,7 @@ library and with 93% of test coverage.</p>
 </div>
 </div>
 <div class="sect2">
-<h3 id="_leiningen">3.2. Leiningen</h3>
+<h3 id="_leiningen"><a class="link" href="#_leiningen">3.2. Leiningen</a></h3>
 <div class="paragraph">
 <p>The simplest way to use <em>buddy</em> in a Clojure project is by including
 it as a dependency in your <strong><em>project.clj</em></strong>:</p>
@@ -617,12 +616,12 @@ it as a dependency in your <strong><em>project.clj</em></strong>:</p>
 <div class="listingblock">
 <div class="title"><em>in project.clj</em></div>
 <div class="content">
-<pre class="pygments highlight"><code data-lang="clojure"><span class="tok-p">[</span><span class="tok-nv">buddy</span> <span class="tok-s">&quot;0.2.0&quot;</span><span class="tok-p">]</span></code></pre>
+<pre class="pygments highlight"><code data-lang="clojure"><span class="tok-p">[</span><span class="tok-nv">buddy</span> <span class="tok-s">&quot;0.2.1&quot;</span><span class="tok-p">]</span></code></pre>
 </div>
 </div>
 </div>
 <div class="sect2">
-<h3 id="_maven">3.3. Maven</h3>
+<h3 id="_maven"><a class="link" href="#_maven">3.3. Maven</a></h3>
 <div class="paragraph">
 <p>Also, you can use it with maven. First, add the clojars repository:</p>
 </div>
@@ -642,13 +641,13 @@ it as a dependency in your <strong><em>project.clj</em></strong>:</p>
 <pre class="pygments highlight"><code data-lang="xml"><span class="tok-nt">&lt;dependency&gt;</span>
     <span class="tok-nt">&lt;groupId&gt;</span>buddy<span class="tok-nt">&lt;/groupId&gt;</span>
     <span class="tok-nt">&lt;artifactId&gt;</span>buddy<span class="tok-nt">&lt;/artifactId&gt;</span>
-    <span class="tok-nt">&lt;version&gt;</span>0.2.0<span class="tok-nt">&lt;/version&gt;</span>
+    <span class="tok-nt">&lt;version&gt;</span>0.2.1<span class="tok-nt">&lt;/version&gt;</span>
 <span class="tok-nt">&lt;/dependency&gt;</span></code></pre>
 </div>
 </div>
 </div>
 <div class="sect2">
-<h3 id="_get_the_code">3.4. Get the Code</h3>
+<h3 id="_get_the_code"><a class="link" href="#_get_the_code">3.4. Get the Code</a></h3>
 <div class="paragraph">
 <p><em>buddy</em> is opensource and is entirely developed on <a href="https://github.com/niwibe/buddy">github</a>.</p>
 </div>
@@ -664,10 +663,10 @@ it as a dependency in your <strong><em>project.clj</em></strong>:</p>
 </div>
 </div>
 <div class="sect1">
-<h2 id="_common_web_security">4. Common Web Security</h2>
+<h2 id="_common_web_security"><a class="link" href="#_common_web_security">4. Common Web Security</a></h2>
 <div class="sectionbody">
 <div class="sect2">
-<h3 id="_generic_message_signing">4.1. Generic Message Signing</h3>
+<h3 id="_generic_message_signing"><a class="link" href="#_generic_message_signing">4.1. Generic Message Signing</a></h3>
 <div class="paragraph">
 <p>The "signing framework" of <em>buddy</em> is mainly based on django&#8217;s
 <a href="https://docs.djangoproject.com/en/1.6/topics/signing/">Cryptographic
@@ -764,7 +763,7 @@ Digital Signature instead of hmac, you must have a key pair (public and private)
 </table>
 </div>
 <div class="sect3">
-<h4 id="_using_low_level_api">4.1.1. Using low level api</h4>
+<h4 id="_using_low_level_api"><a class="link" href="#_using_low_level_api">4.1.1. Using low level api</a></h4>
 <div class="paragraph">
 <p>There are four signing functions in <strong><code>buddy.sign.generic</code></strong> namespace: <code>sign</code>,
 <code>unsign</code>, <code>loads</code> and <code>dumps</code>.</p>
@@ -810,7 +809,7 @@ invalidate signed messages based on their age.</p>
 </div>
 </div>
 <div class="sect3">
-<h4 id="_protecting_complex_data_structures">4.1.2. Protecting complex data structures</h4>
+<h4 id="_protecting_complex_data_structures"><a class="link" href="#_protecting_complex_data_structures">4.1.2. Protecting complex data structures</a></h4>
 <div class="paragraph">
 <p>If you wish to protect a native data structure (hash-map, hash-set,
 list, vector, etc&#8230;&#8203;)  you can do so using the signing <code>dumps</code> and
@@ -851,13 +850,13 @@ it uses a Clojure serialization library <a href="https://github.com/ptaoussanis/
 </div>
 </div>
 <div class="sect3">
-<h4 id="_using_digital_signature_algorithms">4.1.3. Using Digital Signature algorithms</h4>
+<h4 id="_using_digital_signature_algorithms"><a class="link" href="#_using_digital_signature_algorithms">4.1.3. Using Digital Signature algorithms</a></h4>
 <div class="paragraph">
 <p>For use anyone of digital signature algorithms you must have a private/public key. If you
 don&#8217;t have one, don&#8217;t worry - it&#8217;s very easy to generate one using <strong>openssl</strong>.</p>
 </div>
 <div class="sect4">
-<h5 id="_elliptic_curve_dsa">Elliptic Curve DSA</h5>
+<h5 id="_elliptic_curve_dsa"><a class="link" href="#_elliptic_curve_dsa">Elliptic Curve DSA</a></h5>
 <div class="listingblock">
 <div class="content">
 <pre class="pygments highlight"><code data-lang="bash"><span class="tok-c"># Generating params file</span>
@@ -872,7 +871,7 @@ openssl ec -in ecprivkey.pem -pubout -out ecpubkey.pem</code></pre>
 </div>
 </div>
 <div class="sect4">
-<h5 id="_rsa_based_signatures">RSA based signatures</h5>
+<h5 id="_rsa_based_signatures"><a class="link" href="#_rsa_based_signatures">RSA based signatures</a></h5>
 <div class="listingblock">
 <div class="content">
 <pre class="pygments highlight"><code data-lang="bash"><span class="tok-c"># Generate aes256 encrypted private key</span>
@@ -884,7 +883,7 @@ openssl rsa -pubout -in privkey.pem -out pubkey.pem</code></pre>
 </div>
 </div>
 <div class="sect4">
-<h5 id="_using_digital_signature_keys_for_signing">Using Digital Signature Keys for signing</h5>
+<h5 id="_using_digital_signature_keys_for_signing"><a class="link" href="#_using_digital_signature_keys_for_signing">Using Digital Signature Keys for signing</a></h5>
 <div class="paragraph">
 <p>Now, having generated a key pair, you can sign your messages with the
 previously mentioned Digital Signature algorithms.</p>
@@ -911,7 +910,7 @@ previously mentioned Digital Signature algorithms.</p>
 </div>
 </div>
 <div class="sect2">
-<h3 id="_json_web_signature_token">4.2. Json Web Signature/Token</h3>
+<h3 id="_json_web_signature_token"><a class="link" href="#_json_web_signature_token">4.2. Json Web Signature/Token</a></h3>
 <div class="paragraph">
 <p>~<strong>New in version:</strong> 0.2~</p>
 </div>
@@ -994,7 +993,7 @@ the near future (pull-requests welcome).
 </table>
 </div>
 <div class="sect3">
-<h4 id="_signing_data">4.2.1. Signing data</h4>
+<h4 id="_signing_data"><a class="link" href="#_signing_data">4.2.1. Signing data</a></h4>
 <div class="paragraph">
 <p>Due to the nature of storing format, the input is restricted mainly to json objects
 on the current version.</p>
@@ -1018,7 +1017,7 @@ on the current version.</p>
 </div>
 </div>
 <div class="sect2">
-<h3 id="_password_hashers">4.3. Password Hashers</h3>
+<h3 id="_password_hashers"><a class="link" href="#_password_hashers">4.3. Password Hashers</a></h3>
 <div class="paragraph">
 <p>Another important part of a good authentication/authorization library
 is providing some facilities for generating secure passwords.</p>
@@ -1108,7 +1107,7 @@ work with strings instead of bytes (unlike cryptographic hash functions).</p>
 </div>
 </div>
 <div class="sect1">
-<h2 id="_authentication_for_ring_compojure">5. Authentication for Ring &amp; Compojure</h2>
+<h2 id="_authentication_for_ring_compojure"><a class="link" href="#_authentication_for_ring_compojure">5. Authentication for Ring &amp; Compojure</a></h2>
 <div class="sectionbody">
 <div class="paragraph">
 <p>Additionally, buddy commes with web library support for authentication
@@ -1117,7 +1116,7 @@ is ring-based) but in the future it can be extended for work with
 other libraries.</p>
 </div>
 <div class="sect2">
-<h3 id="_authentication">5.1. Authentication</h3>
+<h3 id="_authentication"><a class="link" href="#_authentication">5.1. Authentication</a></h3>
 <div class="paragraph">
 <p>Buddy differs with other libraries because it takes very different approach for handling
 authentication. In first step, it clearly split authentication and authorization in two
@@ -1180,7 +1179,7 @@ unsign self contained token, etc&#8230;&#8203;</p>
 </tbody>
 </table>
 <div class="sect3">
-<h4 id="_http_basic">5.1.1. HTTP Basic</h4>
+<h4 id="_http_basic"><a class="link" href="#_http_basic">5.1.1. HTTP Basic</a></h4>
 <div class="paragraph">
 <p>The HTTP Basic authentication backend is one of the simplest and most insecure authentication
 systems, but is a good first step for understand how buddy authentication works.</p>
@@ -1250,7 +1249,7 @@ request with <code>:identity</code> forwarded to real handler or next middleware
 </div>
 </div>
 <div class="sect3">
-<h4 id="_session">5.1.2. Session</h4>
+<h4 id="_session"><a class="link" href="#_session">5.1.2. Session</a></h4>
 <div class="paragraph">
 <p>The session backend has the simplest implementation because it relies
 entirely on ring session support.</p>
@@ -1265,9 +1264,9 @@ value.</p>
 </div>
 </div>
 <div class="sect3">
-<h4 id="_token">5.1.3. Token</h4>
+<h4 id="_token"><a class="link" href="#_token">5.1.3. Token</a></h4>
 <div class="sect4">
-<h5 id="_standard">Standard</h5>
+<h5 id="_standard"><a class="link" href="#_standard">Standard</a></h5>
 <div class="paragraph">
 <p>This backend works much like the basic auth backend with the difference that this works with
 tokens that can be unpredictable.</p>
@@ -1277,7 +1276,7 @@ tokens that can be unpredictable.</p>
 </div>
 </div>
 <div class="sect4">
-<h5 id="_signed_stateless">Signed/Stateless</h5>
+<h5 id="_signed_stateless"><a class="link" href="#_signed_stateless">Signed/Stateless</a></h5>
 <div class="paragraph">
 <p>This backend is very similar to standard token backend previously explained, but instead
 of relying on <em>authfn</em> for identify a token, it uses stateless tokens (contains all needed
@@ -1293,7 +1292,7 @@ data in a token, without storing any information about token on database as ex&#
 </div>
 </div>
 <div class="sect2">
-<h3 id="_authorization">5.2. Authorization</h3>
+<h3 id="_authorization"><a class="link" href="#_authorization">5.2. Authorization</a></h3>
 <div class="paragraph">
 <p><em>buddy</em> also comes with an authorization system.</p>
 </div>
@@ -1313,9 +1312,9 @@ for handle unauthorized requsts.</p>
 </ul>
 </div>
 <div class="sect3">
-<h4 id="_access_rules_system">5.2.1. Access Rules System</h4>
+<h4 id="_access_rules_system"><a class="link" href="#_access_rules_system">5.2.1. Access Rules System</a></h4>
 <div class="sect4">
-<h5 id="_introduction_2">Introduction</h5>
+<h5 id="_introduction_2"><a class="link" href="#_introduction_2">Introduction</a></h5>
 <div class="paragraph">
 <p>The access rules are another part of the authorization system, and consist of a list of rules
 for one or more uri&#8217;s using regular expressions. One rule consists of a regular expression with its
@@ -1374,7 +1373,7 @@ for unauthorized.</p>
 </div>
 </div>
 <div class="sect4">
-<h5 id="_usage">Usage</h5>
+<h5 id="_usage"><a class="link" href="#_usage">Usage</a></h5>
 <div class="paragraph">
 <p>Now, knowing how rules can be defined, the question is, How can we use
 it for access control for routes?</p>
@@ -1485,7 +1484,7 @@ ring views/handlers, your can use <code>restrict</code> decorator/middleware:</p
 </div>
 </div>
 <div class="sect3">
-<h4 id="_generic_authorization">5.2.2. Generic authorization</h4>
+<h4 id="_generic_authorization"><a class="link" href="#_generic_authorization">5.2.2. Generic authorization</a></h4>
 <div class="paragraph">
 <p>An other way to handle not authorized exceptions is using exceptions. It is less functional
 but in some sircumstances can work very well.</p>
@@ -1578,7 +1577,7 @@ take a look on examples.
 </div>
 </div>
 <div class="sect1">
-<h2 id="_cryptographic_api">6. Cryptographic Api</h2>
+<h2 id="_cryptographic_api"><a class="link" href="#_cryptographic_api">6. Cryptographic Api</a></h2>
 <div class="sectionbody">
 <div class="paragraph">
 <p>Buddy has a low-level interface and a high-level interface.</p>
@@ -1607,7 +1606,7 @@ has implementations for:</p>
 </ul>
 </div>
 <div class="sect2">
-<h3 id="_cryptographic_hash_algorithms">6.1. Cryptographic hash algorithms</h3>
+<h3 id="_cryptographic_hash_algorithms"><a class="link" href="#_cryptographic_hash_algorithms">6.1. Cryptographic hash algorithms</a></h3>
 <div class="paragraph">
 <p>All hash algorithms are located in the <code>buddy.core.hash</code> namespace.</p>
 </div>
@@ -1647,7 +1646,7 @@ has implementations for:</p>
 </tbody>
 </table>
 <div class="sect3">
-<h4 id="_basic_usage">6.1.1. Basic usage</h4>
+<h4 id="_basic_usage"><a class="link" href="#_basic_usage">6.1.1. Basic usage</a></h4>
 <div class="listingblock">
 <div class="title">Import namespace example:</div>
 <div class="content">
@@ -1668,7 +1667,7 @@ has implementations for:</p>
 </div>
 </div>
 <div class="sect3">
-<h4 id="_advanced_usage">6.1.2. Advanced usage</h4>
+<h4 id="_advanced_usage"><a class="link" href="#_advanced_usage">6.1.2. Advanced usage</a></h4>
 <div class="paragraph">
 <p>Hash functions are implemented using protocols and can be extended
 to other types. The default implementations come with support
@@ -1711,18 +1710,18 @@ function <strong>digest</strong>.
 </div>
 </div>
 <div class="sect2">
-<h3 id="_mac_algorithms">6.2. Mac algorithms</h3>
+<h3 id="_mac_algorithms"><a class="link" href="#_mac_algorithms">6.2. Mac algorithms</a></h3>
 <div class="paragraph">
 <p>Buddy comes with three mac implementations: <strong>HMac</strong>, <strong>SHMac</strong> and <strong>Poly1305</strong>.</p>
 </div>
 <div class="sect3">
-<h4 id="_hmac_shmac">6.2.1. HMac &amp; SHMac</h4>
+<h4 id="_hmac_shmac"><a class="link" href="#_hmac_shmac">6.2.1. HMac &amp; SHMac</a></h4>
 <div class="paragraph">
 <p>There are two variants of hmac: simple and salted. And are available
 in the <code>buddy.core.mac.hmac</code> and <code>buddy.core.mac.shmac</code> respectively.</p>
 </div>
 <div class="sect4">
-<h5 id="_basic_usage_2">Basic usage</h5>
+<h5 id="_basic_usage_2"><a class="link" href="#_basic_usage_2">Basic usage</a></h5>
 <div class="listingblock">
 <div class="content">
 <pre class="pygments highlight"><code data-lang="clojure"><span class="tok-c1">;; Import required namespaces</span>
@@ -1748,7 +1747,7 @@ defined in the <code>buddy.core.codecs</code> namespace. It comes with default i
 </div>
 </div>
 <div class="sect4">
-<h5 id="_advanced_usage_2">Advanced usage</h5>
+<h5 id="_advanced_usage_2"><a class="link" href="#_advanced_usage_2">Advanced usage</a></h5>
 <div class="paragraph">
 <p>Like hash functions, hmac is implemented using Clojure
 protocols and comes with default implementations for: String, byte[],
@@ -1777,7 +1776,7 @@ protocols and comes with default implementations for: String, byte[],
 </div>
 </div>
 <div class="sect3">
-<h4 id="_poly1305">6.2.2. Poly1305</h4>
+<h4 id="_poly1305"><a class="link" href="#_poly1305">6.2.2. Poly1305</a></h4>
 <div class="paragraph">
 <p>Poly1305 is a cryptographic message authentication code
 (MAC) written by Daniel J. Bernstein. It can be used to verify the
@@ -1800,7 +1799,7 @@ generator for security guarantees. Also, the IV should be of the same
 length as the chosen cipher block size.</p>
 </div>
 <div class="sect4">
-<h5 id="_basic_usage_3">Basic usage</h5>
+<h5 id="_basic_usage_3"><a class="link" href="#_basic_usage_3">Basic usage</a></h5>
 <div class="paragraph">
 <p>The default specification talks about AES as default block cipher,
 but buddy comes with support for three block ciphers: AES, Serpent
@@ -1823,7 +1822,7 @@ and Twofish.</p>
 </div>
 </div>
 <div class="sect2">
-<h3 id="_public_private_keypairs">6.3. Public/Private keypairs</h3>
+<h3 id="_public_private_keypairs"><a class="link" href="#_public_private_keypairs">6.3. Public/Private keypairs</a></h3>
 <div class="paragraph">
 <p>Before explaining digital signatures, you need to read public/private
 keypairs and convert them to usable objects. Buddy has limited support
@@ -1840,7 +1839,7 @@ for reading:</p>
 </ul>
 </div>
 <div class="sect3">
-<h4 id="_rsa_keypair">6.3.1. RSA Keypair</h4>
+<h4 id="_rsa_keypair"><a class="link" href="#_rsa_keypair">6.3.1. RSA Keypair</a></h4>
 <div class="paragraph">
 <p>An RSA keypair is obviously used for RSA encryption/decryption, but it
 is also used for making digital signatures with RSA-derived
@@ -1869,7 +1868,7 @@ openssl rsa -pubout -in privkey.pem -out pubkey.pem</code></pre>
 </div>
 </div>
 <div class="sect3">
-<h4 id="_ecdsa_keypair">6.3.2. ECDSA Keypair</h4>
+<h4 id="_ecdsa_keypair"><a class="link" href="#_ecdsa_keypair">6.3.2. ECDSA Keypair</a></h4>
 <div class="paragraph">
 <p>Like RSA keypairs, ECDSA is also used for making digital signatures
 and can be read like in the RSA examples.</p>
@@ -1901,7 +1900,7 @@ openssl ec -in ecprivkey.pem -pubout -out ecpubkey.pem</code></pre>
 </div>
 </div>
 <div class="sect2">
-<h3 id="_digital_signatures">6.4. Digital Signatures</h3>
+<h3 id="_digital_signatures"><a class="link" href="#_digital_signatures">6.4. Digital Signatures</a></h3>
 <div class="paragraph">
 <p>Digital Signatures differ from Mac as Mac values are both generated
 and verified using the same secret key. Digital Signatures require a
@@ -1909,7 +1908,7 @@ public/private keypair. It signs using a private key and verifies a
 signature using a public key.</p>
 </div>
 <div class="sect3">
-<h4 id="_rsassa_pss">6.4.1. RSASSA PSS</h4>
+<h4 id="_rsassa_pss"><a class="link" href="#_rsassa_pss">6.4.1. RSASSA PSS</a></h4>
 <div class="paragraph">
 <p>RSASSA-PSS is an improved probabilistic signature scheme with
 appendix. What that means is that you can use a private RSA key
@@ -1946,7 +1945,7 @@ to sign data in combination with some random input.</p>
 </div>
 </div>
 <div class="sect3">
-<h4 id="_rsassa_pkcs1_v1_5">6.4.2. RSASSA PKCS1 v1.5</h4>
+<h4 id="_rsassa_pkcs1_v1_5"><a class="link" href="#_rsassa_pkcs1_v1_5">6.4.2. RSASSA PKCS1 v1.5</a></h4>
 <div class="paragraph">
 <p>RSASSA-PSS is an probabilistic signature scheme with appendix.
 What that means is that you can use a private RSA key to sign data.</p>
@@ -1982,7 +1981,7 @@ What that means is that you can use a private RSA key to sign data.</p>
 </div>
 </div>
 <div class="sect3">
-<h4 id="_eliptic_curve_dsa">6.4.3. Eliptic Curve DSA</h4>
+<h4 id="_eliptic_curve_dsa"><a class="link" href="#_eliptic_curve_dsa">6.4.3. Eliptic Curve DSA</a></h4>
 <div class="paragraph">
 <p>Elliptic Curve Digital Signature Algorithm (ECDSA) is a variant of the
 Digital Signature Algorithm (DSA) which uses elliptic curve cryptography.</p>
@@ -2014,7 +2013,7 @@ Digital Signature Algorithm (DSA) which uses elliptic curve cryptography.</p>
 </div>
 </div>
 <div class="sect2">
-<h3 id="_key_derivation_functions">6.5. Key Derivation Functions</h3>
+<h3 id="_key_derivation_functions"><a class="link" href="#_key_derivation_functions">6.5. Key Derivation Functions</a></h3>
 <div class="paragraph">
 <p>Key derivation functions are often used in conjunction with non-secret parameters
 to derive one or more keys from a common secret value.</p>
@@ -2086,7 +2085,7 @@ strings to byte arrays.</p>
 </table>
 </div>
 <div class="sect3">
-<h4 id="_hkdf">6.5.1. HKDF</h4>
+<h4 id="_hkdf"><a class="link" href="#_hkdf">6.5.1. HKDF</a></h4>
 <div class="paragraph">
 <p>HMAC-based Extract-and-Expand Key Derivation Function (HKDF) is implemented according to IETF RFC 5869</p>
 </div>
@@ -2111,7 +2110,7 @@ strings to byte arrays.</p>
 </div>
 </div>
 <div class="sect3">
-<h4 id="_kdf1_2">6.5.2. KDF1/2</h4>
+<h4 id="_kdf1_2"><a class="link" href="#_kdf1_2">6.5.2. KDF1/2</a></h4>
 <div class="paragraph">
 <p>KDF1/2 hash-based key derivation functions for derived keys and ivs as defined by IEEE P1363a/ISO 18033.</p>
 </div>
@@ -2133,19 +2132,19 @@ strings to byte arrays.</p>
 </div>
 </div>
 <div class="sect3">
-<h4 id="_counter_mode_kdf">6.5.3. Counter Mode KDF</h4>
+<h4 id="_counter_mode_kdf"><a class="link" href="#_counter_mode_kdf">6.5.3. Counter Mode KDF</a></h4>
 <div class="paragraph">
 <p>Hash-based KDF with counter mode defined by the publicly available NIST SP 800-108 specification.</p>
 </div>
 </div>
 <div class="sect3">
-<h4 id="_feedback_mode_kdf">6.5.4. Feedback Mode KDF</h4>
+<h4 id="_feedback_mode_kdf"><a class="link" href="#_feedback_mode_kdf">6.5.4. Feedback Mode KDF</a></h4>
 <div class="paragraph">
 <p>Hash-based KDF with feedback mode defined by the publicly available NIST SP 800-108 specification.</p>
 </div>
 </div>
 <div class="sect3">
-<h4 id="_double_pipeline_iteration_mode_kdf">6.5.5. Double-Pipeline Iteration Mode KDF</h4>
+<h4 id="_double_pipeline_iteration_mode_kdf"><a class="link" href="#_double_pipeline_iteration_mode_kdf">6.5.5. Double-Pipeline Iteration Mode KDF</a></h4>
 <div class="paragraph">
 <p>Hash-based KDF with Double-Pipeline Iteration Mode defined by the publicly available
 NIST SP 800-108 specification.</p>
@@ -2153,12 +2152,12 @@ NIST SP 800-108 specification.</p>
 </div>
 </div>
 <div class="sect2">
-<h3 id="_ciphers">6.6. Ciphers</h3>
+<h3 id="_ciphers"><a class="link" href="#_ciphers">6.6. Ciphers</a></h3>
 <div class="paragraph">
 <p>Ciphers support in buddy is available on <code>buddy.core.crypto</code> namespace.</p>
 </div>
 <div class="sect3">
-<h4 id="_block_ciphers">6.6.1. Block Ciphers</h4>
+<h4 id="_block_ciphers"><a class="link" href="#_block_ciphers">6.6.1. Block Ciphers</a></h4>
 <div class="paragraph">
 <p>In cryptography, a block cipher is a deterministic algorithm operating on fixed-length groups of bits,
 called blocks, with an unvarying transformation that is specified by a symmetric key.</p>
@@ -2247,7 +2246,7 @@ should be added much more options.
 </div>
 </div>
 <div class="sect3">
-<h4 id="_stream_ciphers">6.6.2. Stream Ciphers</h4>
+<h4 id="_stream_ciphers"><a class="link" href="#_stream_ciphers">6.6.2. Stream Ciphers</a></h4>
 <div class="paragraph">
 <p>Stream ciphers differes with block ciphers, that them works with arbitrary length input
 and not requires any additional mode of operation.</p>
@@ -2317,7 +2316,7 @@ for decrypt, only change <code>:op</code> value to <code>:decrypt</code>
 </div>
 </div>
 <div class="sect2">
-<h3 id="_codecs">6.7. Codecs</h3>
+<h3 id="_codecs"><a class="link" href="#_codecs">6.7. Codecs</a></h3>
 <div class="paragraph">
 <p>Implements some useful and widely used around all buddy library functions
 for converting between strings, bytes, hex encoded strings and base64
@@ -2330,10 +2329,10 @@ encoded strings.</p>
 </div>
 </div>
 <div class="sect1">
-<h2 id="_advanced_usage_3">7. Advanced Usage</h2>
+<h2 id="_advanced_usage_3"><a class="link" href="#_advanced_usage_3">7. Advanced Usage</a></h2>
 <div class="sectionbody">
 <div class="sect2">
-<h3 id="how-it-works">7.1. How Auth Works</h3>
+<h3 id="how-it-works"><a class="link" href="#how-it-works">7.1. How Auth Works</a></h3>
 <div class="paragraph">
 <p>Each backend implements two protocols: <code>IAuthentication</code> and <code>IAuthorization</code>.</p>
 </div>
@@ -2419,7 +2418,7 @@ the user defined function is executed else, default behavior is executed.</p>
 </div>
 </div>
 <div class="sect1">
-<h2 id="_examples">8. Examples</h2>
+<h2 id="_examples"><a class="link" href="#_examples">8. Examples</a></h2>
 <div class="sectionbody">
 <div class="paragraph">
 <p><em>buddy</em> comes with some examples for helping a new user understand how
@@ -2446,44 +2445,7 @@ Execute <code>lein with-profile examplename run</code> where examplename can be
 </div>
 </div>
 <div class="sect1">
-<h2 id="_how_to_contribute">9. How to contribute</h2>
-<div class="sectionbody">
-<div class="paragraph">
-<p><em>buddy</em> does not have many restrictions for contributing.</p>
-</div>
-<div class="paragraph">
-<p><strong>For Bugfix</strong>:</p>
-</div>
-<div class="ulist">
-<ul>
-<li>
-<p>Fork github repo.</p>
-</li>
-<li>
-<p>Fix a bug/typo on new branch.</p>
-</li>
-<li>
-<p>Make a pull-request to master.</p>
-</li>
-</ul>
-</div>
-<div class="paragraph">
-<p><strong>For New feature</strong>:</p>
-</div>
-<div class="ulist">
-<ul>
-<li>
-<p>Open a new issue with new feature purpose.</p>
-</li>
-<li>
-<p>If it is accepted, follow same steps as "bugfix".</p>
-</li>
-</ul>
-</div>
-</div>
-</div>
-<div class="sect1">
-<h2 id="_faq">10. FAQ</h2>
+<h2 id="_faq"><a class="link" href="#_faq">9. FAQ</a></h2>
 <div class="sectionbody">
 <div class="paragraph">
 <p><strong>Buddy is a security library/framework?</strong></p>
@@ -2522,10 +2484,10 @@ library dedicated to that.</p>
 </div>
 </div>
 <div class="sect1">
-<h2 id="_how_to_contribute_2">11. How to Contribute?</h2>
+<h2 id="_how_to_contribute"><a class="link" href="#_how_to_contribute">10. How to Contribute?</a></h2>
 <div class="sectionbody">
 <div class="sect2">
-<h3 id="_philosophy">11.1. Philosophy</h3>
+<h3 id="_philosophy"><a class="link" href="#_philosophy">10.1. Philosophy</a></h3>
 <div class="paragraph">
 <p>Five most important rules:</p>
 </div>
@@ -2553,7 +2515,7 @@ library dedicated to that.</p>
 </div>
 </div>
 <div class="sect2">
-<h3 id="_procedure">11.2. Procedure</h3>
+<h3 id="_procedure"><a class="link" href="#_procedure">10.2. Procedure</a></h3>
 <div class="paragraph">
 <p><em>buddy</em> unlike Clojure and other Clojure contrib libs, does not have many
 restrictions for contributions. Just follow the following steps depending on the
@@ -2590,7 +2552,7 @@ situation:</p>
 </div>
 </div>
 <div class="sect2">
-<h3 id="_license">11.3. License</h3>
+<h3 id="_license"><a class="link" href="#_license">10.3. License</a></h3>
 <div class="listingblock">
 <div class="content">
 <pre class="pygments highlight"><code data-lang="text">Copyright (c) 2014, Andrey Antukh
@@ -2625,7 +2587,7 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.</code></pre
 </div>
 <div id="footer">
 <div id="footer-text">
-Last updated 2014-10-21 23:11:12 CEST
+Last updated 2014-12-06 16:22:54 CET
 </div>
 </div>
 </body>
