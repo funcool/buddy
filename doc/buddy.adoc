@@ -6,6 +6,7 @@ Andrey Antukh, <niwi@niwi.be>
 :numbered:
 :source-highlighter: pygments
 :pygments-style: friendly
+:sectlinks:
 
 
 Introduction
