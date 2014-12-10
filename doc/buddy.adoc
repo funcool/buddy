@@ -338,7 +338,7 @@ bcrypt and pbkdf2.
 [options="header"]
 |=====================================================================================
 | Hash algorithm name  | Namespace              | Observations
-| Bcrypt               | `byddy.hashers.bcrypt` | Recommended
+| Bcrypt               | `buddy.hashers.bcrypt` | Recommended
 | Pbkdf2               | `buddy.hashers.pbkdf2` | Recommended
 | Scrypt               | `buddy.hashers.scrypt` | Recommended
 | sha256               | `buddy.hashers.sha256` | Not recommended
@@ -1385,7 +1385,7 @@ authentication only) without including the other.
 The best combination is to use _buddy_'s authentication middleware
 with liberator authorization endpoints.
 
-*Byddy has own cryptographic algorithms implementations?*
+*Buddy has own cryptographic algorithms implementations?*
 
 Mainly no, I'm not cryptography expert and I rely this to battle tested Bouncy Castle java
 library dedicated to that.
