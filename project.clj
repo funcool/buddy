@@ -1,17 +1,17 @@
-(defproject buddy "0.2.3"
+(defproject buddy "0.3.0-SNAPSHOT"
   :description "Security library for Clojure"
   :url "https://github.com/niwibe/buddy"
   :license {:name "BSD (2-Clause)"
             :url "http://opensource.org/licenses/BSD-2-Clause"}
   :dependencies [[org.clojure/clojure "1.6.0"]
                  [org.clojure/algo.monads "0.1.5"]
-                 [ring/ring-core "1.3.1"]
-                 [commons-codec/commons-codec "1.9"]
-                 [com.taoensso/nippy "2.7.0"]
-                 [clojurewerkz/scrypt "1.1.0"]
+                 [ring/ring-core "1.3.2" :exclusions [org.clojure/tools.reader]]
+                 [commons-codec/commons-codec "1.10"]
+                 [com.taoensso/nippy "2.7.1"]
+                 [clojurewerkz/scrypt "1.2.0"]
                  [clj-time "0.8.0"]
                  [swiss-arrows "1.0.0"]
-                 [cheshire "5.3.1"]
+                 [cheshire "5.4.0"]
                  [org.bouncycastle/bcprov-jdk15on "1.51"]
                  [org.bouncycastle/bcpkix-jdk15on "1.51"]]
   :source-paths ["src/clojure"]
