@@ -1,0 +1,2594 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<!--[if IE]><meta http-equiv="X-UA-Compatible" content="IE=edge"><![endif]-->
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="generator" content="Asciidoctor 1.5.1">
+<meta name="author" content="Andrey Antukh, &lt;niwi@niwi.be&gt;">
+<title>buddy documentation</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Open+Sans:300,300italic,400,400italic,600,600italic|Noto+Serif:400,400italic,700,700italic|Droid+Sans+Mono:400">
+<style>
+/* Asciidoctor default stylesheet | MIT License | http://asciidoctor.org */
+/* Remove the comments around the @import statement below when using this as a custom stylesheet */
+/*@import "https://fonts.googleapis.com/css?family=Open+Sans:300,300italic,400,400italic,600,600italic|Noto+Serif:400,400italic,700,700italic|Droid+Sans+Mono:400";*/
+article,aside,details,figcaption,figure,footer,header,hgroup,main,nav,section,summary{display:block}
+audio,canvas,video{display:inline-block}
+audio:not([controls]){display:none;height:0}
+[hidden],template{display:none}
+script{display:none!important}
+html{font-family:sans-serif;-ms-text-size-adjust:100%;-webkit-text-size-adjust:100%}
+body{margin:0}
+a{background:transparent}
+a:focus{outline:thin dotted}
+a:active,a:hover{outline:0}
+h1{font-size:2em;margin:.67em 0}
+abbr[title]{border-bottom:1px dotted}
+b,strong{font-weight:bold}
+dfn{font-style:italic}
+hr{-moz-box-sizing:content-box;box-sizing:content-box;height:0}
+mark{background:#ff0;color:#000}
+code,kbd,pre,samp{font-family:monospace;font-size:1em}
+pre{white-space:pre-wrap}
+q{quotes:"\201C" "\201D" "\2018" "\2019"}
+small{font-size:80%}
+sub,sup{font-size:75%;line-height:0;position:relative;vertical-align:baseline}
+sup{top:-.5em}
+sub{bottom:-.25em}
+img{border:0}
+svg:not(:root){overflow:hidden}
+figure{margin:0}
+fieldset{border:1px solid silver;margin:0 2px;padding:.35em .625em .75em}
+legend{border:0;padding:0}
+button,input,select,textarea{font-family:inherit;font-size:100%;margin:0}
+button,input{line-height:normal}
+button,select{text-transform:none}
+button,html input[type="button"],input[type="reset"],input[type="submit"]{-webkit-appearance:button;cursor:pointer}
+button[disabled],html input[disabled]{cursor:default}
+input[type="checkbox"],input[type="radio"]{box-sizing:border-box;padding:0}
+input[type="search"]{-webkit-appearance:textfield;-moz-box-sizing:content-box;-webkit-box-sizing:content-box;box-sizing:content-box}
+input[type="search"]::-webkit-search-cancel-button,input[type="search"]::-webkit-search-decoration{-webkit-appearance:none}
+button::-moz-focus-inner,input::-moz-focus-inner{border:0;padding:0}
+textarea{overflow:auto;vertical-align:top}
+table{border-collapse:collapse;border-spacing:0}
+*,*:before,*:after{-moz-box-sizing:border-box;-webkit-box-sizing:border-box;box-sizing:border-box}
+html,body{font-size:100%}
+body{background:#fff;color:rgba(0,0,0,.8);padding:0;margin:0;font-family:"Noto Serif","DejaVu Serif",serif;font-weight:400;font-style:normal;line-height:1;position:relative;cursor:auto}
+a:hover{cursor:pointer}
+img,object,embed{max-width:100%;height:auto}
+object,embed{height:100%}
+img{-ms-interpolation-mode:bicubic}
+#map_canvas img,#map_canvas embed,#map_canvas object,.map_canvas img,.map_canvas embed,.map_canvas object{max-width:none!important}
+.left{float:left!important}
+.right{float:right!important}
+.text-left{text-align:left!important}
+.text-right{text-align:right!important}
+.text-center{text-align:center!important}
+.text-justify{text-align:justify!important}
+.hide{display:none}
+.antialiased,body{-webkit-font-smoothing:antialiased}
+img{display:inline-block;vertical-align:middle}
+textarea{height:auto;min-height:50px}
+select{width:100%}
+p.lead,.paragraph.lead>p,#preamble>.sectionbody>.paragraph:first-of-type p{font-size:1.21875em;line-height:1.6}
+.subheader,.admonitionblock td.content>.title,.audioblock>.title,.exampleblock>.title,.imageblock>.title,.listingblock>.title,.literalblock>.title,.stemblock>.title,.openblock>.title,.paragraph>.title,.quoteblock>.title,table.tableblock>.title,.verseblock>.title,.videoblock>.title,.dlist>.title,.olist>.title,.ulist>.title,.qlist>.title,.hdlist>.title{line-height:1.45;color:#7a2518;font-weight:400;margin-top:0;margin-bottom:.25em}
+div,dl,dt,dd,ul,ol,li,h1,h2,h3,#toctitle,.sidebarblock>.content>.title,h4,h5,h6,pre,form,p,blockquote,th,td{margin:0;padding:0;direction:ltr}
+a{color:#2156a5;text-decoration:underline;line-height:inherit}
+a:hover,a:focus{color:#1d4b8f}
+a img{border:none}
+p{font-family:inherit;font-weight:400;font-size:1em;line-height:1.6;margin-bottom:1.25em;text-rendering:optimizeLegibility}
+p aside{font-size:.875em;line-height:1.35;font-style:italic}
+h1,h2,h3,#toctitle,.sidebarblock>.content>.title,h4,h5,h6{font-family:"Open Sans","DejaVu Sans",sans-serif;font-weight:300;font-style:normal;color:#ba3925;text-rendering:optimizeLegibility;margin-top:1em;margin-bottom:.5em;line-height:1.0125em}
+h1 small,h2 small,h3 small,#toctitle small,.sidebarblock>.content>.title small,h4 small,h5 small,h6 small{font-size:60%;color:#e99b8f;line-height:0}
+h1{font-size:2.125em}
+h2{font-size:1.6875em}
+h3,#toctitle,.sidebarblock>.content>.title{font-size:1.375em}
+h4,h5{font-size:1.125em}
+h6{font-size:1em}
+hr{border:solid #ddddd8;border-width:1px 0 0;clear:both;margin:1.25em 0 1.1875em;height:0}
+em,i{font-style:italic;line-height:inherit}
+strong,b{font-weight:bold;line-height:inherit}
+small{font-size:60%;line-height:inherit}
+code{font-family:"Droid Sans Mono","DejaVu Sans Mono",monospace;font-weight:400;color:rgba(0,0,0,.9)}
+ul,ol,dl{font-size:1em;line-height:1.6;margin-bottom:1.25em;list-style-position:outside;font-family:inherit}
+ul,ol,ul.no-bullet,ol.no-bullet{margin-left:1.5em}
+ul li ul,ul li ol{margin-left:1.25em;margin-bottom:0;font-size:1em}
+ul.square li ul,ul.circle li ul,ul.disc li ul{list-style:inherit}
+ul.square{list-style-type:square}
+ul.circle{list-style-type:circle}
+ul.disc{list-style-type:disc}
+ul.no-bullet{list-style:none}
+ol li ul,ol li ol{margin-left:1.25em;margin-bottom:0}
+dl dt{margin-bottom:.3125em;font-weight:bold}
+dl dd{margin-bottom:1.25em}
+abbr,acronym{text-transform:uppercase;font-size:90%;color:rgba(0,0,0,.8);border-bottom:1px dotted #ddd;cursor:help}
+abbr{text-transform:none}
+blockquote{margin:0 0 1.25em;padding:.5625em 1.25em 0 1.1875em;border-left:1px solid #ddd}
+blockquote cite{display:block;font-size:.9375em;color:rgba(0,0,0,.6)}
+blockquote cite:before{content:"\2014 \0020"}
+blockquote cite a,blockquote cite a:visited{color:rgba(0,0,0,.6)}
+blockquote,blockquote p{line-height:1.6;color:rgba(0,0,0,.85)}
+@media only screen and (min-width:768px){h1,h2,h3,#toctitle,.sidebarblock>.content>.title,h4,h5,h6{line-height:1.2}
+h1{font-size:2.75em}
+h2{font-size:2.3125em}
+h3,#toctitle,.sidebarblock>.content>.title{font-size:1.6875em}
+h4{font-size:1.4375em}}table{background:#fff;margin-bottom:1.25em;border:solid 1px #dedede}
+table thead,table tfoot{background:#f7f8f7;font-weight:bold}
+table thead tr th,table thead tr td,table tfoot tr th,table tfoot tr td{padding:.5em .625em .625em;font-size:inherit;color:rgba(0,0,0,.8);text-align:left}
+table tr th,table tr td{padding:.5625em .625em;font-size:inherit;color:rgba(0,0,0,.8)}
+table tr.even,table tr.alt,table tr:nth-of-type(even){background:#f8f8f7}
+table thead tr th,table tfoot tr th,table tbody tr td,table tr td,table tfoot tr td{display:table-cell;line-height:1.6}
+h1,h2,h3,#toctitle,.sidebarblock>.content>.title,h4,h5,h6{line-height:1.2;word-spacing:-.05em}
+h1 strong,h2 strong,h3 strong,#toctitle strong,.sidebarblock>.content>.title strong,h4 strong,h5 strong,h6 strong{font-weight:400}
+.clearfix:before,.clearfix:after,.float-group:before,.float-group:after{content:" ";display:table}
+.clearfix:after,.float-group:after{clear:both}
+*:not(pre)>code{font-size:.9375em;font-style:normal!important;letter-spacing:0;padding:.1em .5ex;word-spacing:-.15em;background-color:#f7f7f8;-webkit-border-radius:4px;border-radius:4px;line-height:1.45;text-rendering:optimizeSpeed}
+pre,pre>code{line-height:1.45;color:rgba(0,0,0,.9);font-family:"Droid Sans Mono","DejaVu Sans Mono",monospace;font-weight:400;text-rendering:optimizeSpeed}
+.keyseq{color:rgba(51,51,51,.8)}
+kbd{display:inline-block;color:rgba(0,0,0,.8);font-size:.75em;line-height:1.4;background-color:#f7f7f7;border:1px solid #ccc;-webkit-border-radius:3px;border-radius:3px;-webkit-box-shadow:0 1px 0 rgba(0,0,0,.2),0 0 0 .1em white inset;box-shadow:0 1px 0 rgba(0,0,0,.2),0 0 0 .1em #fff inset;margin:-.15em .15em 0 .15em;padding:.2em .6em .2em .5em;vertical-align:middle;white-space:nowrap}
+.keyseq kbd:first-child{margin-left:0}
+.keyseq kbd:last-child{margin-right:0}
+.menuseq,.menu{color:rgba(0,0,0,.8)}
+b.button:before,b.button:after{position:relative;top:-1px;font-weight:400}
+b.button:before{content:"[";padding:0 3px 0 2px}
+b.button:after{content:"]";padding:0 2px 0 3px}
+p a>code:hover{color:rgba(0,0,0,.9)}
+#header,#content,#footnotes,#footer{width:100%;margin-left:auto;margin-right:auto;margin-top:0;margin-bottom:0;max-width:62.5em;*zoom:1;position:relative;padding-left:.9375em;padding-right:.9375em}
+#header:before,#header:after,#content:before,#content:after,#footnotes:before,#footnotes:after,#footer:before,#footer:after{content:" ";display:table}
+#header:after,#content:after,#footnotes:after,#footer:after{clear:both}
+#content{margin-top:1.25em}
+#content:before{content:none}
+#header>h1:first-child{color:rgba(0,0,0,.85);margin-top:2.25rem;margin-bottom:0}
+#header>h1:first-child+#toc{margin-top:8px;border-top:1px solid #ddddd8}
+#header>h1:only-child,body.toc2 #header>h1:nth-last-child(2){border-bottom:1px solid #ddddd8;padding-bottom:8px}
+#header .details{border-bottom:1px solid #ddddd8;line-height:1.45;padding-top:.25em;padding-bottom:.25em;padding-left:.25em;color:rgba(0,0,0,.6);display:-ms-flexbox;display:-webkit-flex;display:flex;-ms-flex-flow:row wrap;-webkit-flex-flow:row wrap;flex-flow:row wrap}
+#header .details span:first-child{margin-left:-.125em}
+#header .details span.email a{color:rgba(0,0,0,.85)}
+#header .details br{display:none}
+#header .details br+span:before{content:"\00a0\2013\00a0"}
+#header .details br+span.author:before{content:"\00a0\22c5\00a0";color:rgba(0,0,0,.85)}
+#header .details br+span#revremark:before{content:"\00a0|\00a0"}
+#header #revnumber{text-transform:capitalize}
+#header #revnumber:after{content:"\00a0"}
+#content>h1:first-child:not([class]){color:rgba(0,0,0,.85);border-bottom:1px solid #ddddd8;padding-bottom:8px;margin-top:0;padding-top:1rem;margin-bottom:1.25rem}
+#toc{border-bottom:1px solid #efefed;padding-bottom:.5em}
+#toc>ul{margin-left:.125em}
+#toc ul.sectlevel0>li>a{font-style:italic}
+#toc ul.sectlevel0 ul.sectlevel1{margin:.5em 0}
+#toc ul{font-family:"Open Sans","DejaVu Sans",sans-serif;list-style-type:none}
+#toc a{text-decoration:none}
+#toc a:active{text-decoration:underline}
+#toctitle{color:#7a2518;font-size:1.2em}
+@media only screen and (min-width:768px){#toctitle{font-size:1.375em}
+body.toc2{padding-left:15em;padding-right:0}
+#toc.toc2{margin-top:0!important;background-color:#f8f8f7;position:fixed;width:15em;left:0;top:0;border-right:1px solid #efefed;border-top-width:0!important;border-bottom-width:0!important;z-index:1000;padding:1.25em 1em;height:100%;overflow:auto}
+#toc.toc2 #toctitle{margin-top:0;font-size:1.2em}
+#toc.toc2>ul{font-size:.9em;margin-bottom:0}
+#toc.toc2 ul ul{margin-left:0;padding-left:1em}
+#toc.toc2 ul.sectlevel0 ul.sectlevel1{padding-left:0;margin-top:.5em;margin-bottom:.5em}
+body.toc2.toc-right{padding-left:0;padding-right:15em}
+body.toc2.toc-right #toc.toc2{border-right-width:0;border-left:1px solid #efefed;left:auto;right:0}}@media only screen and (min-width:1280px){body.toc2{padding-left:20em;padding-right:0}
+#toc.toc2{width:20em}
+#toc.toc2 #toctitle{font-size:1.375em}
+#toc.toc2>ul{font-size:.95em}
+#toc.toc2 ul ul{padding-left:1.25em}
+body.toc2.toc-right{padding-left:0;padding-right:20em}}#content #toc{border-style:solid;border-width:1px;border-color:#e0e0dc;margin-bottom:1.25em;padding:1.25em;background:#f8f8f7;-webkit-border-radius:4px;border-radius:4px}
+#content #toc>:first-child{margin-top:0}
+#content #toc>:last-child{margin-bottom:0}
+#footer{max-width:100%;background-color:rgba(0,0,0,.8);padding:1.25em}
+#footer-text{color:rgba(255,255,255,.8);line-height:1.44}
+.sect1{padding-bottom:.625em}
+@media only screen and (min-width:768px){.sect1{padding-bottom:1.25em}}.sect1+.sect1{border-top:1px solid #efefed}
+#content h1>a.anchor,h2>a.anchor,h3>a.anchor,#toctitle>a.anchor,.sidebarblock>.content>.title>a.anchor,h4>a.anchor,h5>a.anchor,h6>a.anchor{position:absolute;z-index:1001;width:1.5ex;margin-left:-1.5ex;display:block;text-decoration:none!important;visibility:hidden;text-align:center;font-weight:400}
+#content h1>a.anchor:before,h2>a.anchor:before,h3>a.anchor:before,#toctitle>a.anchor:before,.sidebarblock>.content>.title>a.anchor:before,h4>a.anchor:before,h5>a.anchor:before,h6>a.anchor:before{content:"\00A7";font-size:.85em;display:block;padding-top:.1em}
+#content h1:hover>a.anchor,#content h1>a.anchor:hover,h2:hover>a.anchor,h2>a.anchor:hover,h3:hover>a.anchor,#toctitle:hover>a.anchor,.sidebarblock>.content>.title:hover>a.anchor,h3>a.anchor:hover,#toctitle>a.anchor:hover,.sidebarblock>.content>.title>a.anchor:hover,h4:hover>a.anchor,h4>a.anchor:hover,h5:hover>a.anchor,h5>a.anchor:hover,h6:hover>a.anchor,h6>a.anchor:hover{visibility:visible}
+#content h1>a.link,h2>a.link,h3>a.link,#toctitle>a.link,.sidebarblock>.content>.title>a.link,h4>a.link,h5>a.link,h6>a.link{color:#ba3925;text-decoration:none}
+#content h1>a.link:hover,h2>a.link:hover,h3>a.link:hover,#toctitle>a.link:hover,.sidebarblock>.content>.title>a.link:hover,h4>a.link:hover,h5>a.link:hover,h6>a.link:hover{color:#a53221}
+.audioblock,.imageblock,.literalblock,.listingblock,.stemblock,.videoblock{margin-bottom:1.25em}
+.admonitionblock td.content>.title,.audioblock>.title,.exampleblock>.title,.imageblock>.title,.listingblock>.title,.literalblock>.title,.stemblock>.title,.openblock>.title,.paragraph>.title,.quoteblock>.title,table.tableblock>.title,.verseblock>.title,.videoblock>.title,.dlist>.title,.olist>.title,.ulist>.title,.qlist>.title,.hdlist>.title{text-rendering:optimizeLegibility;text-align:left;font-family:"Noto Serif","DejaVu Serif",serif;font-size:1rem;font-style:italic}
+table.tableblock>caption.title{white-space:nowrap;overflow:visible;max-width:0}
+.paragraph.lead>p,#preamble>.sectionbody>.paragraph:first-of-type p{color:rgba(0,0,0,.85)}
+table.tableblock #preamble>.sectionbody>.paragraph:first-of-type p{font-size:inherit}
+.admonitionblock>table{border-collapse:separate;border:0;background:none;width:100%}
+.admonitionblock>table td.icon{text-align:center;width:80px}
+.admonitionblock>table td.icon img{max-width:none}
+.admonitionblock>table td.icon .title{font-weight:bold;font-family:"Open Sans","DejaVu Sans",sans-serif;text-transform:uppercase}
+.admonitionblock>table td.content{padding-left:1.125em;padding-right:1.25em;border-left:1px solid #ddddd8;color:rgba(0,0,0,.6)}
+.admonitionblock>table td.content>:last-child>:last-child{margin-bottom:0}
+.exampleblock>.content{border-style:solid;border-width:1px;border-color:#e6e6e6;margin-bottom:1.25em;padding:1.25em;background:#fff;-webkit-border-radius:4px;border-radius:4px}
+.exampleblock>.content>:first-child{margin-top:0}
+.exampleblock>.content>:last-child{margin-bottom:0}
+.sidebarblock{border-style:solid;border-width:1px;border-color:#e0e0dc;margin-bottom:1.25em;padding:1.25em;background:#f8f8f7;-webkit-border-radius:4px;border-radius:4px}
+.sidebarblock>:first-child{margin-top:0}
+.sidebarblock>:last-child{margin-bottom:0}
+.sidebarblock>.content>.title{color:#7a2518;margin-top:0;text-align:center}
+.exampleblock>.content>:last-child>:last-child,.exampleblock>.content .olist>ol>li:last-child>:last-child,.exampleblock>.content .ulist>ul>li:last-child>:last-child,.exampleblock>.content .qlist>ol>li:last-child>:last-child,.sidebarblock>.content>:last-child>:last-child,.sidebarblock>.content .olist>ol>li:last-child>:last-child,.sidebarblock>.content .ulist>ul>li:last-child>:last-child,.sidebarblock>.content .qlist>ol>li:last-child>:last-child{margin-bottom:0}
+.literalblock pre,.listingblock pre:not(.highlight),.listingblock pre[class="highlight"],.listingblock pre[class^="highlight "],.listingblock pre.CodeRay,.listingblock pre.prettyprint{background:#f7f7f8}
+.sidebarblock .literalblock pre,.sidebarblock .listingblock pre:not(.highlight),.sidebarblock .listingblock pre[class="highlight"],.sidebarblock .listingblock pre[class^="highlight "],.sidebarblock .listingblock pre.CodeRay,.sidebarblock .listingblock pre.prettyprint{background:#f2f1f1}
+.literalblock pre,.literalblock pre[class],.listingblock pre,.listingblock pre[class]{-webkit-border-radius:4px;border-radius:4px;word-wrap:break-word;padding:1em;font-size:.8125em}
+.literalblock pre.nowrap,.literalblock pre[class].nowrap,.listingblock pre.nowrap,.listingblock pre[class].nowrap{overflow-x:auto;white-space:pre;word-wrap:normal}
+@media only screen and (min-width:768px){.literalblock pre,.literalblock pre[class],.listingblock pre,.listingblock pre[class]{font-size:.90625em}}@media only screen and (min-width:1280px){.literalblock pre,.literalblock pre[class],.listingblock pre,.listingblock pre[class]{font-size:1em}}.literalblock.output pre{color:#f7f7f8;background-color:rgba(0,0,0,.9)}
+.listingblock pre.highlightjs{padding:0}
+.listingblock pre.highlightjs>code{padding:1em;-webkit-border-radius:4px;border-radius:4px}
+.listingblock pre.prettyprint{border-width:0}
+.listingblock>.content{position:relative}
+.listingblock code[data-lang]:before{display:none;content:attr(data-lang);position:absolute;font-size:.75em;top:.425rem;right:.5rem;line-height:1;text-transform:uppercase;color:#999}
+.listingblock:hover code[data-lang]:before{display:block}
+.listingblock.terminal pre .command:before{content:attr(data-prompt);padding-right:.5em;color:#999}
+.listingblock.terminal pre .command:not([data-prompt]):before{content:"$"}
+table.pyhltable{border-collapse:separate;border:0;margin-bottom:0;background:none}
+table.pyhltable td{vertical-align:top;padding-top:0;padding-bottom:0}
+table.pyhltable td.code{padding-left:.75em;padding-right:0}
+pre.pygments .lineno,table.pyhltable td:not(.code){color:#999;padding-left:0;padding-right:.5em;border-right:1px solid #ddddd8}
+pre.pygments .lineno{display:inline-block;margin-right:.25em}
+table.pyhltable .linenodiv{background:none!important;padding-right:0!important}
+.quoteblock{margin:0 1em 1.25em 1.5em;display:table}
+.quoteblock>.title{margin-left:-1.5em;margin-bottom:.75em}
+.quoteblock blockquote,.quoteblock blockquote p{color:rgba(0,0,0,.85);font-size:1.15rem;line-height:1.75;word-spacing:.1em;letter-spacing:0;font-style:italic;text-align:justify}
+.quoteblock blockquote{margin:0;padding:0;border:0}
+.quoteblock blockquote:before{content:"\201c";float:left;font-size:2.75em;font-weight:bold;line-height:.6em;margin-left:-.6em;color:#7a2518;text-shadow:0 1px 2px rgba(0,0,0,.1)}
+.quoteblock blockquote>.paragraph:last-child p{margin-bottom:0}
+.quoteblock .attribution{margin-top:.5em;margin-right:.5ex;text-align:right}
+.quoteblock .quoteblock{margin-left:0;margin-right:0;padding:.5em 0;border-left:3px solid rgba(0,0,0,.6)}
+.quoteblock .quoteblock blockquote{padding:0 0 0 .75em}
+.quoteblock .quoteblock blockquote:before{display:none}
+.verseblock{margin:0 1em 1.25em 1em}
+.verseblock pre{font-family:"Open Sans","DejaVu Sans",sans;font-size:1.15rem;color:rgba(0,0,0,.85);font-weight:300;text-rendering:optimizeLegibility}
+.verseblock pre strong{font-weight:400}
+.verseblock .attribution{margin-top:1.25rem;margin-left:.5ex}
+.quoteblock .attribution,.verseblock .attribution{font-size:.9375em;line-height:1.45;font-style:italic}
+.quoteblock .attribution br,.verseblock .attribution br{display:none}
+.quoteblock .attribution cite,.verseblock .attribution cite{display:block;letter-spacing:-.05em;color:rgba(0,0,0,.6)}
+.quoteblock.abstract{margin:0 0 1.25em 0;display:block}
+.quoteblock.abstract blockquote,.quoteblock.abstract blockquote p{text-align:left;word-spacing:0}
+.quoteblock.abstract blockquote:before,.quoteblock.abstract blockquote p:first-of-type:before{display:none}
+table.tableblock{max-width:100%;border-collapse:separate}
+table.tableblock td>.paragraph:last-child p>p:last-child,table.tableblock th>p:last-child,table.tableblock td>p:last-child{margin-bottom:0}
+table.spread{width:100%}
+table.tableblock,th.tableblock,td.tableblock{border:0 solid #dedede}
+table.grid-all th.tableblock,table.grid-all td.tableblock{border-width:0 1px 1px 0}
+table.grid-all tfoot>tr>th.tableblock,table.grid-all tfoot>tr>td.tableblock{border-width:1px 1px 0 0}
+table.grid-cols th.tableblock,table.grid-cols td.tableblock{border-width:0 1px 0 0}
+table.grid-all *>tr>.tableblock:last-child,table.grid-cols *>tr>.tableblock:last-child{border-right-width:0}
+table.grid-rows th.tableblock,table.grid-rows td.tableblock{border-width:0 0 1px 0}
+table.grid-all tbody>tr:last-child>th.tableblock,table.grid-all tbody>tr:last-child>td.tableblock,table.grid-all thead:last-child>tr>th.tableblock,table.grid-rows tbody>tr:last-child>th.tableblock,table.grid-rows tbody>tr:last-child>td.tableblock,table.grid-rows thead:last-child>tr>th.tableblock{border-bottom-width:0}
+table.grid-rows tfoot>tr>th.tableblock,table.grid-rows tfoot>tr>td.tableblock{border-width:1px 0 0 0}
+table.frame-all{border-width:1px}
+table.frame-sides{border-width:0 1px}
+table.frame-topbot{border-width:1px 0}
+th.halign-left,td.halign-left{text-align:left}
+th.halign-right,td.halign-right{text-align:right}
+th.halign-center,td.halign-center{text-align:center}
+th.valign-top,td.valign-top{vertical-align:top}
+th.valign-bottom,td.valign-bottom{vertical-align:bottom}
+th.valign-middle,td.valign-middle{vertical-align:middle}
+table thead th,table tfoot th{font-weight:bold}
+tbody tr th{display:table-cell;line-height:1.6;background:#f7f8f7}
+tbody tr th,tbody tr th p,tfoot tr th,tfoot tr th p{color:rgba(0,0,0,.8);font-weight:bold}
+p.tableblock>code:only-child{background:none;padding:0}
+p.tableblock{font-size:1em}
+td>div.verse{white-space:pre}
+ol{margin-left:1.75em}
+ul li ol{margin-left:1.5em}
+dl dd{margin-left:1.125em}
+dl dd:last-child,dl dd:last-child>:last-child{margin-bottom:0}
+ol>li p,ul>li p,ul dd,ol dd,.olist .olist,.ulist .ulist,.ulist .olist,.olist .ulist{margin-bottom:.625em}
+ul.unstyled,ol.unnumbered,ul.checklist,ul.none{list-style-type:none}
+ul.unstyled,ol.unnumbered,ul.checklist{margin-left:.625em}
+ul.checklist li>p:first-child>.fa-check-square-o:first-child,ul.checklist li>p:first-child>input[type="checkbox"]:first-child{margin-right:.25em}
+ul.checklist li>p:first-child>input[type="checkbox"]:first-child{position:relative;top:1px}
+ul.inline{margin:0 auto .625em auto;margin-left:-1.375em;margin-right:0;padding:0;list-style:none;overflow:hidden}
+ul.inline>li{list-style:none;float:left;margin-left:1.375em;display:block}
+ul.inline>li>*{display:block}
+.unstyled dl dt{font-weight:400;font-style:normal}
+ol.arabic{list-style-type:decimal}
+ol.decimal{list-style-type:decimal-leading-zero}
+ol.loweralpha{list-style-type:lower-alpha}
+ol.upperalpha{list-style-type:upper-alpha}
+ol.lowerroman{list-style-type:lower-roman}
+ol.upperroman{list-style-type:upper-roman}
+ol.lowergreek{list-style-type:lower-greek}
+.hdlist>table,.colist>table{border:0;background:none}
+.hdlist>table>tbody>tr,.colist>table>tbody>tr{background:none}
+td.hdlist1{padding-right:.75em;font-weight:bold}
+td.hdlist1,td.hdlist2{vertical-align:top}
+.literalblock+.colist,.listingblock+.colist{margin-top:-.5em}
+.colist>table tr>td:first-of-type{padding:0 .75em;line-height:1}
+.colist>table tr>td:last-of-type{padding:.25em 0}
+.thumb,.th{line-height:0;display:inline-block;border:solid 4px #fff;-webkit-box-shadow:0 0 0 1px #ddd;box-shadow:0 0 0 1px #ddd}
+.imageblock.left,.imageblock[style*="float: left"]{margin:.25em .625em 1.25em 0}
+.imageblock.right,.imageblock[style*="float: right"]{margin:.25em 0 1.25em .625em}
+.imageblock>.title{margin-bottom:0}
+.imageblock.thumb,.imageblock.th{border-width:6px}
+.imageblock.thumb>.title,.imageblock.th>.title{padding:0 .125em}
+.image.left,.image.right{margin-top:.25em;margin-bottom:.25em;display:inline-block;line-height:0}
+.image.left{margin-right:.625em}
+.image.right{margin-left:.625em}
+a.image{text-decoration:none}
+span.footnote,span.footnoteref{vertical-align:super;font-size:.875em}
+span.footnote a,span.footnoteref a{text-decoration:none}
+span.footnote a:active,span.footnoteref a:active{text-decoration:underline}
+#footnotes{padding-top:.75em;padding-bottom:.75em;margin-bottom:.625em}
+#footnotes hr{width:20%;min-width:6.25em;margin:-.25em 0 .75em 0;border-width:1px 0 0 0}
+#footnotes .footnote{padding:0 .375em;line-height:1.3;font-size:.875em;margin-left:1.2em;text-indent:-1.2em;margin-bottom:.2em}
+#footnotes .footnote a:first-of-type{font-weight:bold;text-decoration:none}
+#footnotes .footnote:last-of-type{margin-bottom:0}
+#content #footnotes{margin-top:-.625em;margin-bottom:0;padding:.75em 0}
+.gist .file-data>table{border:0;background:#fff;width:100%;margin-bottom:0}
+.gist .file-data>table td.line-data{width:99%}
+div.unbreakable{page-break-inside:avoid}
+.big{font-size:larger}
+.small{font-size:smaller}
+.underline{text-decoration:underline}
+.overline{text-decoration:overline}
+.line-through{text-decoration:line-through}
+.aqua{color:#00bfbf}
+.aqua-background{background-color:#00fafa}
+.black{color:#000}
+.black-background{background-color:#000}
+.blue{color:#0000bf}
+.blue-background{background-color:#0000fa}
+.fuchsia{color:#bf00bf}
+.fuchsia-background{background-color:#fa00fa}
+.gray{color:#606060}
+.gray-background{background-color:#7d7d7d}
+.green{color:#006000}
+.green-background{background-color:#007d00}
+.lime{color:#00bf00}
+.lime-background{background-color:#00fa00}
+.maroon{color:#600000}
+.maroon-background{background-color:#7d0000}
+.navy{color:#000060}
+.navy-background{background-color:#00007d}
+.olive{color:#606000}
+.olive-background{background-color:#7d7d00}
+.purple{color:#600060}
+.purple-background{background-color:#7d007d}
+.red{color:#bf0000}
+.red-background{background-color:#fa0000}
+.silver{color:#909090}
+.silver-background{background-color:#bcbcbc}
+.teal{color:#006060}
+.teal-background{background-color:#007d7d}
+.white{color:#bfbfbf}
+.white-background{background-color:#fafafa}
+.yellow{color:#bfbf00}
+.yellow-background{background-color:#fafa00}
+span.icon>.fa{cursor:default}
+.admonitionblock td.icon [class^="fa icon-"]{font-size:2.5em;text-shadow:1px 1px 2px rgba(0,0,0,.5);cursor:default}
+.admonitionblock td.icon .icon-note:before{content:"\f05a";color:#19407c}
+.admonitionblock td.icon .icon-tip:before{content:"\f0eb";text-shadow:1px 1px 2px rgba(155,155,0,.8);color:#111}
+.admonitionblock td.icon .icon-warning:before{content:"\f071";color:#bf6900}
+.admonitionblock td.icon .icon-caution:before{content:"\f06d";color:#bf3400}
+.admonitionblock td.icon .icon-important:before{content:"\f06a";color:#bf0000}
+.conum[data-value]{display:inline-block;color:#fff!important;background-color:rgba(0,0,0,.8);-webkit-border-radius:100px;border-radius:100px;text-align:center;font-size:.75em;width:1.67em;height:1.67em;line-height:1.67em;font-family:"Open Sans","DejaVu Sans",sans-serif;font-style:normal;font-weight:bold}
+.conum[data-value] *{color:#fff!important}
+.conum[data-value]+b{display:none}
+.conum[data-value]:after{content:attr(data-value)}
+pre .conum[data-value]{position:relative;top:-.125em}
+b.conum *{color:inherit!important}
+.conum:not([data-value]):empty{display:none}
+h1,h2{letter-spacing:-.01em}
+dt,th.tableblock,td.content{text-rendering:optimizeLegibility}
+p,td.content{letter-spacing:-.01em}
+p strong,td.content strong{letter-spacing:-.005em}
+p,blockquote,dt,td.content{font-size:1.0625rem}
+p{margin-bottom:1.25rem}
+.sidebarblock p,.sidebarblock dt,.sidebarblock td.content,p.tableblock{font-size:1em}
+.exampleblock>.content{background-color:#fffef7;border-color:#e0e0dc;-webkit-box-shadow:0 1px 4px #e0e0dc;box-shadow:0 1px 4px #e0e0dc}
+.print-only{display:none!important}
+@media print{@page{margin:1.25cm .75cm}
+*{-webkit-box-shadow:none!important;box-shadow:none!important;text-shadow:none!important}
+a{color:inherit!important;text-decoration:underline!important}
+a.bare,a[href^="#"],a[href^="mailto:"]{text-decoration:none!important}
+a[href^="http:"]:not(.bare):after,a[href^="https:"]:not(.bare):after{content:"(" attr(href) ")";display:inline-block;font-size:.875em;padding-left:.25em}
+abbr[title]:after{content:" (" attr(title) ")"}
+pre,blockquote,tr,img{page-break-inside:avoid}
+thead{display:table-header-group}
+img{max-width:100%!important}
+p,blockquote,dt,td.content{font-size:1em;orphans:3;widows:3}
+h2,h3,#toctitle,.sidebarblock>.content>.title{page-break-after:avoid}
+#toc,.sidebarblock,.exampleblock>.content{background:none!important}
+#toc{border-bottom:1px solid #ddddd8!important;padding-bottom:0!important}
+.sect1{padding-bottom:0!important}
+.sect1+.sect1{border:0!important}
+#header>h1:first-child{margin-top:1.25rem}
+body.book #header{text-align:center}
+body.book #header>h1:first-child{border:0!important;margin:2.5em 0 1em 0}
+body.book #header .details{border:0!important;display:block;padding:0!important}
+body.book #header .details span:first-child{margin-left:0!important}
+body.book #header .details br{display:block}
+body.book #header .details br+span:before{content:none!important}
+body.book #toc{border:0!important;text-align:left!important;padding:0!important;margin:0!important}
+body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-break-before:always}
+.listingblock code[data-lang]:before{display:block}
+#footer{background:none!important;padding:0 .9375em}
+#footer-text{color:rgba(0,0,0,.6)!important;font-size:.9em}
+.hide-on-print{display:none!important}
+.print-only{display:block!important}
+.hide-for-print{display:none!important}
+.show-for-print{display:inherit!important}}
+</style>
+<style>
+.listingblock .pygments .hll { background-color: #ffffcc }
+.listingblock .pygments  { background: #f0f0f0; }
+.listingblock .pygments .tok-c { color: #60a0b0; font-style: italic } /* Comment */
+.listingblock .pygments .tok-err { border: 1px solid #FF0000 } /* Error */
+.listingblock .pygments .tok-k { color: #007020; font-weight: bold } /* Keyword */
+.listingblock .pygments .tok-o { color: #666666 } /* Operator */
+.listingblock .pygments .tok-cm { color: #60a0b0; font-style: italic } /* Comment.Multiline */
+.listingblock .pygments .tok-cp { color: #007020 } /* Comment.Preproc */
+.listingblock .pygments .tok-c1 { color: #60a0b0; font-style: italic } /* Comment.Single */
+.listingblock .pygments .tok-cs { color: #60a0b0; background-color: #fff0f0 } /* Comment.Special */
+.listingblock .pygments .tok-gd { color: #A00000 } /* Generic.Deleted */
+.listingblock .pygments .tok-ge { font-style: italic } /* Generic.Emph */
+.listingblock .pygments .tok-gr { color: #FF0000 } /* Generic.Error */
+.listingblock .pygments .tok-gh { color: #000080; font-weight: bold } /* Generic.Heading */
+.listingblock .pygments .tok-gi { color: #00A000 } /* Generic.Inserted */
+.listingblock .pygments .tok-go { color: #888888 } /* Generic.Output */
+.listingblock .pygments .tok-gp { color: #c65d09; font-weight: bold } /* Generic.Prompt */
+.listingblock .pygments .tok-gs { font-weight: bold } /* Generic.Strong */
+.listingblock .pygments .tok-gu { color: #800080; font-weight: bold } /* Generic.Subheading */
+.listingblock .pygments .tok-gt { color: #0044DD } /* Generic.Traceback */
+.listingblock .pygments .tok-kc { color: #007020; font-weight: bold } /* Keyword.Constant */
+.listingblock .pygments .tok-kd { color: #007020; font-weight: bold } /* Keyword.Declaration */
+.listingblock .pygments .tok-kn { color: #007020; font-weight: bold } /* Keyword.Namespace */
+.listingblock .pygments .tok-kp { color: #007020 } /* Keyword.Pseudo */
+.listingblock .pygments .tok-kr { color: #007020; font-weight: bold } /* Keyword.Reserved */
+.listingblock .pygments .tok-kt { color: #902000 } /* Keyword.Type */
+.listingblock .pygments .tok-m { color: #40a070 } /* Literal.Number */
+.listingblock .pygments .tok-s { color: #4070a0 } /* Literal.String */
+.listingblock .pygments .tok-na { color: #4070a0 } /* Name.Attribute */
+.listingblock .pygments .tok-nb { color: #007020 } /* Name.Builtin */
+.listingblock .pygments .tok-nc { color: #0e84b5; font-weight: bold } /* Name.Class */
+.listingblock .pygments .tok-no { color: #60add5 } /* Name.Constant */
+.listingblock .pygments .tok-nd { color: #555555; font-weight: bold } /* Name.Decorator */
+.listingblock .pygments .tok-ni { color: #d55537; font-weight: bold } /* Name.Entity */
+.listingblock .pygments .tok-ne { color: #007020 } /* Name.Exception */
+.listingblock .pygments .tok-nf { color: #06287e } /* Name.Function */
+.listingblock .pygments .tok-nl { color: #002070; font-weight: bold } /* Name.Label */
+.listingblock .pygments .tok-nn { color: #0e84b5; font-weight: bold } /* Name.Namespace */
+.listingblock .pygments .tok-nt { color: #062873; font-weight: bold } /* Name.Tag */
+.listingblock .pygments .tok-nv { color: #bb60d5 } /* Name.Variable */
+.listingblock .pygments .tok-ow { color: #007020; font-weight: bold } /* Operator.Word */
+.listingblock .pygments .tok-w { color: #bbbbbb } /* Text.Whitespace */
+.listingblock .pygments .tok-mb { color: #40a070 } /* Literal.Number.Bin */
+.listingblock .pygments .tok-mf { color: #40a070 } /* Literal.Number.Float */
+.listingblock .pygments .tok-mh { color: #40a070 } /* Literal.Number.Hex */
+.listingblock .pygments .tok-mi { color: #40a070 } /* Literal.Number.Integer */
+.listingblock .pygments .tok-mo { color: #40a070 } /* Literal.Number.Oct */
+.listingblock .pygments .tok-sb { color: #4070a0 } /* Literal.String.Backtick */
+.listingblock .pygments .tok-sc { color: #4070a0 } /* Literal.String.Char */
+.listingblock .pygments .tok-sd { color: #4070a0; font-style: italic } /* Literal.String.Doc */
+.listingblock .pygments .tok-s2 { color: #4070a0 } /* Literal.String.Double */
+.listingblock .pygments .tok-se { color: #4070a0; font-weight: bold } /* Literal.String.Escape */
+.listingblock .pygments .tok-sh { color: #4070a0 } /* Literal.String.Heredoc */
+.listingblock .pygments .tok-si { color: #70a0d0; font-style: italic } /* Literal.String.Interpol */
+.listingblock .pygments .tok-sx { color: #c65d09 } /* Literal.String.Other */
+.listingblock .pygments .tok-sr { color: #235388 } /* Literal.String.Regex */
+.listingblock .pygments .tok-s1 { color: #4070a0 } /* Literal.String.Single */
+.listingblock .pygments .tok-ss { color: #517918 } /* Literal.String.Symbol */
+.listingblock .pygments .tok-bp { color: #007020 } /* Name.Builtin.Pseudo */
+.listingblock .pygments .tok-vc { color: #bb60d5 } /* Name.Variable.Class */
+.listingblock .pygments .tok-vg { color: #bb60d5 } /* Name.Variable.Global */
+.listingblock .pygments .tok-vi { color: #bb60d5 } /* Name.Variable.Instance */
+.listingblock .pygments .tok-il { color: #40a070 } /* Literal.Number.Integer.Long */
+</style>
+</head>
+<body class="article toc2 toc-left">
+<div id="header">
+<h1>buddy documentation</h1>
+<div class="details">
+<span id="author" class="author">Andrey Antukh, &lt;niwi@niwi.be&gt;</span><br>
+<span id="revdate">0.2.3</span>
+</div>
+<div id="toc" class="toc2">
+<div id="toctitle">Table of Contents</div>
+<ul class="sectlevel1">
+<li><a href="#_introduction">1. Introduction</a></li>
+<li><a href="#_project_maturity">2. Project Maturity</a></li>
+<li><a href="#_install">3. Install</a>
+<ul class="sectlevel2">
+<li><a href="#_requirements">3.1. Requirements</a></li>
+<li><a href="#_leiningen">3.2. Leiningen</a></li>
+<li><a href="#_maven">3.3. Maven</a></li>
+<li><a href="#_get_the_code">3.4. Get the Code</a></li>
+</ul>
+</li>
+<li><a href="#_common_web_security">4. Common Web Security</a>
+<ul class="sectlevel2">
+<li><a href="#_generic_message_signing">4.1. Generic Message Signing</a></li>
+<li><a href="#_json_web_signature_token">4.2. Json Web Signature/Token</a></li>
+<li><a href="#_password_hashers">4.3. Password Hashers</a></li>
+</ul>
+</li>
+<li><a href="#_authentication_for_ring_compojure">5. Authentication for Ring &amp; Compojure</a>
+<ul class="sectlevel2">
+<li><a href="#_authentication">5.1. Authentication</a></li>
+<li><a href="#_authorization">5.2. Authorization</a></li>
+</ul>
+</li>
+<li><a href="#_cryptographic_api">6. Cryptographic Api</a>
+<ul class="sectlevel2">
+<li><a href="#_cryptographic_hash_algorithms">6.1. Cryptographic hash algorithms</a></li>
+<li><a href="#_mac_algorithms">6.2. Mac algorithms</a></li>
+<li><a href="#_public_private_keypairs">6.3. Public/Private keypairs</a></li>
+<li><a href="#_digital_signatures">6.4. Digital Signatures</a></li>
+<li><a href="#_key_derivation_functions">6.5. Key Derivation Functions</a></li>
+<li><a href="#_ciphers">6.6. Ciphers</a></li>
+<li><a href="#_codecs">6.7. Codecs</a></li>
+</ul>
+</li>
+<li><a href="#_advanced_usage_3">7. Advanced Usage</a>
+<ul class="sectlevel2">
+<li><a href="#how-it-works">7.1. How Auth Works</a></li>
+</ul>
+</li>
+<li><a href="#_examples">8. Examples</a></li>
+<li><a href="#_faq">9. FAQ</a></li>
+<li><a href="#_how_to_contribute">10. How to Contribute?</a>
+<ul class="sectlevel2">
+<li><a href="#_philosophy">10.1. Philosophy</a></li>
+<li><a href="#_procedure">10.2. Procedure</a></li>
+<li><a href="#_license">10.3. License</a></li>
+</ul>
+</li>
+</ul>
+</div>
+</div>
+<div id="content">
+<div class="sect1">
+<h2 id="_introduction"><a class="link" href="#_introduction">1. Introduction</a></h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p><em>buddy</em> is a complete security library for clojure with support for:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>authentication, authorization &amp; access rules (ring/compojure extensions)</p>
+</li>
+<li>
+<p>secure hash functions (digest)</p>
+</li>
+<li>
+<p>password hashing algorithms (bcrypt, pbkdf2, scrypt)</p>
+</li>
+<li>
+<p>message/text signing (high level interface)</p>
+</li>
+<li>
+<p>signature &amp; authentication (mac &amp; digital signature)</p>
+</li>
+<li>
+<p>encryption (block &amp; stream ciphers)</p>
+</li>
+<li>
+<p>key derivartion functions (kdf)</p>
+</li>
+</ul>
+</div>
+<div class="paragraph">
+<p>Obviously backed by battle tested <a href="http://www.bouncycastle.org/specifications.html">bouncy castle</a>
+library and with 93% of test coverage.</p>
+</div>
+<div class="paragraph">
+<p><a href="api/index.html">API reference documentation.</a></p>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_project_maturity"><a class="link" href="#_project_maturity">2. Project Maturity</a></h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>Since <em>buddy</em> is a young project there can be some API breakage.</p>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_install"><a class="link" href="#_install">3. Install</a></h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>This section covers installing <em>buddy</em>.</p>
+</div>
+<div class="sect2">
+<h3 id="_requirements"><a class="link" href="#_requirements">3.1. Requirements</a></h3>
+<div class="paragraph">
+<p><em>buddy</em> has support for these jvm versions:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>JDK7</p>
+</li>
+<li>
+<p>JDK8</p>
+</li>
+</ul>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_leiningen"><a class="link" href="#_leiningen">3.2. Leiningen</a></h3>
+<div class="paragraph">
+<p>The simplest way to use <em>buddy</em> in a Clojure project is by including
+it as a dependency in your <strong><em>project.clj</em></strong>:</p>
+</div>
+<div class="listingblock">
+<div class="title"><em>in project.clj</em></div>
+<div class="content">
+<pre class="pygments highlight"><code data-lang="clojure"><span class="tok-p">[</span><span class="tok-nv">buddy</span> <span class="tok-s">&quot;0.2.1&quot;</span><span class="tok-p">]</span></code></pre>
+</div>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_maven"><a class="link" href="#_maven">3.3. Maven</a></h3>
+<div class="paragraph">
+<p>Also, you can use it with maven. First, add the clojars repository:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="pygments highlight"><code data-lang="xml"><span class="tok-nt">&lt;repository&gt;</span>
+    <span class="tok-nt">&lt;id&gt;</span>clojars.org<span class="tok-nt">&lt;/id&gt;</span>
+    <span class="tok-nt">&lt;url&gt;</span>http://clojars.org/repo<span class="tok-nt">&lt;/url&gt;</span>
+<span class="tok-nt">&lt;/repository&gt;</span></code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>Then for buddy:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="pygments highlight"><code data-lang="xml"><span class="tok-nt">&lt;dependency&gt;</span>
+    <span class="tok-nt">&lt;groupId&gt;</span>buddy<span class="tok-nt">&lt;/groupId&gt;</span>
+    <span class="tok-nt">&lt;artifactId&gt;</span>buddy<span class="tok-nt">&lt;/artifactId&gt;</span>
+    <span class="tok-nt">&lt;version&gt;</span>0.2.1<span class="tok-nt">&lt;/version&gt;</span>
+<span class="tok-nt">&lt;/dependency&gt;</span></code></pre>
+</div>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_get_the_code"><a class="link" href="#_get_the_code">3.4. Get the Code</a></h3>
+<div class="paragraph">
+<p><em>buddy</em> is opensource and is entirely developed on <a href="https://github.com/niwibe/buddy">github</a>.</p>
+</div>
+<div class="paragraph">
+<p>You can clone the public repository with this command:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="pygments highlight"><code data-lang="text">git clone https://github.com/niwibe/buddy</code></pre>
+</div>
+</div>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_common_web_security"><a class="link" href="#_common_web_security">4. Common Web Security</a></h2>
+<div class="sectionbody">
+<div class="sect2">
+<h3 id="_generic_message_signing"><a class="link" href="#_generic_message_signing">4.1. Generic Message Signing</a></h3>
+<div class="paragraph">
+<p>The "signing framework" of <em>buddy</em> is mainly based on django&#8217;s
+<a href="https://docs.djangoproject.com/en/1.6/topics/signing/">Cryptographic
+signing</a> library but extended with various signing algorithms and cryptography
+support.</p>
+</div>
+<div class="paragraph">
+<p>It can be used for several purposes:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>Safety send/store signed or encrypted messages.</p>
+</li>
+<li>
+<p>Safely storing session data in cookies instead of a database (It prevents others from changing session content)</p>
+</li>
+<li>
+<p>Self contained token generation for use it on completely stateless token based authentication.</p>
+</li>
+</ul>
+</div>
+<div class="admonitionblock note">
+<table>
+<tr>
+<td class="icon">
+<div class="title">Note</div>
+</td>
+<td class="content">
+this library is used by one of authentication backends for implement token based stateless authentication.
+</td>
+</tr>
+</table>
+</div>
+<table class="tableblock frame-all grid-all spread">
+<caption class="title">Table 1. Supported Algorithms</caption>
+<colgroup>
+<col style="width: 25%;">
+<col style="width: 25%;">
+<col style="width: 25%;">
+<col style="width: 25%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">Algorithm name</th>
+<th class="tableblock halign-left valign-top">Hash algorithms</th>
+<th class="tableblock halign-left valign-top">Keywords</th>
+<th class="tableblock halign-left valign-top">Priv/Pub Key?</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Elliptic Curve DSA</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">sha256, sha512</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>:es256</code>, <code>:es512</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Yes</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">RSASSA PSS</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">sha256, sha512</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>:ps256</code>, <code>:ps512</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Yes</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">RSASSA PKCS1 v1_5</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">sha256, sha512</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>:rs256</code>, <code>:rs256</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Yes</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">HMAC</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">sha256*, sha512</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>:hs256</code>, <code>:hs256</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">No</p></td>
+</tr>
+</tbody>
+</table>
+<div class="paragraph">
+<p>* indicates the default value.</p>
+</div>
+<div class="admonitionblock note">
+<table>
+<tr>
+<td class="icon">
+<div class="title">Note</div>
+</td>
+<td class="content">
+<div class="paragraph">
+<p>Only HMAC based algorithm supports plain text secret keys, If you want use
+Digital Signature instead of hmac, you must have a key pair (public and private).</p>
+</div>
+</td>
+</tr>
+</table>
+</div>
+<div class="sect3">
+<h4 id="_using_low_level_api"><a class="link" href="#_using_low_level_api">4.1.1. Using low level api</a></h4>
+<div class="paragraph">
+<p>There are four signing functions in <strong><code>buddy.sign.generic</code></strong> namespace: <code>sign</code>,
+<code>unsign</code>, <code>loads</code> and <code>dumps</code>.</p>
+</div>
+<div class="paragraph">
+<p><code>sign</code> and <code>unsign</code> are low level and work primarily with strings.</p>
+</div>
+<div class="listingblock">
+<div class="title">Unsigning previously signed data</div>
+<div class="content">
+<pre class="pygments highlight"><code data-lang="clojure"><span class="tok-p">(</span><span class="tok-nf">require</span> <span class="tok-o">&#39;</span><span class="tok-p">[</span><span class="tok-nv">buddy.sign.generic</span> <span class="tok-ss">:refer</span> <span class="tok-p">[</span><span class="tok-nv">sign</span> <span class="tok-nv">unsign</span><span class="tok-p">]])</span>
+
+<span class="tok-c1">;; Sign data</span>
+<span class="tok-p">(</span><span class="tok-k">def </span><span class="tok-nv">signed-data</span> <span class="tok-p">(</span><span class="tok-nf">sign</span> <span class="tok-s">&quot;mystring&quot;</span> <span class="tok-s">&quot;my-secret-key&quot;</span><span class="tok-p">))</span>
+
+<span class="tok-c1">;; signed-data should contain a string similar to:</span>
+<span class="tok-c1">;; &quot;mystring:f08dd937a438f43639d34a345910148cb933ea8ea0c2c306e8733e0255677e3d:MTM...&quot;</span>
+
+<span class="tok-c1">;; Unsign previosly signed data</span>
+<span class="tok-p">(</span><span class="tok-k">def </span><span class="tok-nv">unsigned-data</span> <span class="tok-p">(</span><span class="tok-nf">unsign</span> <span class="tok-nv">signed-data</span> <span class="tok-s">&quot;my-secret-key&quot;</span><span class="tok-p">))</span>
+
+<span class="tok-c1">;; unsigned-data should contain the original string: &quot;mystring&quot;</span></code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>The signing process consists of appending signatures to the original
+string and separating the signature with a predefined separator (default
+":" char).</p>
+</div>
+<div class="paragraph">
+<p>Each signature has a timestamp attached (with millisecond of accuracy) so you can
+invalidate signed messages based on their age.</p>
+</div>
+<div class="listingblock">
+<div class="title">Invalidate signed data using timestamp</div>
+<div class="content">
+<pre class="pygments highlight"><code data-lang="clojure"><span class="tok-c1">;; Unsign with max-age (15min)</span>
+<span class="tok-p">(</span><span class="tok-k">def </span><span class="tok-nv">unsigned-data</span> <span class="tok-p">(</span><span class="tok-nf">unsign</span> <span class="tok-nv">signed-data</span> <span class="tok-s">&quot;my-secret-key&quot;</span> <span class="tok-p">{</span><span class="tok-ss">:max-age</span> <span class="tok-p">(</span><span class="tok-nb">* </span><span class="tok-mi">15</span> <span class="tok-mi">60</span><span class="tok-p">)}))</span>
+
+<span class="tok-c1">;; unsigned-data should contain a nil value if the signing date is</span>
+<span class="tok-c1">;; older than 15 min.</span></code></pre>
+</div>
+</div>
+</div>
+<div class="sect3">
+<h4 id="_protecting_complex_data_structures"><a class="link" href="#_protecting_complex_data_structures">4.1.2. Protecting complex data structures</a></h4>
+<div class="paragraph">
+<p>If you wish to protect a native data structure (hash-map, hash-set,
+list, vector, etc&#8230;&#8203;)  you can do so using the signing <code>dumps</code> and
+<code>loads</code> functions.</p>
+</div>
+<div class="paragraph">
+<p>They accept the same parameters as their low level friends, but can also sign
+more complex data.</p>
+</div>
+<div class="listingblock">
+<div class="title">Sign/Unsign Clojure hash-map</div>
+<div class="content">
+<pre class="pygments highlight"><code data-lang="clojure"><span class="tok-p">(</span><span class="tok-nf">require</span> <span class="tok-o">&#39;</span><span class="tok-p">[</span><span class="tok-nv">buddy.sign.generic</span> <span class="tok-ss">:refer</span> <span class="tok-p">[</span><span class="tok-nv">dumps</span> <span class="tok-nv">loads</span><span class="tok-p">]])</span>
+
+<span class="tok-c1">;; Sign data</span>
+<span class="tok-p">(</span><span class="tok-k">def </span><span class="tok-nv">signed-data</span> <span class="tok-p">(</span><span class="tok-nf">dumps</span> <span class="tok-p">{</span><span class="tok-ss">:userid</span> <span class="tok-mi">1</span><span class="tok-p">}</span> <span class="tok-s">&quot;my-secret-key&quot;</span><span class="tok-p">))</span>
+
+<span class="tok-c1">;; signed-data should contain a string similar to:</span>
+<span class="tok-c1">;; &quot;TlBZARlgGwAAAAIOAAAABnVzZXJpZCsAAAAAAAAAAQ:59d9e8063ad80f6abd3092b45857810b10f5...&quot;</span>
+
+<span class="tok-c1">;; Unsign previously signed data</span>
+<span class="tok-p">(</span><span class="tok-k">def </span><span class="tok-nv">unsigned-data</span> <span class="tok-p">(</span><span class="tok-nf">loads</span> <span class="tok-nv">signed-data</span> <span class="tok-s">&quot;my-secret-key&quot;</span><span class="tok-p">))</span>
+
+<span class="tok-c1">;; unsigned-data should contain a original map: {:userid 1}</span></code></pre>
+</div>
+</div>
+<div class="admonitionblock note">
+<table>
+<tr>
+<td class="icon">
+<div class="title">Note</div>
+</td>
+<td class="content">
+it uses a Clojure serialization library <a href="https://github.com/ptaoussanis/nippy">Nippy</a>
+</td>
+</tr>
+</table>
+</div>
+</div>
+<div class="sect3">
+<h4 id="_using_digital_signature_algorithms"><a class="link" href="#_using_digital_signature_algorithms">4.1.3. Using Digital Signature algorithms</a></h4>
+<div class="paragraph">
+<p>For use anyone of digital signature algorithms you must have a private/public key. If you
+don&#8217;t have one, don&#8217;t worry - it&#8217;s very easy to generate one using <strong>openssl</strong>.</p>
+</div>
+<div class="sect4">
+<h5 id="_elliptic_curve_dsa"><a class="link" href="#_elliptic_curve_dsa">Elliptic Curve DSA</a></h5>
+<div class="listingblock">
+<div class="content">
+<pre class="pygments highlight"><code data-lang="bash"><span class="tok-c"># Generating params file</span>
+openssl ecparam -name prime256v1 -out ecparams.pem
+
+<span class="tok-c"># Generate a private key from params file</span>
+openssl ecparam -in ecparams.pem -genkey -noout -out ecprivkey.pem
+
+<span class="tok-c"># Generate a public key from private key</span>
+openssl ec -in ecprivkey.pem -pubout -out ecpubkey.pem</code></pre>
+</div>
+</div>
+</div>
+<div class="sect4">
+<h5 id="_rsa_based_signatures"><a class="link" href="#_rsa_based_signatures">RSA based signatures</a></h5>
+<div class="listingblock">
+<div class="content">
+<pre class="pygments highlight"><code data-lang="bash"><span class="tok-c"># Generate aes256 encrypted private key</span>
+openssl genrsa -aes256 -out privkey.pem 2048
+
+<span class="tok-c"># Generate public key from previously created private key.</span>
+openssl rsa -pubout -in privkey.pem -out pubkey.pem</code></pre>
+</div>
+</div>
+</div>
+<div class="sect4">
+<h5 id="_using_digital_signature_keys_for_signing"><a class="link" href="#_using_digital_signature_keys_for_signing">Using Digital Signature Keys for signing</a></h5>
+<div class="paragraph">
+<p>Now, having generated a key pair, you can sign your messages with the
+previously mentioned Digital Signature algorithms.</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="pygments highlight"><code data-lang="clojure"><span class="tok-p">(</span><span class="tok-nf">require</span> <span class="tok-o">&#39;</span><span class="tok-p">[</span><span class="tok-nv">buddy.sign.generic</span> <span class="tok-ss">:refer</span> <span class="tok-p">[</span><span class="tok-nv">sign</span> <span class="tok-nv">unsign</span><span class="tok-p">]])</span>
+
+<span class="tok-c1">;; Import namespace for managing/reading keys</span>
+<span class="tok-p">(</span><span class="tok-nf">require</span> <span class="tok-o">&#39;</span><span class="tok-p">[</span><span class="tok-nv">buddy.core.keys</span> <span class="tok-ss">:as</span> <span class="tok-nv">keys</span><span class="tok-p">])</span>
+
+<span class="tok-c1">;; Create keys instances</span>
+<span class="tok-p">(</span><span class="tok-k">def </span><span class="tok-nv">ec-privkey</span> <span class="tok-p">(</span><span class="tok-nf">keys/private-key</span> <span class="tok-s">&quot;ecprivkey.pem&quot;</span><span class="tok-p">))</span>
+<span class="tok-p">(</span><span class="tok-k">def </span><span class="tok-nv">ec-pubkey</span> <span class="tok-p">(</span><span class="tok-nf">keys/public-key</span> <span class="tok-s">&quot;ecpubkey.pem&quot;</span><span class="tok-p">))</span>
+
+<span class="tok-c1">;; Use them like plain secret password with hmac algorithms for sign</span>
+<span class="tok-p">(</span><span class="tok-k">def </span><span class="tok-nv">signed-data</span> <span class="tok-p">(</span><span class="tok-nf">sign</span> <span class="tok-s">&quot;mystring&quot;</span> <span class="tok-nv">ec-privkey</span> <span class="tok-p">{</span><span class="tok-ss">:alg</span> <span class="tok-ss">:ec256</span><span class="tok-p">}))</span>
+
+<span class="tok-c1">;; And unsign</span>
+<span class="tok-p">(</span><span class="tok-k">def </span><span class="tok-nv">unsigned-data</span> <span class="tok-p">(</span><span class="tok-nf">unsign</span> <span class="tok-nv">signed-data</span> <span class="tok-nv">ec-pubkey</span> <span class="tok-p">{</span><span class="tok-ss">:alg</span> <span class="tok-ss">:ec256</span><span class="tok-p">}))</span></code></pre>
+</div>
+</div>
+</div>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_json_web_signature_token"><a class="link" href="#_json_web_signature_token">4.2. Json Web Signature/Token</a></h3>
+<div class="paragraph">
+<p>~<strong>New in version:</strong> 0.2~</p>
+</div>
+<div class="paragraph">
+<p>JSON Web Signature (JWS) represents content secured with digital
+signatures or Message Authentication Codes (MACs) using JavaScript
+Object Notation (JSON) based data structures.</p>
+</div>
+<div class="paragraph">
+<p>List of rfcs related to this feature:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p><a href="http://tools.ietf.org/html/draft-ietf-oauth-json-web-token-20" class="bare">http://tools.ietf.org/html/draft-ietf-oauth-json-web-token-20</a></p>
+</li>
+<li>
+<p><a href="http://tools.ietf.org/html/draft-ietf-jose-json-web-algorithms-26" class="bare">http://tools.ietf.org/html/draft-ietf-jose-json-web-algorithms-26</a></p>
+</li>
+<li>
+<p><a href="http://tools.ietf.org/html/draft-ietf-jose-json-web-signature-26" class="bare">http://tools.ietf.org/html/draft-ietf-jose-json-web-signature-26</a></p>
+</li>
+</ul>
+</div>
+<table class="tableblock frame-all grid-all spread">
+<caption class="title">Table 2. Supported Algorithms</caption>
+<colgroup>
+<col style="width: 25%;">
+<col style="width: 25%;">
+<col style="width: 25%;">
+<col style="width: 25%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">Algorithm name</th>
+<th class="tableblock halign-left valign-top">Hash algorithms</th>
+<th class="tableblock halign-left valign-top">Keywords</th>
+<th class="tableblock halign-left valign-top">Priv/Pub Key?</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Elliptic Curve DSA</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">sha256, sha512</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>:es256</code>, <code>:es512</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Yes</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">RSASSA PSS</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">sha256, sha512</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>:ps256</code>, <code>:ps512</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Yes</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">RSASSA PKCS1 v1_5</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">sha256, sha512</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>:rs256</code>, <code>:rs256</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Yes</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">HMAC</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">sha256*, sha512</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>:hs256</code>, <code>:hs256</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">No</p></td>
+</tr>
+</tbody>
+</table>
+<div class="admonitionblock note">
+<table>
+<tr>
+<td class="icon">
+<div class="title">Note</div>
+</td>
+<td class="content">
+almost all specified algorithms in jws-algorithms rfc are implemented. Add
+support for missing algorithms is very easy to add possibly them will be added in
+the near future (pull-requests welcome).
+</td>
+</tr>
+</table>
+</div>
+<div class="sect3">
+<h4 id="_signing_data"><a class="link" href="#_signing_data">4.2.1. Signing data</a></h4>
+<div class="paragraph">
+<p>Due to the nature of storing format, the input is restricted mainly to json objects
+on the current version.</p>
+</div>
+<div class="listingblock">
+<div class="title">Example sign data using JWS</div>
+<div class="content">
+<pre class="pygments highlight"><code data-lang="clojure"><span class="tok-p">(</span><span class="tok-nf">require</span> <span class="tok-o">&#39;</span><span class="tok-p">[</span><span class="tok-nv">buddy.sign.jws</span> <span class="tok-ss">:as</span> <span class="tok-nv">jws</span><span class="tok-p">])</span>
+
+<span class="tok-c1">;; Sign data using default `:hs256` algorithm that does not</span>
+<span class="tok-c1">;; requres special priv/pub key.</span>
+<span class="tok-p">(</span><span class="tok-k">def </span><span class="tok-nv">data</span> <span class="tok-p">(</span><span class="tok-nf">jws/sign</span> <span class="tok-p">{</span><span class="tok-ss">:userid</span> <span class="tok-mi">1</span><span class="tok-p">}</span> <span class="tok-s">&quot;secret&quot;</span><span class="tok-p">))</span>
+
+<span class="tok-c1">;; data should contain string similar to:</span>
+<span class="tok-c1">;; &quot;eyJ0eXAiOiJKV1MiLCJhbGciOiJIUzI1NiJ9.eyJ1c2VyaWQiOjF9.zjenOuIAEG-...&quot;</span>
+
+<span class="tok-p">(</span><span class="tok-nf">jws/unsign</span> <span class="tok-nv">data</span> <span class="tok-s">&quot;secret&quot;</span><span class="tok-p">)</span>
+<span class="tok-c1">;; =&gt; {:userid 1}</span></code></pre>
+</div>
+</div>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_password_hashers"><a class="link" href="#_password_hashers">4.3. Password Hashers</a></h3>
+<div class="paragraph">
+<p>Another important part of a good authentication/authorization library
+is providing some facilities for generating secure passwords.</p>
+</div>
+<div class="paragraph">
+<p><em>buddy</em> comes with a few functions for generating and verifying
+passwords such as the widely used password derivation algorithms:
+bcrypt and pbkdf2.</p>
+</div>
+<table class="tableblock frame-all grid-all spread">
+<caption class="title">Table 3. Supported password hashers algorithms</caption>
+<colgroup>
+<col style="width: 33%;">
+<col style="width: 33%;">
+<col style="width: 33%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">Hash algorithm name</th>
+<th class="tableblock halign-left valign-top">Namespace</th>
+<th class="tableblock halign-left valign-top">Observations</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Bcrypt</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>buddy.hashers.bcrypt</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Recommended</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Pbkdf2</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>buddy.hashers.pbkdf2</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Recommended</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Scrypt</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>buddy.hashers.scrypt</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Recommended</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">sha256</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>buddy.hashers.sha256</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Not recommended</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">md5</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>buddy.hashers.md5</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Broken! Not Recommended</p></td>
+</tr>
+</tbody>
+</table>
+<div class="paragraph">
+<p>The hashers  consist in two functions: <code>make-password</code> and <code>check-password</code>.</p>
+</div>
+<div class="paragraph">
+<p>The purpose of these functions is obvious: creating a new password,
+and verifying incoming plain text password with previously created
+hash.</p>
+</div>
+<div class="listingblock">
+<div class="title">Example of creating and verifying a new hash</div>
+<div class="content">
+<pre class="pygments highlight"><code data-lang="clojure"><span class="tok-p">(</span><span class="tok-nf">require</span> <span class="tok-o">&#39;</span><span class="tok-p">[</span><span class="tok-nv">buddy.hashers.bcrypt</span> <span class="tok-ss">:as</span> <span class="tok-nv">hs</span><span class="tok-p">])</span>
+
+<span class="tok-p">(</span><span class="tok-k">def </span><span class="tok-nv">myhash</span> <span class="tok-p">(</span><span class="tok-nf">hs/make-password</span> <span class="tok-s">&quot;secretpassword&quot;</span><span class="tok-p">))</span>
+<span class="tok-p">(</span><span class="tok-k">def </span><span class="tok-nv">ok</span> <span class="tok-p">(</span><span class="tok-nf">hs/check-password</span> <span class="tok-s">&quot;secretpassword&quot;</span> <span class="tok-nv">myhash</span><span class="tok-p">))</span>
+
+<span class="tok-c1">;; ok var reference should contain true</span></code></pre>
+</div>
+</div>
+<div class="admonitionblock note">
+<table>
+<tr>
+<td class="icon">
+<div class="title">Note</div>
+</td>
+<td class="content">
+<div class="paragraph">
+<p><code>make-password</code> accepts distinct parameters depending on hasher implementation and all functions
+work with strings instead of bytes (unlike cryptographic hash functions).</p>
+</div>
+</td>
+</tr>
+</table>
+</div>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_authentication_for_ring_compojure"><a class="link" href="#_authentication_for_ring_compojure">5. Authentication for Ring &amp; Compojure</a></h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>Additionally, buddy commes with web library support for authentication
+and authorization. It mainly works with ring (and compojure, since it
+is ring-based) but in the future it can be extended for work with
+other libraries.</p>
+</div>
+<div class="sect2">
+<h3 id="_authentication"><a class="link" href="#_authentication">5.1. Authentication</a></h3>
+<div class="paragraph">
+<p>Buddy differs with other libraries because it takes very different approach for handling
+authentication. In first step, it clearly split authentication and authorization in two
+separated steps and in second step, implements it using "backends" and protocols for easy
+extensibility.</p>
+</div>
+<div class="paragraph">
+<p>If you are not happy with builtin backends, you can implement your own and use it with
+buddy middlewares without any problem.</p>
+</div>
+<div class="paragraph">
+<p>Authentication in buddy, has two phases:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>Parse: parsing incoming request headers, parameters etc&#8230;&#8203;</p>
+</li>
+<li>
+<p>Authenticate: having parsed data do authentication process, such as call auth function,
+unsign self contained token, etc&#8230;&#8203;</p>
+</li>
+</ul>
+</div>
+<table class="tableblock frame-all grid-all spread">
+<caption class="title">Table 4. Here is a list of built-in authentication backends:</caption>
+<colgroup>
+<col style="width: 33%;">
+<col style="width: 33%;">
+<col style="width: 33%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">Backend name</th>
+<th class="tableblock halign-left valign-top">Namespace</th>
+<th class="tableblock halign-left valign-top">Observations</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Http Basic</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>buddy.auth.backends.httpbasic</code></p></td>
+<td class="tableblock halign-left valign-top"></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Session</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>buddy.auth.backends.session</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Can be combined with password hashers.</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Token</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>buddy.auth.backends.token</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Can be combined with password hashers and high level signing library for generate tokens.</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">SignedToken</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>buddy.auth.backends.token</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Based on the high level signing framework.</p></td>
+</tr>
+</tbody>
+</table>
+<div class="sect3">
+<h4 id="_http_basic"><a class="link" href="#_http_basic">5.1.1. HTTP Basic</a></h4>
+<div class="paragraph">
+<p>The HTTP Basic authentication backend is one of the simplest and most insecure authentication
+systems, but is a good first step for understand how buddy authentication works.</p>
+</div>
+<div class="listingblock">
+<div class="title">Simple ring handler/view for example purpose.</div>
+<div class="content">
+<pre class="pygments highlight"><code data-lang="clojure"><span class="tok-p">(</span><span class="tok-nf">require</span> <span class="tok-o">&#39;</span><span class="tok-p">[</span><span class="tok-nv">buddy.auth</span> <span class="tok-ss">:refer</span> <span class="tok-p">(</span><span class="tok-nf">authenticated?</span><span class="tok-p">)])</span>
+<span class="tok-p">(</span><span class="tok-nf">require</span> <span class="tok-o">&#39;</span><span class="tok-p">[</span><span class="tok-nv">ring.util.response</span> <span class="tok-ss">:refer</span> <span class="tok-p">(</span><span class="tok-nf">response</span><span class="tok-p">)])</span>
+
+<span class="tok-c1">;; Simple ring handler. This can also be a compojure router handler</span>
+<span class="tok-c1">;; or anything else compatible with ring middlewares.</span>
+<span class="tok-p">(</span><span class="tok-kd">defn </span><span class="tok-nv">handler</span>
+  <span class="tok-p">[</span><span class="tok-nv">request</span><span class="tok-p">]</span>
+  <span class="tok-p">(</span><span class="tok-k">if </span><span class="tok-p">(</span><span class="tok-nf">authenticated?</span> <span class="tok-nv">request</span><span class="tok-p">)</span>
+    <span class="tok-p">(</span><span class="tok-nf">response</span> <span class="tok-p">(</span><span class="tok-nf">format</span> <span class="tok-s">&quot;Hello %s&quot;</span> <span class="tok-p">(</span><span class="tok-ss">:identity</span> <span class="tok-nv">request</span><span class="tok-p">)))</span>
+    <span class="tok-p">(</span><span class="tok-nf">response</span> <span class="tok-s">&quot;Hello Anonymous&quot;</span><span class="tok-p">)))</span></code></pre>
+</div>
+</div>
+<div class="listingblock">
+<div class="title">Create an instance of authentication backend.</div>
+<div class="content">
+<pre class="pygments highlight"><code data-lang="clojure"><span class="tok-p">(</span><span class="tok-nf">require</span> <span class="tok-o">&#39;</span><span class="tok-p">[</span><span class="tok-nv">buddy.auth.backends.httpbasic</span> <span class="tok-ss">:refer</span> <span class="tok-p">[</span><span class="tok-nv">http-basic-backend</span><span class="tok-p">]])</span>
+
+<span class="tok-c1">;; Http Basic backend in this case requires one function with parameter</span>
+<span class="tok-c1">;; that takes a responsability to identify the incoming request.</span>
+
+<span class="tok-c1">;; The required function is caled in authentication of parsed data</span>
+<span class="tok-c1">;; and it receives the current ring request and parsed data from parse</span>
+<span class="tok-c1">;; phase of authentication.</span>
+<span class="tok-c1">;;</span>
+<span class="tok-c1">;; This function should return a non-nil value that</span>
+<span class="tok-c1">;; is automatically stored on :identity key on request</span>
+<span class="tok-c1">;; If it returns nil, a request is considered unauthenticated.</span>
+
+<span class="tok-p">(</span><span class="tok-kd">defn </span><span class="tok-nv">my-authfn</span>
+  <span class="tok-p">[</span><span class="tok-nv">request</span>, <span class="tok-nv">authdata</span><span class="tok-p">]</span>
+  <span class="tok-p">(</span><span class="tok-k">let </span><span class="tok-p">[</span><span class="tok-nv">username</span> <span class="tok-p">(</span><span class="tok-ss">:username</span> <span class="tok-nv">authdata</span><span class="tok-p">)</span>
+        <span class="tok-nv">password</span> <span class="tok-p">(</span><span class="tok-ss">:password</span> <span class="tok-nv">authdata</span><span class="tok-p">)]</span>
+    <span class="tok-nv">username</span><span class="tok-p">))</span>
+
+<span class="tok-p">(</span><span class="tok-k">def </span><span class="tok-nv">backend</span> <span class="tok-p">(</span><span class="tok-nf">http-basic-backend</span> <span class="tok-p">{</span><span class="tok-ss">:realm</span> <span class="tok-s">&quot;MyApi&quot;</span> <span class="tok-ss">:authfn</span> <span class="tok-nv">my-authfn</span><span class="tok-p">}))</span></code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>Now having simple view function and backend defined, you should wrap it
+in a standard ring middleware way with buddy&#8217;s authentication middleware.</p>
+</div>
+<div class="listingblock">
+<div class="title">Declare auth function and create ring app with wrapped handler.</div>
+<div class="content">
+<pre class="pygments highlight"><code data-lang="clojure"><span class="tok-p">(</span><span class="tok-nf">require</span> <span class="tok-o">&#39;</span><span class="tok-p">[</span><span class="tok-nv">buddy.auth.middleware</span> <span class="tok-ss">:refer</span> <span class="tok-p">[</span><span class="tok-nv">wrap-authentication</span><span class="tok-p">]])</span>
+
+<span class="tok-c1">;; Define the main handler with *app* name wrapping it</span>
+<span class="tok-c1">;; with authentication middleware using an instance of</span>
+<span class="tok-c1">;; just created http-basic backend.</span>
+
+<span class="tok-c1">;; Define app var with handler wrapped with buddy&#39;s authentication</span>
+<span class="tok-c1">;; middleware using just previously defined backend.</span>
+
+<span class="tok-p">(</span><span class="tok-k">def </span><span class="tok-nv">app</span> <span class="tok-p">(</span><span class="tok-nf">wrap-authentication</span> <span class="tok-nv">handler</span> <span class="tok-nv">backend</span><span class="tok-p">))</span></code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>Now, all incoming request with basic auth header are properly parsed and
+request with <code>:identity</code> forwarded to real handler or next middleware.</p>
+</div>
+</div>
+<div class="sect3">
+<h4 id="_session"><a class="link" href="#_session">5.1.2. Session</a></h4>
+<div class="paragraph">
+<p>The session backend has the simplest implementation because it relies
+entirely on ring session support.</p>
+</div>
+<div class="paragraph">
+<p>It checks the <code>:identity</code> key on session to authenticate the user with its
+value. The value is identified as logged user if it contains any logical true
+value.</p>
+</div>
+<div class="paragraph">
+<p>See <a href="#examples">examples section</a> for complete examples for this backend.</p>
+</div>
+</div>
+<div class="sect3">
+<h4 id="_token"><a class="link" href="#_token">5.1.3. Token</a></h4>
+<div class="sect4">
+<h5 id="_standard"><a class="link" href="#_standard">Standard</a></h5>
+<div class="paragraph">
+<p>This backend works much like the basic auth backend with the difference that this works with
+tokens that can be unpredictable.</p>
+</div>
+<div class="paragraph">
+<p>It parses a token and passes it to <em>authfn</em> for authentication.</p>
+</div>
+</div>
+<div class="sect4">
+<h5 id="_signed_stateless"><a class="link" href="#_signed_stateless">Signed/Stateless</a></h5>
+<div class="paragraph">
+<p>This backend is very similar to standard token backend previously explained, but instead
+of relying on <em>authfn</em> for identify a token, it uses stateless tokens (contains all needed
+data in a token, without storing any information about token on database as ex&#8230;&#8203;).</p>
+</div>
+<div class="paragraph">
+<p>This backend relies on the security of the high level signing framework for user authentication.</p>
+</div>
+<div class="paragraph">
+<p>Reference: <a href="http://lucumr.pocoo.org/2013/11/17/my-favorite-database/" class="bare">http://lucumr.pocoo.org/2013/11/17/my-favorite-database/</a></p>
+</div>
+</div>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_authorization"><a class="link" href="#_authorization">5.2. Authorization</a></h3>
+<div class="paragraph">
+<p><em>buddy</em> also comes with an authorization system.</p>
+</div>
+<div class="paragraph">
+<p>The authorization system is split into two parts:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>access rules system, using rules and logical combinators that applies to specific urls (matching
+them using regular expressions) or specific handlers wrapping with the <code>restricted</code> decorator.</p>
+</li>
+<li>
+<p>generic authorization system using exceptions for fast return and unauthorized-handler function
+for handle unauthorized requsts.</p>
+</li>
+</ul>
+</div>
+<div class="sect3">
+<h4 id="_access_rules_system"><a class="link" href="#_access_rules_system">5.2.1. Access Rules System</a></h4>
+<div class="sect4">
+<h5 id="_introduction_2"><a class="link" href="#_introduction_2">Introduction</a></h5>
+<div class="paragraph">
+<p>The access rules are another part of the authorization system, and consist of a list of rules
+for one or more uri&#8217;s using regular expressions. One rule consists of a regular expression with its
+associated handler (function) with authorization logic.</p>
+</div>
+<div class="listingblock">
+<div class="title">Simple rule definition example.</div>
+<div class="content">
+<pre class="pygments highlight"><code data-lang="clojure"><span class="tok-p">{</span><span class="tok-ss">:pattern</span> <span class="tok-o">#</span><span class="tok-s">&quot;^/admin/.*&quot;</span>
+ <span class="tok-ss">:handler</span> <span class="tok-nv">admin-access</span><span class="tok-p">}</span></code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>Function with authorization logic has the following appearance:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="pygments highlight"><code data-lang="clojure"><span class="tok-p">(</span><span class="tok-nf">require</span> <span class="tok-o">&#39;</span><span class="tok-p">[</span><span class="tok-nv">buddy.auth</span> <span class="tok-ss">:refer</span> <span class="tok-p">(</span><span class="tok-nf">authenticated?</span><span class="tok-p">)])</span>
+
+<span class="tok-p">(</span><span class="tok-kd">defn </span><span class="tok-nv">should-be-authenticated</span>
+  <span class="tok-p">[</span><span class="tok-nv">request</span><span class="tok-p">]</span>
+  <span class="tok-p">(</span><span class="tok-nf">authenticated?</span> <span class="tok-nv">request</span><span class="tok-p">))</span>
+
+<span class="tok-p">(</span><span class="tok-kd">defn </span><span class="tok-nv">should-be-safe</span>
+  <span class="tok-p">[</span><span class="tok-nv">request</span><span class="tok-p">]</span>
+  <span class="tok-p">(</span><span class="tok-k">let </span><span class="tok-p">[</span><span class="tok-nv">method</span> <span class="tok-p">(</span><span class="tok-ss">:method</span> <span class="tok-nv">request</span><span class="tok-p">)]</span>
+    <span class="tok-p">(</span><span class="tok-k">if </span><span class="tok-p">(</span><span class="tok-nb">or </span><span class="tok-p">(</span><span class="tok-nb">= </span><span class="tok-nv">method</span> <span class="tok-ss">:get</span><span class="tok-p">)</span> <span class="tok-p">(</span><span class="tok-nb">= </span><span class="tok-nv">method</span> <span class="tok-ss">:head</span><span class="tok-p">))</span>
+      <span class="tok-nv">true</span>
+      <span class="tok-nv">false</span><span class="tok-p">)))</span></code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>It should return a boolean value with true when request is authorized and false
+for unauthorized.</p>
+</div>
+<div class="paragraph">
+<p>Also, you can combine multiple rules using logical operators in an other rule:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="pygments highlight"><code data-lang="clojure"><span class="tok-p">{</span><span class="tok-ss">:pattern</span> <span class="tok-o">#</span><span class="tok-s">&quot;^/admin/.*&quot;</span>
+ <span class="tok-ss">:handler</span> <span class="tok-p">{</span><span class="tok-ss">:or</span> <span class="tok-p">[</span><span class="tok-nv">should-be-authenticated</span>
+                <span class="tok-nv">should-be-safe</span><span class="tok-p">]}}</span></code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>You can nesting rules combinators as you want:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="pygments highlight"><code data-lang="clojure"><span class="tok-p">{</span><span class="tok-ss">:pattern</span> <span class="tok-o">#</span><span class="tok-s">&quot;^/admin/.*&quot;</span>
+ <span class="tok-ss">:handler</span> <span class="tok-p">{</span><span class="tok-ss">:or</span> <span class="tok-p">[</span><span class="tok-nv">should-be-admin</span>
+                <span class="tok-p">{</span><span class="tok-ss">:and</span> <span class="tok-p">[</span><span class="tok-nv">should-be-safe</span>
+                       <span class="tok-nv">should-be-authenticated</span><span class="tok-p">]}]}}</span></code></pre>
+</div>
+</div>
+</div>
+<div class="sect4">
+<h5 id="_usage"><a class="link" href="#_usage">Usage</a></h5>
+<div class="paragraph">
+<p>Now, knowing how rules can be defined, the question is, How can we use
+it for access control for routes?</p>
+</div>
+<div class="paragraph">
+<p>In this case you have two ways:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>Define a separated vector of handlers and pass it to authorization middleware</p>
+</li>
+<li>
+<p>Use more granular <code>restricted</code> decorator/middleware for specific functions.</p>
+</li>
+</ul>
+</div>
+<div class="paragraph">
+<p>For wrap separated defined access rules, you should use <code>wrap-access-rules</code>
+buddy middleware. Here some examples of how to setup authorization for you ring
+app:</p>
+</div>
+<div class="listingblock">
+<div class="title">Define a list of rules</div>
+<div class="content">
+<pre class="pygments highlight"><code data-lang="clojure"><span class="tok-c1">;; Rules handlers used on this example are omited for code clarity</span>
+<span class="tok-c1">;; and them repsents a authorization logic for its name.</span>
+
+<span class="tok-p">(</span><span class="tok-k">def </span><span class="tok-nv">rules</span> <span class="tok-p">[{</span><span class="tok-ss">:pattern</span> <span class="tok-o">#</span><span class="tok-s">&quot;^/admin/.*&quot;</span>
+             <span class="tok-ss">:handler</span> <span class="tok-p">{</span><span class="tok-ss">:or</span> <span class="tok-p">[</span><span class="tok-nv">admin-access</span> <span class="tok-nv">operator-access</span><span class="tok-p">]}}</span>
+            <span class="tok-p">{</span><span class="tok-ss">:pattern</span> <span class="tok-o">#</span><span class="tok-s">&quot;^/login$&quot;</span>
+             <span class="tok-ss">:handler</span> <span class="tok-nv">any-access</span><span class="tok-p">}</span>
+            <span class="tok-p">{</span><span class="tok-ss">:pattern</span> <span class="tok-o">#</span><span class="tok-s">&quot;^/.*&quot;</span>
+             <span class="tok-ss">:handler</span> <span class="tok-nv">authenticated-access</span><span class="tok-p">}])</span></code></pre>
+</div>
+</div>
+<div class="listingblock">
+<div class="title">Define default behavior for not authorized requests</div>
+<div class="content">
+<pre class="pygments highlight"><code data-lang="clojure"><span class="tok-c1">;; This functions works like default ring compatible handler</span>
+<span class="tok-c1">;; and should implement the default behavior for request</span>
+<span class="tok-c1">;; that are not authorized by any defined rule</span>
+
+<span class="tok-p">(</span><span class="tok-kd">defn </span><span class="tok-nv">reject-handler</span>
+  <span class="tok-p">[</span><span class="tok-nv">request</span><span class="tok-p">]</span>
+  <span class="tok-p">{</span><span class="tok-ss">:status</span> <span class="tok-mi">403</span>
+   <span class="tok-ss">:headers</span> <span class="tok-p">{}</span>
+   <span class="tok-ss">:body</span> <span class="tok-s">&quot;Not authorized&quot;</span><span class="tok-p">})</span></code></pre>
+</div>
+</div>
+<div class="listingblock">
+<div class="title">Wrap your handler with access rules (and run with jetty as example)</div>
+<div class="content">
+<pre class="pygments highlight"><code data-lang="clojure"><span class="tok-p">(</span><span class="tok-kd">defn </span><span class="tok-nv">-main</span>
+  <span class="tok-p">[</span><span class="tok-o">&amp;</span> <span class="tok-nv">args</span><span class="tok-p">]</span>
+  <span class="tok-p">(</span><span class="tok-k">let </span><span class="tok-p">[</span><span class="tok-nv">options</span> <span class="tok-p">{</span><span class="tok-ss">:rules</span> <span class="tok-nv">rules</span> <span class="tok-ss">:reject-handler</span> <span class="tok-nv">reject-handler</span><span class="tok-p">}</span>
+        <span class="tok-nv">app</span>     <span class="tok-p">(</span><span class="tok-nf">wrap-access-rules</span> <span class="tok-nv">your-app-handler</span> <span class="tok-nv">options</span><span class="tok-p">)]</span>
+    <span class="tok-p">(</span><span class="tok-nf">run-jetty</span> <span class="tok-nv">app</span> <span class="tok-p">{</span><span class="tok-ss">:port</span> <span class="tok-mi">9090</span><span class="tok-p">}))</span></code></pre>
+</div>
+</div>
+<div class="admonitionblock note">
+<table>
+<tr>
+<td class="icon">
+<div class="title">Note</div>
+</td>
+<td class="content">
+An unauthorized exception is raised if no reject handler is
+specified. These exceptions can be captured by generic authorization
+middleware.
+</td>
+</tr>
+</table>
+</div>
+<div class="admonitionblock note">
+<table>
+<tr>
+<td class="icon">
+<div class="title">Note</div>
+</td>
+<td class="content">
+If request uri not match any regular expression, the default policy enter in
+action. Default policy in buddy is <strong>allow</strong> but you can change the default behavior
+specifiec <code>:reject</code> value to <code>:policy</code> option.
+</td>
+</tr>
+</table>
+</div>
+<div class="paragraph">
+<p>If you don&#8217;t want a external rules list and simple want apply some rules to specific
+ring views/handlers, your can use <code>restrict</code> decorator/middleware:</p>
+</div>
+<div class="listingblock">
+<div class="title">Simple example using compojure routes.</div>
+<div class="content">
+<pre class="pygments highlight"><code data-lang="clojure"><span class="tok-p">(</span><span class="tok-nf">require</span> <span class="tok-o">&#39;</span><span class="tok-p">[</span><span class="tok-nv">buddy.auth.accessrules</span> <span class="tok-ss">:refer</span> <span class="tok-p">[</span><span class="tok-nv">restrict</span><span class="tok-p">]])</span>
+
+<span class="tok-p">(</span><span class="tok-kd">defn </span><span class="tok-nv">home-controller</span>
+  <span class="tok-p">[</span><span class="tok-nv">request</span><span class="tok-p">]</span>
+  <span class="tok-p">{</span><span class="tok-ss">:body</span> <span class="tok-s">&quot;Hello World&quot;</span> <span class="tok-ss">:status</span> <span class="tok-mi">200</span><span class="tok-p">})</span>
+
+
+<span class="tok-p">(</span><span class="tok-nf">defroutes</span> <span class="tok-nv">app</span>
+  <span class="tok-p">(</span><span class="tok-nf">GET</span> <span class="tok-s">&quot;/&quot;</span> <span class="tok-p">[]</span> <span class="tok-p">(</span><span class="tok-nf">restrict</span> <span class="tok-nv">home-controller</span> <span class="tok-p">{</span><span class="tok-ss">:rule</span> <span class="tok-nv">should-be-authenticated</span>
+                                         <span class="tok-ss">:reject-handler</span> <span class="tok-nv">reject-handler</span><span class="tok-p">}))</span></code></pre>
+</div>
+</div>
+</div>
+</div>
+<div class="sect3">
+<h4 id="_generic_authorization"><a class="link" href="#_generic_authorization">5.2.2. Generic authorization</a></h4>
+<div class="paragraph">
+<p>An other way to handle not authorized exceptions is using exceptions. It is less functional
+but in some sircumstances can work very well.</p>
+</div>
+<div class="paragraph">
+<p>But how it works? It is very simple, the authorization backend wraps everything in
+a try/catch block watching only specific exception, and in case of unauthorized exception
+is intercepted, executes a specific function for handle it or reraise the exception.</p>
+</div>
+<div class="paragraph">
+<p>With this approach you can define your own middlewared/decorators with custom authorization
+logic with fast skip raising not authorized exception using <code>throw-unauthorized</code> function.</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="pygments highlight"><code data-lang="clojure"><span class="tok-p">(</span><span class="tok-nf">require</span> <span class="tok-o">&#39;</span><span class="tok-p">[</span><span class="tok-nv">buddy.auth</span> <span class="tok-ss">:refer</span> <span class="tok-p">[</span><span class="tok-nv">authenticated?</span> <span class="tok-nv">throw-unauthorized</span><span class="tok-p">]])</span>
+<span class="tok-p">(</span><span class="tok-nf">require</span> <span class="tok-o">&#39;</span><span class="tok-p">[</span><span class="tok-nv">ring.util.response</span> <span class="tok-ss">:refer</span> <span class="tok-p">(</span><span class="tok-nf">response</span> <span class="tok-nv">redirect</span><span class="tok-p">)])</span>
+
+<span class="tok-p">(</span><span class="tok-kd">defn </span><span class="tok-nv">home-controller</span>
+  <span class="tok-p">[</span><span class="tok-nv">request</span><span class="tok-p">]</span>
+  <span class="tok-p">(</span><span class="tok-nb">when </span><span class="tok-p">(</span><span class="tok-nb">not </span><span class="tok-p">(</span><span class="tok-nf">authenticated?</span> <span class="tok-nv">request</span><span class="tok-p">))</span>
+    <span class="tok-p">(</span><span class="tok-nf">throw-unauthorized</span> <span class="tok-p">{</span><span class="tok-ss">:message</span> <span class="tok-s">&quot;Not authorized&quot;</span><span class="tok-p">}))</span>
+  <span class="tok-p">(</span><span class="tok-nf">response</span> <span class="tok-s">&quot;Hello World&quot;</span><span class="tok-p">))</span></code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>Like authentication system, authorization is also implemented using protocols. Taking advantage of
+it, all built-in authentication backends also implements this authorization protocol (<code>IAuthorization</code>):</p>
+</div>
+<div class="admonitionblock note">
+<table>
+<tr>
+<td class="icon">
+<div class="title">Note</div>
+</td>
+<td class="content">
+<div class="paragraph">
+<p>Some authentication backends require specific behavior in the authorization layer (like http-basic
+which should return <code>WWW-Authenticate</code> header when request is unauthorized). By default, all backends
+come with an specific implementation.</p>
+</div>
+<div class="paragraph">
+<p>You can overwrite the default behavior by passing your own exception handler through the
+<code>:unauthorized-handler</code> keyword parameter in the backend constructor.</p>
+</div>
+</td>
+</tr>
+</table>
+</div>
+<div class="paragraph">
+<p>Below is a complete example setting up a basic/generic authorization
+system for your ring compatible web application:</p>
+</div>
+<div class="listingblock">
+<div class="title">Define the final handler</div>
+<div class="content">
+<pre class="pygments highlight"><code data-lang="clojure"><span class="tok-p">(</span><span class="tok-nf">require</span> <span class="tok-o">&#39;</span><span class="tok-p">[</span><span class="tok-nv">buddy.auth.backends.httpbasic</span> <span class="tok-ss">:refer</span> <span class="tok-p">[</span><span class="tok-nv">http-basic-backend</span><span class="tok-p">]])</span>
+<span class="tok-p">(</span><span class="tok-nf">require</span> <span class="tok-o">&#39;</span><span class="tok-p">[</span><span class="tok-nv">buddy.auth.middleware</span> <span class="tok-ss">:refer</span> <span class="tok-p">[</span><span class="tok-nv">wrap-authentication</span> <span class="tok-nv">wrap-authorization</span><span class="tok-p">]])</span>
+
+<span class="tok-c1">;; Define the final handler wrapping it on authentication and</span>
+<span class="tok-c1">;; authorization handler using the same backend and overwriting</span>
+<span class="tok-c1">;; the default unathorized request behavior with own, previously</span>
+<span class="tok-c1">;; defined function</span>
+
+<span class="tok-p">(</span><span class="tok-k">def </span><span class="tok-nv">app</span>
+  <span class="tok-p">(</span><span class="tok-k">let </span><span class="tok-p">[</span><span class="tok-nv">backend</span> <span class="tok-p">(</span><span class="tok-nf">http-basic-backend</span>
+                 <span class="tok-p">{</span><span class="tok-ss">:realm</span> <span class="tok-s">&quot;API&quot;</span>
+                  <span class="tok-ss">:authfn</span> <span class="tok-nv">my-auth-fn</span>
+                  <span class="tok-ss">:unauthorized-handler</span> <span class="tok-nv">my-unauthorized-handler</span><span class="tok-p">})]</span>
+    <span class="tok-p">(</span><span class="tok-nb">-&gt; </span><span class="tok-nv">handler</span>
+        <span class="tok-p">(</span><span class="tok-nf">wrap-authentication</span> <span class="tok-nv">backend</span><span class="tok-p">)</span>
+        <span class="tok-p">(</span><span class="tok-nf">wrap-authorization</span> <span class="tok-nv">backend</span><span class="tok-p">))))</span></code></pre>
+</div>
+</div>
+<div class="admonitionblock note">
+<table>
+<tr>
+<td class="icon">
+<div class="title">Note</div>
+</td>
+<td class="content">
+If you want know how it really works, see <a href="#how-it-works">How it works</a> section or
+take a look on examples.
+</td>
+</tr>
+</table>
+</div>
+</div>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_cryptographic_api"><a class="link" href="#_cryptographic_api">6. Cryptographic Api</a></h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>Buddy has a low-level interface and a high-level interface.</p>
+</div>
+<div class="paragraph">
+<p>The low-level interface is located in the <code>buddy.core</code> namespace and
+has implementations for:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>cryptographic hash algorithms</p>
+</li>
+<li>
+<p>key derivation algorithms</p>
+</li>
+<li>
+<p>digital signatures</p>
+</li>
+<li>
+<p>message authentication (mac)</p>
+</li>
+<li>
+<p>cryptographic algorithms (block &amp; stream ciphers)</p>
+</li>
+</ul>
+</div>
+<div class="sect2">
+<h3 id="_cryptographic_hash_algorithms"><a class="link" href="#_cryptographic_hash_algorithms">6.1. Cryptographic hash algorithms</a></h3>
+<div class="paragraph">
+<p>All hash algorithms are located in the <code>buddy.core.hash</code> namespace.</p>
+</div>
+<table class="tableblock frame-all grid-all spread">
+<caption class="title">Table 5. Available hash algorithms</caption>
+<colgroup>
+<col style="width: 50%;">
+<col style="width: 50%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">Hash algorithm name</th>
+<th class="tableblock halign-left valign-top">Digest size</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">SHA1</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">160</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">SHA2</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">256, 384, 512</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">SHA3</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">256, 384, 512</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">MD5</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">128</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Tiger</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">192</p></td>
+</tr>
+</tbody>
+</table>
+<div class="sect3">
+<h4 id="_basic_usage"><a class="link" href="#_basic_usage">6.1.1. Basic usage</a></h4>
+<div class="listingblock">
+<div class="title">Import namespace example:</div>
+<div class="content">
+<pre class="pygments highlight"><code data-lang="clojure"><span class="tok-p">(</span><span class="tok-nf">require</span> <span class="tok-o">&#39;</span><span class="tok-p">[</span><span class="tok-nv">buddy.core.hash</span> <span class="tok-ss">:as</span> <span class="tok-nv">hash</span><span class="tok-p">])</span>
+<span class="tok-p">(</span><span class="tok-nf">require</span> <span class="tok-o">&#39;</span><span class="tok-p">[</span><span class="tok-nv">buddy.core.codecs</span> <span class="tok-ss">:refer</span> <span class="tok-ss">:all</span><span class="tok-p">])</span></code></pre>
+</div>
+</div>
+<div class="listingblock">
+<div class="title">Usage examples:</div>
+<div class="content">
+<pre class="pygments highlight"><code data-lang="clojure"><span class="tok-p">(</span><span class="tok-nf">hash/sha256</span> <span class="tok-s">&quot;foo bar&quot;</span><span class="tok-p">)</span>
+<span class="tok-c1">;; -&gt; #&lt;byte[] [B@162a657e&gt;</span>
+
+<span class="tok-p">(</span><span class="tok-nb">-&gt; </span><span class="tok-p">(</span><span class="tok-nf">hash/sha256</span> <span class="tok-s">&quot;foo bar&quot;</span><span class="tok-p">)</span>
+    <span class="tok-p">(</span><span class="tok-nf">bytes-&gt;hex</span><span class="tok-p">))</span>
+<span class="tok-c1">;; -&gt; &quot;fbc1a9f858ea9e177916964bd88c3d37b91a1e84412765e29950777f265c4b75&quot;</span></code></pre>
+</div>
+</div>
+</div>
+<div class="sect3">
+<h4 id="_advanced_usage"><a class="link" href="#_advanced_usage">6.1.2. Advanced usage</a></h4>
+<div class="paragraph">
+<p>Hash functions are implemented using protocols and can be extended
+to other types. The default implementations come with support
+for file-like objects (<strong>File</strong>, <strong>URL</strong>, URI* and <strong>InputStream</strong>).</p>
+</div>
+<div class="listingblock">
+<div class="title">Make hash of file example:</div>
+<div class="content">
+<pre class="pygments highlight"><code data-lang="clojure"><span class="tok-c1">;; Additional import for easy open files</span>
+<span class="tok-p">(</span><span class="tok-nf">require</span> <span class="tok-o">&#39;</span><span class="tok-p">[</span><span class="tok-nv">clojure.java.io</span> <span class="tok-ss">:as</span> <span class="tok-nv">io</span><span class="tok-p">])</span>
+
+<span class="tok-p">(</span><span class="tok-nb">-&gt; </span><span class="tok-p">(</span><span class="tok-nf">hash/sha256</span> <span class="tok-p">(</span><span class="tok-nf">io/input-stream</span> <span class="tok-s">&quot;/tmp/some-file&quot;</span><span class="tok-p">))</span>
+    <span class="tok-p">(</span><span class="tok-nf">bytes-&gt;hex</span><span class="tok-p">))</span>
+<span class="tok-c1">;; -&gt; &quot;bba878639499c8449f69efbfc699413eebfaf41d4b7a7faa560bfaf7e93a43dd&quot;</span></code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>You can extend it for your own types using the
+<strong>buddy.core.hash/Digest</strong> protocol:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="pygments highlight"><code data-lang="clojure"><span class="tok-p">(</span><span class="tok-kd">defprotocol </span><span class="tok-nv">Digest</span>
+  <span class="tok-p">(</span><span class="tok-nf">make-digest</span> <span class="tok-p">[</span><span class="tok-nv">data</span> <span class="tok-nv">algorithm</span><span class="tok-p">]))</span></code></pre>
+</div>
+</div>
+<div class="admonitionblock note">
+<table>
+<tr>
+<td class="icon">
+<div class="title">Note</div>
+</td>
+<td class="content">
+Functions like <strong>sha256</strong> are aliases for the more generic
+function <strong>digest</strong>.
+</td>
+</tr>
+</table>
+</div>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_mac_algorithms"><a class="link" href="#_mac_algorithms">6.2. Mac algorithms</a></h3>
+<div class="paragraph">
+<p>Buddy comes with three mac implementations: <strong>HMac</strong>, <strong>SHMac</strong> and <strong>Poly1305</strong>.</p>
+</div>
+<div class="sect3">
+<h4 id="_hmac_shmac"><a class="link" href="#_hmac_shmac">6.2.1. HMac &amp; SHMac</a></h4>
+<div class="paragraph">
+<p>There are two variants of hmac: simple and salted. And are available
+in the <code>buddy.core.mac.hmac</code> and <code>buddy.core.mac.shmac</code> respectively.</p>
+</div>
+<div class="sect4">
+<h5 id="_basic_usage_2"><a class="link" href="#_basic_usage_2">Basic usage</a></h5>
+<div class="listingblock">
+<div class="content">
+<pre class="pygments highlight"><code data-lang="clojure"><span class="tok-c1">;; Import required namespaces</span>
+<span class="tok-p">(</span><span class="tok-nf">require</span> <span class="tok-o">&#39;</span><span class="tok-p">[</span><span class="tok-nv">buddy.core.mac.hmac</span> <span class="tok-ss">:as</span> <span class="tok-nv">hmac</span><span class="tok-p">])</span>
+<span class="tok-p">(</span><span class="tok-nf">require</span> <span class="tok-o">&#39;</span><span class="tok-p">[</span><span class="tok-nv">buddy.core.mac.shmac</span> <span class="tok-ss">:as</span> <span class="tok-nv">shmac</span><span class="tok-p">])</span>
+<span class="tok-p">(</span><span class="tok-nf">require</span> <span class="tok-o">&#39;</span><span class="tok-p">[</span><span class="tok-nv">buddy.core.codecs</span> <span class="tok-ss">:refer</span> <span class="tok-ss">:all</span><span class="tok-p">])</span>
+
+<span class="tok-c1">;; Generate sha256 hmac over string</span>
+<span class="tok-p">(</span><span class="tok-nb">-&gt; </span><span class="tok-p">(</span><span class="tok-nf">hmac/hmac</span> <span class="tok-s">&quot;foo bar&quot;</span> <span class="tok-s">&quot;mysecretkey&quot;</span> <span class="tok-ss">:sha256</span><span class="tok-p">)</span>
+    <span class="tok-p">(</span><span class="tok-nf">bytes-&gt;hex</span><span class="tok-p">))</span>
+<span class="tok-c1">;; -&gt; &quot;61849448bdbb67b39d609471eead667e65b0d1b9e01b1c3bf7aa56b83e9c8083&quot;</span>
+
+<span class="tok-c1">;; Same example but using salted variant</span>
+<span class="tok-p">(</span><span class="tok-nb">-&gt; </span><span class="tok-p">(</span><span class="tok-nf">shmac/shmac</span> <span class="tok-s">&quot;foo bar&quot;</span> <span class="tok-s">&quot;salt&quot;</span> <span class="tok-s">&quot;mysecretkey&quot;</span> <span class="tok-ss">:sha256</span><span class="tok-p">)</span>
+    <span class="tok-p">(</span><span class="tok-nf">bytes-&gt;hex</span><span class="tok-p">))</span>
+<span class="tok-c1">;; -&gt; &quot;bd5f7a0040430a73f4845bac8f980c6398b4baae8a22efcc22038be0f4dd9678&quot;</span></code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>The key parameter can be any type that implements the <strong>ByteArray</strong> protocol
+defined in the <code>buddy.core.codecs</code> namespace. It comes with default implementations for
+<code>byte[]</code> and <code>java.lang.String</code>.</p>
+</div>
+</div>
+<div class="sect4">
+<h5 id="_advanced_usage_2"><a class="link" href="#_advanced_usage_2">Advanced usage</a></h5>
+<div class="paragraph">
+<p>Like hash functions, hmac is implemented using Clojure
+protocols and comes with default implementations for: String, byte[],
+<strong>File</strong>, <strong>URL</strong>, <strong>URI</strong> and <strong>InputStream</strong>.</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="pygments highlight"><code data-lang="clojure"><span class="tok-p">(</span><span class="tok-nf">require</span> <span class="tok-o">&#39;</span><span class="tok-p">[</span><span class="tok-nv">clojure.java.io</span> <span class="tok-ss">:as</span> <span class="tok-nv">io</span><span class="tok-p">])</span>
+
+<span class="tok-c1">;; Generate hmac for file</span>
+<span class="tok-p">(</span><span class="tok-nb">-&gt; </span><span class="tok-p">(</span><span class="tok-nf">io/input-stream</span> <span class="tok-s">&quot;/tmp/somefile&quot;</span><span class="tok-p">)</span>
+    <span class="tok-p">(</span><span class="tok-nf">hmac/hmac</span> <span class="tok-s">&quot;mysecretkey&quot;</span> <span class="tok-ss">:sha256</span><span class="tok-p">)</span>
+    <span class="tok-p">(</span><span class="tok-nf">bytes-&gt;hex</span><span class="tok-p">))</span>
+<span class="tok-c1">;; -&gt; &quot;4cb793e600848da2053238003fce4c010233c49df3e6a04119b4287eb464c27e&quot;</span></code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>You can extend it for your own types using <code>buddy.core.mac.hmac/HMac</code> protocol:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="pygments highlight"><code data-lang="clojure"><span class="tok-p">(</span><span class="tok-kd">defprotocol </span><span class="tok-nv">HMac</span>
+  <span class="tok-p">(</span><span class="tok-nf">make-hmac</span> <span class="tok-p">[</span><span class="tok-nv">data</span> <span class="tok-nb">key </span><span class="tok-nv">algorithm</span><span class="tok-p">]))</span></code></pre>
+</div>
+</div>
+</div>
+</div>
+<div class="sect3">
+<h4 id="_poly1305"><a class="link" href="#_poly1305">6.2.2. Poly1305</a></h4>
+<div class="paragraph">
+<p>Poly1305 is a cryptographic message authentication code
+(MAC) written by Daniel J. Bernstein. It can be used to verify the
+data integrity and the authenticity of a message.</p>
+</div>
+<div class="paragraph">
+<p>The security of Poly1305 is very close to the block cipher algorithm.
+As a result, the only way for an attacker to break Poly1305 is to break
+the cipher.</p>
+</div>
+<div class="paragraph">
+<p>Poly1305 offers cipher replaceability. If anything goes wrong with
+one, it can be substituted by another with identical security
+guarantees.</p>
+</div>
+<div class="paragraph">
+<p>Unlike <strong>HMac</strong>, it requires an initialization vector (IV). An IV is
+like a salt. It should be generated using a strong random number
+generator for security guarantees. Also, the IV should be of the same
+length as the chosen cipher block size.</p>
+</div>
+<div class="sect4">
+<h5 id="_basic_usage_3"><a class="link" href="#_basic_usage_3">Basic usage</a></h5>
+<div class="paragraph">
+<p>The default specification talks about AES as default block cipher,
+but buddy comes with support for three block ciphers: AES, Serpent
+and Twofish.</p>
+</div>
+<div class="listingblock">
+<div class="title">Make mac using Serpent block cipher with random IV</div>
+<div class="content">
+<pre class="pygments highlight"><code data-lang="clojure"><span class="tok-p">(</span><span class="tok-nf">require</span> <span class="tok-o">&#39;</span><span class="tok-p">[</span><span class="tok-nv">buddy.core.codecs</span> <span class="tok-ss">:refer</span> <span class="tok-p">[</span><span class="tok-nv">bytes-&gt;hex</span><span class="tok-p">]])</span>
+<span class="tok-p">(</span><span class="tok-nf">require</span> <span class="tok-o">&#39;</span><span class="tok-p">[</span><span class="tok-nv">buddy.core.mac.poly1305</span> <span class="tok-ss">:as</span> <span class="tok-nv">poly</span><span class="tok-p">])</span>
+<span class="tok-p">(</span><span class="tok-nf">require</span> <span class="tok-o">&#39;</span><span class="tok-p">[</span><span class="tok-nv">buddy.core.keys</span> <span class="tok-ss">:refer</span> <span class="tok-p">[</span><span class="tok-nv">make-random-bytes</span><span class="tok-p">]])</span>
+
+<span class="tok-p">(</span><span class="tok-k">let </span><span class="tok-p">[</span><span class="tok-nv">iv</span>  <span class="tok-p">(</span><span class="tok-nf">make-random-bytes</span> <span class="tok-mi">16</span><span class="tok-p">)</span>
+      <span class="tok-nv">mac</span> <span class="tok-p">(</span><span class="tok-nf">poly/poly1305</span> <span class="tok-s">&quot;some-data&quot;</span> <span class="tok-s">&quot;mysecret&quot;</span> <span class="tok-nv">iv</span> <span class="tok-ss">:serpent</span><span class="tok-p">)]</span>
+  <span class="tok-p">(</span><span class="tok-nb">println </span><span class="tok-p">(</span><span class="tok-nf">bytes-&gt;hex</span> <span class="tok-nv">mac</span><span class="tok-p">)))</span>
+<span class="tok-c1">;; =&gt; &quot;1976b1c490c306e7304a59dfacee4207&quot;</span></code></pre>
+</div>
+</div>
+</div>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_public_private_keypairs"><a class="link" href="#_public_private_keypairs">6.3. Public/Private keypairs</a></h3>
+<div class="paragraph">
+<p>Before explaining digital signatures, you need to read public/private
+keypairs and convert them to usable objects. Buddy has limited support
+for reading:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>RSA keypair</p>
+</li>
+<li>
+<p>ECDSA keypair</p>
+</li>
+</ul>
+</div>
+<div class="sect3">
+<h4 id="_rsa_keypair"><a class="link" href="#_rsa_keypair">6.3.1. RSA Keypair</a></h4>
+<div class="paragraph">
+<p>An RSA keypair is obviously used for RSA encryption/decryption, but it
+is also used for making digital signatures with RSA-derived
+algorithms.</p>
+</div>
+<div class="listingblock">
+<div class="title">Read keys</div>
+<div class="content">
+<pre class="pygments highlight"><code data-lang="clojure"><span class="tok-p">(</span><span class="tok-nf">require</span> <span class="tok-o">&#39;</span><span class="tok-p">[</span><span class="tok-nv">buddy.core.keys</span> <span class="tok-ss">:as</span> <span class="tok-nv">keys</span><span class="tok-p">])</span>
+
+<span class="tok-c1">;; The last parameter is optional and is only mandatory</span>
+<span class="tok-c1">;; if a private key is encrypted.</span>
+<span class="tok-p">(</span><span class="tok-k">def </span><span class="tok-nv">privkey</span> <span class="tok-p">(</span><span class="tok-nf">keys/private-key</span> <span class="tok-s">&quot;test/_files/privkey.3des.rsa.pem&quot;</span> <span class="tok-s">&quot;secret&quot;</span><span class="tok-p">)</span>
+<span class="tok-p">(</span><span class="tok-k">def </span><span class="tok-nv">pubkey</span> <span class="tok-p">(</span><span class="tok-nf">keys/public-key</span> <span class="tok-s">&quot;test/_files/pubkey.3des.rsa.pem&quot;</span><span class="tok-p">))</span></code></pre>
+</div>
+</div>
+<div class="listingblock">
+<div class="title">Generate a RSA Keypair using openssl.</div>
+<div class="content">
+<pre class="pygments highlight"><code data-lang="bash"><span class="tok-c"># Generate AES-256 encrypted private key</span>
+openssl genrsa -aes256 -out privkey.pem 2048
+
+<span class="tok-c"># Generate public key from previously created private key.</span>
+openssl rsa -pubout -in privkey.pem -out pubkey.pem</code></pre>
+</div>
+</div>
+</div>
+<div class="sect3">
+<h4 id="_ecdsa_keypair"><a class="link" href="#_ecdsa_keypair">6.3.2. ECDSA Keypair</a></h4>
+<div class="paragraph">
+<p>Like RSA keypairs, ECDSA is also used for making digital signatures
+and can be read like in the RSA examples.</p>
+</div>
+<div class="listingblock">
+<div class="title">Read keys.</div>
+<div class="content">
+<pre class="pygments highlight"><code data-lang="clojure"><span class="tok-p">(</span><span class="tok-nf">require</span> <span class="tok-o">&#39;</span><span class="tok-p">[</span><span class="tok-nv">buddy.core.keys</span> <span class="tok-ss">:as</span> <span class="tok-nv">keys</span><span class="tok-p">])</span>
+
+<span class="tok-c1">;; The last parameter is optional and is only mandatory</span>
+<span class="tok-c1">;; if a private key is encrypted.</span>
+<span class="tok-p">(</span><span class="tok-k">def </span><span class="tok-nv">privkey</span> <span class="tok-p">(</span><span class="tok-nf">keys/private-key</span> <span class="tok-s">&quot;test/_files/privkey.ecdsa.pem&quot;</span> <span class="tok-s">&quot;secret&quot;</span><span class="tok-p">)</span>
+<span class="tok-p">(</span><span class="tok-k">def </span><span class="tok-nv">pubkey</span> <span class="tok-p">(</span><span class="tok-nf">keys/public-key</span> <span class="tok-s">&quot;test/_files/pubkey.ecdsa.pem&quot;</span><span class="tok-p">))</span></code></pre>
+</div>
+</div>
+<div class="listingblock">
+<div class="title">Generate a ECDSA Keypair using openssl.</div>
+<div class="content">
+<pre class="pygments highlight"><code data-lang="bash"><span class="tok-c"># Generate a params file</span>
+openssl ecparam -name prime256v1 -out ecparams.pem
+
+<span class="tok-c"># Generate a private key from params file</span>
+openssl ecparam -in ecparams.pem -genkey -noout -out ecprivkey.pem
+
+<span class="tok-c"># Generate a public key from private key</span>
+openssl ec -in ecprivkey.pem -pubout -out ecpubkey.pem</code></pre>
+</div>
+</div>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_digital_signatures"><a class="link" href="#_digital_signatures">6.4. Digital Signatures</a></h3>
+<div class="paragraph">
+<p>Digital Signatures differ from Mac as Mac values are both generated
+and verified using the same secret key. Digital Signatures require a
+public/private keypair. It signs using a private key and verifies a
+signature using a public key.</p>
+</div>
+<div class="sect3">
+<h4 id="_rsassa_pss"><a class="link" href="#_rsassa_pss">6.4.1. RSASSA PSS</a></h4>
+<div class="paragraph">
+<p>RSASSA-PSS is an improved probabilistic signature scheme with
+appendix. What that means is that you can use a private RSA key
+to sign data in combination with some random input.</p>
+</div>
+<div class="paragraph">
+<p><a href="http://www.ietf.org/rfc/rfc3447.txt">rfc3447.txt</a></p>
+</div>
+<div class="listingblock">
+<div class="title">Sign sample string using rsassa-pss.</div>
+<div class="content">
+<pre class="pygments highlight"><code data-lang="clojure"><span class="tok-p">(</span><span class="tok-nf">require</span> <span class="tok-o">&#39;</span><span class="tok-p">[</span><span class="tok-nv">buddy.core.keys</span> <span class="tok-ss">:as</span> <span class="tok-nv">keys</span><span class="tok-p">])</span>
+<span class="tok-p">(</span><span class="tok-nf">require</span> <span class="tok-o">&#39;</span><span class="tok-p">[</span><span class="tok-nv">buddy.core.sign.rsapss</span> <span class="tok-ss">:as</span> <span class="tok-nv">rsapss</span><span class="tok-p">])</span>
+
+<span class="tok-c1">;; Read private key</span>
+<span class="tok-p">(</span><span class="tok-k">def </span><span class="tok-nv">rsaprivkey</span> <span class="tok-p">(</span><span class="tok-nf">keys/private-key</span> <span class="tok-s">&quot;test/_files/privkey.3des.rsa.pem&quot;</span> <span class="tok-s">&quot;secret&quot;</span><span class="tok-p">))</span>
+
+<span class="tok-c1">;; Make signature</span>
+<span class="tok-p">(</span><span class="tok-k">def </span><span class="tok-nv">signature</span> <span class="tok-p">(</span><span class="tok-nf">rsapss/rsapss</span> <span class="tok-s">&quot;foo&quot;</span> <span class="tok-nv">rsaprivkey</span> <span class="tok-ss">:sha256</span><span class="tok-p">))</span>
+
+<span class="tok-c1">;; Now signature contains a byte[] with signature of &quot;foo&quot; string</span></code></pre>
+</div>
+</div>
+<div class="listingblock">
+<div class="title">Verify signature using rsassa-pss.</div>
+<div class="content">
+<pre class="pygments highlight"><code data-lang="clojure"><span class="tok-c1">;; Read private key</span>
+<span class="tok-p">(</span><span class="tok-k">def </span><span class="tok-nv">rsapubkey</span> <span class="tok-p">(</span><span class="tok-nf">keys/private-key</span> <span class="tok-s">&quot;test/_files/pubkey.3des.rsa.pem&quot;</span><span class="tok-p">))</span>
+
+<span class="tok-c1">;; Make verification</span>
+<span class="tok-p">(</span><span class="tok-nf">rsapss/verify</span> <span class="tok-s">&quot;foo&quot;</span> <span class="tok-nv">signature</span> <span class="tok-nv">rsapubkey</span> <span class="tok-ss">:sha256</span><span class="tok-p">))</span>
+<span class="tok-c1">;; =&gt; true</span></code></pre>
+</div>
+</div>
+</div>
+<div class="sect3">
+<h4 id="_rsassa_pkcs1_v1_5"><a class="link" href="#_rsassa_pkcs1_v1_5">6.4.2. RSASSA PKCS1 v1.5</a></h4>
+<div class="paragraph">
+<p>RSASSA-PSS is an probabilistic signature scheme with appendix.
+What that means is that you can use a private RSA key to sign data.</p>
+</div>
+<div class="paragraph">
+<p><a href="http://www.ietf.org/rfc/rfc3447.txt">rfc3447.txt</a></p>
+</div>
+<div class="listingblock">
+<div class="title">Sign sample string using rsassa-pkcs.</div>
+<div class="content">
+<pre class="pygments highlight"><code data-lang="clojure"><span class="tok-p">(</span><span class="tok-nf">require</span> <span class="tok-o">&#39;</span><span class="tok-p">[</span><span class="tok-nv">buddy.core.keys</span> <span class="tok-ss">:as</span> <span class="tok-nv">keys</span><span class="tok-p">])</span>
+<span class="tok-p">(</span><span class="tok-nf">require</span> <span class="tok-o">&#39;</span><span class="tok-p">[</span><span class="tok-nv">buddy.core.sign.rsapkcs</span> <span class="tok-ss">:as</span> <span class="tok-nv">rsapkcs</span><span class="tok-p">])</span>
+
+<span class="tok-c1">;; Read private key</span>
+<span class="tok-p">(</span><span class="tok-k">def </span><span class="tok-nv">rsaprivkey</span> <span class="tok-p">(</span><span class="tok-nf">keys/private-key</span> <span class="tok-s">&quot;test/_files/privkey.3des.rsa.pem&quot;</span> <span class="tok-s">&quot;secret&quot;</span><span class="tok-p">))</span>
+
+<span class="tok-c1">;; Make signature</span>
+<span class="tok-p">(</span><span class="tok-k">def </span><span class="tok-nv">signature</span> <span class="tok-p">(</span><span class="tok-nf">rsapkcs/rsapkcs15</span> <span class="tok-s">&quot;foo&quot;</span> <span class="tok-nv">rsaprivkey</span> <span class="tok-ss">:sha256</span><span class="tok-p">))</span>
+
+<span class="tok-c1">;; Now signature contains a byte[] with signature of &quot;foo&quot; string</span></code></pre>
+</div>
+</div>
+<div class="listingblock">
+<div class="title">Verify signature using rsassa-pkcs.</div>
+<div class="content">
+<pre class="pygments highlight"><code data-lang="clojure"><span class="tok-c1">;; Read private key</span>
+<span class="tok-p">(</span><span class="tok-k">def </span><span class="tok-nv">rsapubkey</span> <span class="tok-p">(</span><span class="tok-nf">keys/private-key</span> <span class="tok-s">&quot;test/_files/pubkey.3des.rsa.pem&quot;</span><span class="tok-p">))</span>
+
+<span class="tok-c1">;; Make verification</span>
+<span class="tok-p">(</span><span class="tok-nf">rsapkcs/verify</span> <span class="tok-s">&quot;foo&quot;</span> <span class="tok-nv">signature</span> <span class="tok-nv">rsapubkey</span> <span class="tok-ss">:sha256</span><span class="tok-p">))</span>
+<span class="tok-c1">;; =&gt; true</span></code></pre>
+</div>
+</div>
+</div>
+<div class="sect3">
+<h4 id="_eliptic_curve_dsa"><a class="link" href="#_eliptic_curve_dsa">6.4.3. Eliptic Curve DSA</a></h4>
+<div class="paragraph">
+<p>Elliptic Curve Digital Signature Algorithm (ECDSA) is a variant of the
+Digital Signature Algorithm (DSA) which uses elliptic curve cryptography.</p>
+</div>
+<div class="listingblock">
+<div class="title">Sign sample string using ecdsa.</div>
+<div class="content">
+<pre class="pygments highlight"><code data-lang="clojure"><span class="tok-p">(</span><span class="tok-nf">require</span> <span class="tok-o">&#39;</span><span class="tok-p">[</span><span class="tok-nv">buddy.core.keys</span> <span class="tok-ss">:as</span> <span class="tok-nv">keys</span><span class="tok-p">])</span>
+<span class="tok-p">(</span><span class="tok-nf">require</span> <span class="tok-o">&#39;</span><span class="tok-p">[</span><span class="tok-nv">buddy.core.sign.ecdsa</span> <span class="tok-ss">:as</span> <span class="tok-nv">ecdsa</span><span class="tok-p">])</span>
+
+<span class="tok-c1">;; Read private key</span>
+<span class="tok-p">(</span><span class="tok-k">def </span><span class="tok-nv">ecdsaprivkey</span> <span class="tok-p">(</span><span class="tok-nf">keys/private-key</span> <span class="tok-s">&quot;test/_files/privkey.ecdsa.pem&quot;</span> <span class="tok-s">&quot;secret&quot;</span><span class="tok-p">))</span>
+
+<span class="tok-c1">;; Make signature</span>
+<span class="tok-p">(</span><span class="tok-k">def </span><span class="tok-nv">signature</span> <span class="tok-p">(</span><span class="tok-nf">ecdsa/ecdsa</span> <span class="tok-s">&quot;foo&quot;</span> <span class="tok-nv">ecdsaprivkey</span> <span class="tok-ss">:sha256</span><span class="tok-p">))</span></code></pre>
+</div>
+</div>
+<div class="listingblock">
+<div class="title">Verify signature using ecdsa.</div>
+<div class="content">
+<pre class="pygments highlight"><code data-lang="clojure"><span class="tok-c1">;; Read private key</span>
+<span class="tok-p">(</span><span class="tok-k">def </span><span class="tok-nv">ecdsapubkey</span> <span class="tok-p">(</span><span class="tok-nf">keys/private-key</span> <span class="tok-s">&quot;test/_files/pubkey.ecdsa.pem&quot;</span><span class="tok-p">))</span>
+
+<span class="tok-c1">;; Make verification</span>
+<span class="tok-p">(</span><span class="tok-nf">ecdsa/verify</span> <span class="tok-s">&quot;foo&quot;</span> <span class="tok-nv">signature</span> <span class="tok-nv">ecdsapubkey</span> <span class="tok-ss">:sha256</span><span class="tok-p">))</span>
+<span class="tok-c1">;; =&gt; true</span></code></pre>
+</div>
+</div>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_key_derivation_functions"><a class="link" href="#_key_derivation_functions">6.5. Key Derivation Functions</a></h3>
+<div class="paragraph">
+<p>Key derivation functions are often used in conjunction with non-secret parameters
+to derive one or more keys from a common secret value.</p>
+</div>
+<div class="paragraph">
+<p><strong>buddy</strong> commes with several of them:</p>
+</div>
+<table class="tableblock frame-all grid-all spread">
+<caption class="title">Table 6. Supported key derivation functions.</caption>
+<colgroup>
+<col style="width: 33%;">
+<col style="width: 33%;">
+<col style="width: 33%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">Algorithm name</th>
+<th class="tableblock halign-left valign-top">Constructor</th>
+<th class="tableblock halign-left valign-top">Notes</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">HKDF</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>buddy.core.kdf/hkdf</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">HMAC based KDF</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">KDF1</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>buddy.core.kdf/kdf1</code></p></td>
+<td class="tableblock halign-left valign-top"></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">KDF2</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>buddy.core.kdf/kdf2</code></p></td>
+<td class="tableblock halign-left valign-top"></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">CMKDF</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>buddy.core.kdf/cmkdf</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Counter Mode KDF</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">FMKDF</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>buddy.core.kdf/fmkdf</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Feedback Mode KDF</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">DPIMKDF</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>buddy.core.kdf/dpimkdf</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Double-Pipeline Iteration Mode KDF</p></td>
+</tr>
+</tbody>
+</table>
+<div class="admonitionblock note">
+<table>
+<tr>
+<td class="icon">
+<div class="title">Note</div>
+</td>
+<td class="content">
+<div class="paragraph">
+<p>All key derivation functions work with byte arrays. For the
+following examples, the functions in <code>buddy.core.codecs</code> convert
+strings to byte arrays.</p>
+</div>
+</td>
+</tr>
+</table>
+</div>
+<div class="sect3">
+<h4 id="_hkdf"><a class="link" href="#_hkdf">6.5.1. HKDF</a></h4>
+<div class="paragraph">
+<p>HMAC-based Extract-and-Expand Key Derivation Function (HKDF) is implemented according to IETF RFC 5869</p>
+</div>
+<div class="listingblock">
+<div class="title">Example using hkdf</div>
+<div class="content">
+<pre class="pygments highlight"><code data-lang="clojure"><span class="tok-p">(</span><span class="tok-nf">require</span> <span class="tok-o">&#39;</span><span class="tok-p">[</span><span class="tok-nv">buddy.core.codecs</span> <span class="tok-ss">:refer</span> <span class="tok-ss">:all</span><span class="tok-p">])</span>
+<span class="tok-p">(</span><span class="tok-nf">require</span> <span class="tok-o">&#39;</span><span class="tok-p">[</span><span class="tok-nv">buddy.core.kdf</span> <span class="tok-ss">:as</span> <span class="tok-nv">kdf</span><span class="tok-p">])</span>
+
+<span class="tok-c1">;; Using hkdf derivation functions. It requires a</span>
+<span class="tok-c1">;; key, salt and optionally info field that can</span>
+<span class="tok-c1">;; contain any random data.</span>
+
+<span class="tok-p">(</span><span class="tok-k">let </span><span class="tok-p">[</span><span class="tok-nv">kfn</span> <span class="tok-p">(</span><span class="tok-nf">kdf/hkdf</span> <span class="tok-p">(</span><span class="tok-nf">str-&gt;bytes</span> <span class="tok-s">&quot;mysecretkey&quot;</span><span class="tok-p">)</span>
+                    <span class="tok-p">(</span><span class="tok-nf">str-&gt;bytes</span> <span class="tok-s">&quot;mypublicsalt&quot;</span><span class="tok-p">)</span>
+                    <span class="tok-nv">nil</span> <span class="tok-c1">;; info parameter can be nil</span>
+                    <span class="tok-ss">:sha256</span><span class="tok-p">)]</span>
+  <span class="tok-p">(</span><span class="tok-nb">-&gt; </span><span class="tok-p">(</span><span class="tok-nf">kdf/generate-bytes!</span> <span class="tok-nv">kfn</span> <span class="tok-mi">8</span><span class="tok-p">)</span>
+      <span class="tok-p">(</span><span class="tok-nf">bytes-&gt;hex</span><span class="tok-p">)))</span>
+<span class="tok-c1">;; =&gt; &quot;0faba553152fce4f&quot;</span></code></pre>
+</div>
+</div>
+</div>
+<div class="sect3">
+<h4 id="_kdf1_2"><a class="link" href="#_kdf1_2">6.5.2. KDF1/2</a></h4>
+<div class="paragraph">
+<p>KDF1/2 hash-based key derivation functions for derived keys and ivs as defined by IEEE P1363a/ISO 18033.</p>
+</div>
+<div class="listingblock">
+<div class="title">Example using kdf1 or kdf2</div>
+<div class="content">
+<pre class="pygments highlight"><code data-lang="clojure"><span class="tok-p">(</span><span class="tok-nf">require</span> <span class="tok-o">&#39;</span><span class="tok-p">[</span><span class="tok-nv">buddy.core.codecs</span> <span class="tok-ss">:refer</span> <span class="tok-ss">:all</span><span class="tok-p">])</span>
+<span class="tok-p">(</span><span class="tok-nf">require</span> <span class="tok-o">&#39;</span><span class="tok-p">[</span><span class="tok-nv">buddy.core.kdf</span> <span class="tok-ss">:as</span> <span class="tok-nv">kdf</span><span class="tok-p">])</span>
+
+<span class="tok-c1">;; kdf1 and kdf2 are very similar and have the same</span>
+<span class="tok-c1">;; constructor signature. Requires: key data, salt</span>
+<span class="tok-c1">;; and hash algorithm keyword.</span>
+
+<span class="tok-p">(</span><span class="tok-k">let </span><span class="tok-p">[</span><span class="tok-nv">kfn</span> <span class="tok-p">(</span><span class="tok-nf">kdf/kdf2</span> <span class="tok-p">(</span><span class="tok-nf">str-&gt;bytes</span> <span class="tok-s">&quot;mysecretkey&quot;</span><span class="tok-p">)</span> <span class="tok-p">(</span><span class="tok-nf">str-&gt;bytes</span> <span class="tok-s">&quot;mypublicsalt&quot;</span><span class="tok-p">)</span> <span class="tok-ss">:sha256</span><span class="tok-p">)]</span>
+  <span class="tok-p">(</span><span class="tok-nb">-&gt; </span><span class="tok-p">(</span><span class="tok-nf">kdf/generate-bytes!</span> <span class="tok-nv">kfn</span> <span class="tok-mi">8</span><span class="tok-p">)</span>
+      <span class="tok-p">(</span><span class="tok-nf">bytes-&gt;hex</span><span class="tok-p">)))</span>
+<span class="tok-c1">;; =&gt; &quot;0faba553152fce4f&quot;</span></code></pre>
+</div>
+</div>
+</div>
+<div class="sect3">
+<h4 id="_counter_mode_kdf"><a class="link" href="#_counter_mode_kdf">6.5.3. Counter Mode KDF</a></h4>
+<div class="paragraph">
+<p>Hash-based KDF with counter mode defined by the publicly available NIST SP 800-108 specification.</p>
+</div>
+</div>
+<div class="sect3">
+<h4 id="_feedback_mode_kdf"><a class="link" href="#_feedback_mode_kdf">6.5.4. Feedback Mode KDF</a></h4>
+<div class="paragraph">
+<p>Hash-based KDF with feedback mode defined by the publicly available NIST SP 800-108 specification.</p>
+</div>
+</div>
+<div class="sect3">
+<h4 id="_double_pipeline_iteration_mode_kdf"><a class="link" href="#_double_pipeline_iteration_mode_kdf">6.5.5. Double-Pipeline Iteration Mode KDF</a></h4>
+<div class="paragraph">
+<p>Hash-based KDF with Double-Pipeline Iteration Mode defined by the publicly available
+NIST SP 800-108 specification.</p>
+</div>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_ciphers"><a class="link" href="#_ciphers">6.6. Ciphers</a></h3>
+<div class="paragraph">
+<p>Ciphers support in buddy is available on <code>buddy.core.crypto</code> namespace.</p>
+</div>
+<div class="sect3">
+<h4 id="_block_ciphers"><a class="link" href="#_block_ciphers">6.6.1. Block Ciphers</a></h4>
+<div class="paragraph">
+<p>In cryptography, a block cipher is a deterministic algorithm operating on fixed-length groups of bits,
+called blocks, with an unvarying transformation that is specified by a symmetric key.</p>
+</div>
+<table class="tableblock frame-all grid-all spread">
+<caption class="title">Table 7. This is a list of currently supported block ciphers in buddy</caption>
+<colgroup>
+<col style="width: 50%;">
+<col style="width: 50%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">Algorithm name</th>
+<th class="tableblock halign-left valign-top">Keywords</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Twofish</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>:twofish</code></p></td>
+</tr>
+</tbody>
+</table>
+<div class="paragraph">
+<p>Additionally, for good security, is mandatory to combine a block cipher with some cipher
+mode of operation.</p>
+</div>
+<table class="tableblock frame-all grid-all spread">
+<caption class="title">Table 8. This is a list of currently supported of cipher mode of operation</caption>
+<colgroup>
+<col style="width: 50%;">
+<col style="width: 50%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">Algorithm name</th>
+<th class="tableblock halign-left valign-top">Keywords</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">SIC (CTR)</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>:ctr</code>, <code>:sic</code></p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">CBC</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>:cbc</code></p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">OFB</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>:ofb</code></p></td>
+</tr>
+</tbody>
+</table>
+<div class="paragraph">
+<p>Encrypt data using buddy&#8217;s crypto primitives is almost easy. In case of block ciphers, you
+should know that block cipher and cipher mode you want to use.</p>
+</div>
+<div class="admonitionblock note">
+<table>
+<tr>
+<td class="icon">
+<div class="title">Note</div>
+</td>
+<td class="content">
+currently buddy comes with limited number of ciphers and modes, but in near future
+should be added much more options.
+</td>
+</tr>
+</table>
+</div>
+<div class="listingblock">
+<div class="title">Example encrypt</div>
+<div class="content">
+<pre class="pygments highlight"><code data-lang="clojure"><span class="tok-p">(</span><span class="tok-nf">require</span> <span class="tok-o">&#39;</span><span class="tok-p">[</span><span class="tok-nv">buddy.core.crypto</span> <span class="tok-ss">:as</span> <span class="tok-nv">c</span><span class="tok-p">])</span>
+<span class="tok-p">(</span><span class="tok-nf">require</span> <span class="tok-o">&#39;</span><span class="tok-p">[</span><span class="tok-nv">buddy.core.codecs</span> <span class="tok-ss">:refer</span> <span class="tok-ss">:all</span><span class="tok-p">])</span>
+
+<span class="tok-p">(</span><span class="tok-k">let </span><span class="tok-p">[</span><span class="tok-nv">eng</span>   <span class="tok-p">(</span><span class="tok-nf">c/engine</span> <span class="tok-ss">:twofish</span> <span class="tok-ss">:cbc</span><span class="tok-p">)</span>
+      <span class="tok-nv">iv16</span>  <span class="tok-p">(</span><span class="tok-nf">make-random-bytes</span> <span class="tok-mi">16</span><span class="tok-p">)</span>
+      <span class="tok-nv">key32</span> <span class="tok-p">(</span><span class="tok-nf">make-random-bytes</span> <span class="tok-mi">32</span><span class="tok-p">)</span>
+      <span class="tok-nv">data</span>  <span class="tok-p">(</span><span class="tok-nf">hex-&gt;bytes</span> <span class="tok-s">&quot;000000000000000000000000000000AA&quot;</span><span class="tok-p">)]</span>
+  <span class="tok-p">(</span><span class="tok-nf">c/initialize!</span> <span class="tok-nv">eng</span> <span class="tok-p">{</span><span class="tok-ss">:key</span> <span class="tok-nv">key32</span> <span class="tok-ss">:iv</span> <span class="tok-nv">iv16</span> <span class="tok-ss">:op</span> <span class="tok-ss">:encrypt</span><span class="tok-p">})</span>
+  <span class="tok-p">(</span><span class="tok-nf">c/process-block!</span> <span class="tok-nv">eng</span> <span class="tok-nv">data</span><span class="tok-p">))</span>
+<span class="tok-c1">;; =&gt; #&lt;byte[] [B@efadff9&gt;</span></code></pre>
+</div>
+</div>
+</div>
+<div class="sect3">
+<h4 id="_stream_ciphers"><a class="link" href="#_stream_ciphers">6.6.2. Stream Ciphers</a></h4>
+<div class="paragraph">
+<p>Stream ciphers differes with block ciphers, that them works with arbitrary length input
+and not requires any additional mode of operation.</p>
+</div>
+<table class="tableblock frame-all grid-all spread">
+<caption class="title">Table 9. This is a list of currently supported of stream ciphers in buddy</caption>
+<colgroup>
+<col style="width: 50%;">
+<col style="width: 50%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">Algorithm name</th>
+<th class="tableblock halign-left valign-top">Keywords</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">ChaCha</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>:chacha</code></p></td>
+</tr>
+</tbody>
+</table>
+<div class="listingblock">
+<div class="title">Example encrypt</div>
+<div class="content">
+<pre class="pygments highlight"><code data-lang="clojure"><span class="tok-p">(</span><span class="tok-nf">require</span> <span class="tok-o">&#39;</span><span class="tok-p">[</span><span class="tok-nv">buddy.core.crypto</span> <span class="tok-ss">:as</span> <span class="tok-nv">c</span><span class="tok-p">])</span>
+<span class="tok-p">(</span><span class="tok-nf">require</span> <span class="tok-o">&#39;</span><span class="tok-p">[</span><span class="tok-nv">buddy.core.codecs</span> <span class="tok-ss">:refer</span> <span class="tok-ss">:all</span><span class="tok-p">])</span>
+
+<span class="tok-p">(</span><span class="tok-k">let </span><span class="tok-p">[</span><span class="tok-nv">eng</span>   <span class="tok-p">(</span><span class="tok-nf">c/stream-engine</span> <span class="tok-ss">:chacha</span><span class="tok-p">)</span>
+      <span class="tok-nv">iv8</span>   <span class="tok-p">(</span><span class="tok-nf">make-random-bytes</span> <span class="tok-mi">8</span><span class="tok-p">)</span>
+      <span class="tok-nv">key32</span> <span class="tok-p">(</span><span class="tok-nf">make-random-bytes</span> <span class="tok-mi">32</span><span class="tok-p">)</span>
+      <span class="tok-nv">data</span>  <span class="tok-p">(</span><span class="tok-nf">hex-&gt;bytes</span> <span class="tok-s">&quot;0011&quot;</span><span class="tok-p">)]</span>
+  <span class="tok-p">(</span><span class="tok-nf">c/initialize!</span> <span class="tok-nv">eng</span> <span class="tok-p">{</span><span class="tok-ss">:key</span> <span class="tok-nv">key32</span> <span class="tok-ss">:iv</span> <span class="tok-nv">iv8</span> <span class="tok-ss">:op</span> <span class="tok-ss">:encrypt</span><span class="tok-p">})</span>
+  <span class="tok-p">(</span><span class="tok-nf">c/process-bytes!</span> <span class="tok-nv">eng</span> <span class="tok-nv">data</span><span class="tok-p">))</span>
+<span class="tok-c1">;; =&gt; #&lt;byte[] [B@efadff9&gt;</span></code></pre>
+</div>
+</div>
+<div class="admonitionblock note">
+<table>
+<tr>
+<td class="icon">
+<div class="title">Note</div>
+</td>
+<td class="content">
+the iv and key size depends estrictly on cipher engine, in this case, chacha
+engine requires 8 bytes iv.
+</td>
+</tr>
+</table>
+</div>
+<div class="admonitionblock note">
+<table>
+<tr>
+<td class="icon">
+<div class="title">Note</div>
+</td>
+<td class="content">
+for decrypt, only change <code>:op</code> value to <code>:decrypt</code>
+</td>
+</tr>
+</table>
+</div>
+<div class="paragraph">
+<p>You can call <code>c/initialize</code> any times as you want, it simple reinitialize the engine.</p>
+</div>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_codecs"><a class="link" href="#_codecs">6.7. Codecs</a></h3>
+<div class="paragraph">
+<p>Implements some useful and widely used around all buddy library functions
+for converting between strings, bytes, hex encoded strings and base64
+encoded strings.</p>
+</div>
+<div class="paragraph">
+<p>The best documentation for this part is the source code.</p>
+</div>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_advanced_usage_3"><a class="link" href="#_advanced_usage_3">7. Advanced Usage</a></h2>
+<div class="sectionbody">
+<div class="sect2">
+<h3 id="how-it-works"><a class="link" href="#how-it-works">7.1. How Auth Works</a></h3>
+<div class="paragraph">
+<p>Each backend implements two protocols: <code>IAuthentication</code> and <code>IAuthorization</code>.</p>
+</div>
+<div class="paragraph">
+<p><strong>IAuthentication</strong> provides two functions: <code>parse</code> and <code>authenticate</code>
+and is automatically handled with <code>wrap-authentication</code> ring
+middleware. This is an example flow for the http basic backend:</p>
+</div>
+<div class="olist arabic">
+<ol class="arabic">
+<li>
+<p>Received request is passed to <code>parse</code> function. This function extracts the <code>Authorization</code>
+header, decodes a base64 encoded string and returns Clojure map with <code>:username</code> and <code>:password</code>
+keys. If a parse error occured, it returns nil.</p>
+</li>
+<li>
+<p>If the previous step parsed the token successfully, <code>authenticate</code> is called with current
+request and parsed data from previous step. <code>authenticate</code> can delegate authentication
+to user defined function passed as <code>:authfn</code> parameter to backend constructor.
+<code>authenticate</code> should return a request with <code>:identity</code> key assigned to nil or any other
+value. All requests with <code>:identity</code> key with nil value are considered not authenticated.</p>
+</li>
+<li>
+<p>User handler is called.</p>
+</li>
+</ol>
+</div>
+<div class="admonitionblock note">
+<table>
+<tr>
+<td class="icon">
+<div class="title">Note</div>
+</td>
+<td class="content">
+<div class="ulist">
+<ul>
+<li>
+<p><code>parse</code> function can return valid response, in that case response is returned inmediatel
+ignoring user handler.</p>
+</li>
+<li>
+<p>if <code>parse</code> function returns nil, <code>authenticate</code> function is ignored and user handler is
+called directly.</p>
+</li>
+<li>
+<p><code>authenticate</code> also can return a valid response, in these case it has same behavior that
+with <code>parse</code> function.</p>
+</li>
+</ul>
+</div>
+</td>
+</tr>
+</table>
+</div>
+<div class="paragraph">
+<p><strong>IAuthorization</strong> provides <code>handle-unauthorized</code> function. Each backend implements it default
+behavior but it can be overwritted with user defined function, passed on <code>:handle-unauthorized</code>
+keyword parameter to backend constructor. It always should return a valid response.</p>
+</div>
+<div class="paragraph">
+<p>Authorization is handled automatically with <code>wrap-authorization</code> ring middleware. It wraps
+all request in try/catch block for intercept only authorization exception.</p>
+</div>
+<div class="paragraph">
+<p>This is a flow that follows authorization middleware:</p>
+</div>
+<div class="olist arabic">
+<ol class="arabic">
+<li>
+<p>User handler is wrapped in try/catch block and executed.</p>
+</li>
+<li>
+<p>Not authorized exception is raised with <code>buddy.auth/throw-unauthorized</code> function from
+any part of your handler.</p>
+</li>
+<li>
+<p>handle-unauthorized is executed of your backend, if user has specified it own function,
+the user defined function is executed else, default behavior is executed.</p>
+</li>
+</ol>
+</div>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_examples"><a class="link" href="#_examples">8. Examples</a></h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p><em>buddy</em> comes with some examples for helping a new user understand how
+it works. All examples are available in the <code>examples/</code> directory.</p>
+</div>
+<div class="paragraph">
+<p>At the moment, two examples are available:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p><a href="https://github.com/niwibe/buddy/tree/master/examples/sessionexample">Use session backend as authentication and authorization.</a></p>
+</li>
+<li>
+<p><a href="https://github.com/niwibe/buddy/tree/master/examples/oauthexample">Use session backend with oauth2 using Github api.</a></p>
+</li>
+</ul>
+</div>
+<div class="paragraph">
+<p>To run examples, you should be in the project&#8217;s root directory.
+Execute <code>lein with-profile examplename run</code> where examplename can be
+<code>sessionexample</code> or <code>oauthexample</code>.</p>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_faq"><a class="link" href="#_faq">9. FAQ</a></h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p><strong>Buddy is a security library/framework?</strong></p>
+</div>
+<div class="paragraph">
+<p>Yes and No. I don&#8217;t like call "security" library because security represents a very generic
+concepts and can contain a lot of things. Buddy is target to cryptography, message signing
+and authentication/authorization extensions for ring compatible web applications. You can see
+the main target on the "Introduction" section of this documentation.</p>
+</div>
+<div class="paragraph">
+<p><strong>How can I use <em>buddy</em> with <a href="http://clojure-liberator.github.io/liberator/">liberator</a>?</strong></p>
+</div>
+<div class="paragraph">
+<p>By design, <em>buddy</em> has authorization and authentication well
+separated. This helps a lot if you want use only one part of it (ex:
+authentication only) without including the other.</p>
+</div>
+<div class="paragraph">
+<p>The best combination is to use <em>buddy</em>'s authentication middleware
+with liberator authorization endpoints.</p>
+</div>
+<div class="paragraph">
+<p><strong>Buddy has own cryptographic algorithms implementations?</strong></p>
+</div>
+<div class="paragraph">
+<p>Mainly no, I&#8217;m not cryptography expert and I rely this to battle tested Bouncy Castle java
+library dedicated to that.</p>
+</div>
+<div class="paragraph">
+<p><strong>Buddy will support pgp?</strong></p>
+</div>
+<div class="paragraph">
+<p>Surely not! Because there is already exists one good <a href="https://github.com/greglook/clj-pgp">library for that</a>.</p>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_how_to_contribute"><a class="link" href="#_how_to_contribute">10. How to Contribute?</a></h2>
+<div class="sectionbody">
+<div class="sect2">
+<h3 id="_philosophy"><a class="link" href="#_philosophy">10.1. Philosophy</a></h3>
+<div class="paragraph">
+<p>Five most important rules:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>Beautiful is better than ugly.</p>
+</li>
+<li>
+<p>Explicit is better than implicit.</p>
+</li>
+<li>
+<p>Simple is better than complex.</p>
+</li>
+<li>
+<p>Complex is better than complicated.</p>
+</li>
+<li>
+<p>Readability counts.</p>
+</li>
+</ul>
+</div>
+<div class="paragraph">
+<p>All contributions to <em>buddy</em> should keep these important rules in mind.</p>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_procedure"><a class="link" href="#_procedure">10.2. Procedure</a></h3>
+<div class="paragraph">
+<p><em>buddy</em> unlike Clojure and other Clojure contrib libs, does not have many
+restrictions for contributions. Just follow the following steps depending on the
+situation:</p>
+</div>
+<div class="paragraph">
+<p><strong>Bugfix</strong>:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>Fork the GitHub repo.</p>
+</li>
+<li>
+<p>Fix a bug/typo on a new branch.</p>
+</li>
+<li>
+<p>Make a pull-request to master.</p>
+</li>
+</ul>
+</div>
+<div class="paragraph">
+<p><strong>New feature</strong>:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>Open new issue with the new feature proposal.</p>
+</li>
+<li>
+<p>If it is accepted, follow the same steps as "bugfix".</p>
+</li>
+</ul>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_license"><a class="link" href="#_license">10.3. License</a></h3>
+<div class="listingblock">
+<div class="content">
+<pre class="pygments highlight"><code data-lang="text">Copyright (c) 2014, Andrey Antukh
+
+All rights reserved.
+
+Redistribution and use in source and binary forms, with or without
+modification, are permitted provided that the following conditions are met:
+
+* Redistributions of source code must retain the above copyright notice, this
+  list of conditions and the following disclaimer.
+
+* Redistributions in binary form must reproduce the above copyright notice,
+  this list of conditions and the following disclaimer in the documentation
+  and/or other materials provided with the distribution.
+
+THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS &quot;AS IS&quot;
+AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
+IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
+DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE LIABLE
+FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL
+DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR
+SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER
+CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY,
+OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
+OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.</code></pre>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+<div id="footer">
+<div id="footer-text">
+Last updated 2014-12-13 19:11:32 CET
+</div>
+</div>
+</body>
+</html>
