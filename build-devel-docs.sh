@@ -9,6 +9,7 @@ mv doc/api /tmp/api
 
 git checkout gh-pages;
 
+rm -rf ./$VERSION/
 mkdir -p ./$VERSION/
 mv -fv /tmp/index.html ./$VERSION/
 mv -fv /tmp/api ./$VERSION/
