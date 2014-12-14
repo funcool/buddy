@@ -7,6 +7,8 @@
                  [org.clojure/algo.monads "0.1.5"]
                  [ring/ring-core "1.3.2" :exclusions [org.clojure/tools.reader]]
                  [commons-codec/commons-codec "1.10"]
+                 [cats "0.2.0" :exclusions [org.clojure/clojure]]
+                 [clout "2.1.0"]
                  [com.taoensso/nippy "2.7.1"]
                  [clojurewerkz/scrypt "1.2.0"]
                  [clj-time "0.8.0"]
@@ -17,15 +19,21 @@
   :source-paths ["src/clojure"]
   :java-source-paths ["src/java"]
   :javac-options ["-target" "1.7" "-source" "1.7" "-Xlint:-options"]
+  :test-paths ["test"]
   :plugins [[codox "0.8.10"]
             [lein-cloverage "1.0.2"]]
   :codox {:output-dir "doc/api"
           :src-dir-uri "http://github.com/niwibe/buddy/blob/master/"
           :src-linenum-anchor-prefix "L"}
-  :profiles {:uberjar {:aot :all}
-             :bench {:dependencies [[criterium "0.4.3"]]
+  :profiles {:bench {:dependencies [[criterium "0.4.3"]]
                      :source-paths ["benchmarks/"]
                      :main ^:skip-aot buddy.benchmarks}
+             ;; :dev {:dependencies [[speclj "3.1.0"]]
+             ;;       :test-paths ["spec"]
+             ;;       :plugins [[speclj "3.1.0"]]}
+             :speclj {:dependencies [[speclj "3.1.0"]]
+                      :test-paths ["spec"]
+                      :plugins [[speclj "3.1.0"]]}
              :example {:dependencies [[compojure "1.1.8"]
                                       [ring "1.3.1"]]}
              :sessionexample [:example
