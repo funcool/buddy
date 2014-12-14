@@ -14,8 +14,8 @@
 
 For more info:
 
-- **Stable version documentation:** http://niwibe.github.io/buddy/index.html
-- **Development version documentation:** http://niwibe.github.io/buddy/index-dev.html
+- **Stable version documentation:** https://niwibe.github.io/buddy/latest/
+- **Development version documentation:** https://niwibe.github.io/buddy/devel/
 
 
 
