@@ -6,7 +6,7 @@ Version 0.2.3
 
 Date: 2014-11-19
 
-- Fix java7 compativility.
+- Fix java7 compatibility.
 - Minor fix on namespace name on some test file.
 - Upgrade bouncycastle version to 1.51 (from 1.50)
 
