@@ -1,6 +1,5 @@
 #!/bin/sh
-#!/bin/sh
-VERSION="latest"
+VERSION="0.2.x"
 
 lein doc
 (cd doc; make)
