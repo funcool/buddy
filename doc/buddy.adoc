@@ -553,7 +553,7 @@ link:https://github.com/weavejester/clout[clout] url matching syntax o regular e
 
 .The same example but using regular expressions.
 [source, clojure]
-         ----
+----
 [{:pattern #"^/foo$"
   :handler user-access}
 ----
