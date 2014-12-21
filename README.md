@@ -1,6 +1,7 @@
 # buddy
 
 [![Travis Badge](https://img.shields.io/travis/niwibe/buddy.svg?style=flat)](https://travis-ci.org/niwibe/buddy "Travis Badge")
+[![Dependencies Status](http://jarkeeper.com/niwibe/buddy/status.svg)](http://jarkeeper.com/niwibe/buddy)
 
 **buddy** is a complete security library for clojure with support for:
 
