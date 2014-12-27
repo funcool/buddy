@@ -16,3 +16,11 @@ Documentation:
 
 - **Stable version documentation:** https://funcool.github.io/buddy/latest/
 - **Development version documentation:** https://funcool.github.io/buddy/devel/
+
+
+Since 0.3.0, this is a meta package for:
+
+- https://github.com/funcool/buddy-core
+- https://github.com/funcool/buddy-auth
+- https://github.com/funcool/buddy-sign
+- https://github.com/funcool/buddy-hashers
