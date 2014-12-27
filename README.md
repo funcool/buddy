@@ -13,10 +13,7 @@
 - encryption (block & stream ciphers)
 - key derivartion functions (kdf)
 
-For more info:
+Documentation:
 
 - **Stable version documentation:** https://funcool.github.io/buddy/latest/
 - **Development version documentation:** https://funcool.github.io/buddy/devel/
-
-
-
