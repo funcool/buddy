@@ -1,0 +1,206 @@
+= Buddy - Security library for clojure.
+Andrey Antukh, <niwi@niwi.be>
+0.3.0-SNAPSHOT
+:toc: left
+:numbered:
+:source-highlighter: pygments
+:pygments-style: friendly
+:sectlinks:
+
+== Introduction
+
+Buddy *sign* module is dedicated to provide a high level abstraction
+for web ready message signing.
+
+It can be used for several purposes:
+
+- Safely send/store signed or encrypted messages.
+- Safely store session data in cookies instead of a database (this prevents others
+  from changing session content)
+- Self contained token generation for use with completely stateless token based authentication.
+
+
+== Generic Message Signing
+
+The generic singin is mainly based on django's
+link:https://docs.djangoproject.com/en/1.6/topics/signing/[Cryptographic
+signing] library but extended with various signing algorithms and cryptography
+support.
+
+.Supported Algorithms
+[options="header"]
+|=====================================================================================
+|Algorithm name     | Hash algorithms   | Keywords           | Priv/Pub Key?
+|Elliptic Curve DSA | sha256, sha512    | `:es256`, `:es512` | Yes
+|RSASSA PSS         | sha256, sha512    | `:ps256`, `:ps512` | Yes
+|RSASSA PKCS1 v1_5  | sha256, sha512    | `:rs256`, `:rs256` | Yes
+|HMAC               | sha256*, sha512   | `:hs256`, `:hs256` | No
+|=====================================================================================
+
++++*+++ indicates the default value.
+
+[NOTE]
+====
+Only HMAC based algorithms support plain text secret keys, If you want to use
+Digital Signature instead of hmac then you must have a key pair (public and private).
+====
+
+=== Using low level api
+
+There are four signing functions in _buddy.sign.generic_ namespace: _sign_,
+_unsign_, _loads_ and _dumps_.
+
+_sign_ and _unsign_ are low level and work primarily with strings.
+
+.Using low level api example.
+[source,clojure]
+----
+(require '[buddy.sign.generic :refer [sign unsign]])
+
+;; Sign data
+(def signed-data (sign "mystring" "my-secret-key"))
+
+;; signed-data should contain a string similar to:
+;; "mystring:f08dd937a438f43639d34a345910148cb933ea8ea0c2c306e8733e0255677e3d:MTM..."
+
+;; Unsign previosly signed data
+(def unsigned-data (unsign signed-data "my-secret-key"))
+
+;; unsigned-data should contain the original string: "mystring"
+----
+
+Each signature has a timestamp attached (with millisecond of accuracy) so you can
+invalidate signed messages based on their age.
+
+.Unsign old signed data with _max-age_ parameter.
+[source,clojure]
+----
+(unsign old-signed-data "my-secret-key" {:max-age (* 15 60)})
+;; => nil
+----
+
+
+=== Protecting complex data structures
+
+If you wish to protect a native data structure (hash-map, hash-set, list, vector, etc...)
+you can do so using the _dumps_ and _loads_ functions.
+
+
+.Using high-level api for sign and unsing complex data.
+[source,clojure]
+----
+(require '[buddy.sign.generic :refer [dumps loads]])
+
+;; Sign data
+(def signed-data (dumps {:userid 1} "my-secret-key"))
+
+;; signed-data should contain a string similar to:
+;; "TlBZARlgGwAAAAIOAAAABnVzZXJpZCsAAAAAAAAAAQ:59d9e8063ad80f6abd3092b45857810b10f5..."
+
+;; Unsign previously signed data
+(loads signed-data "my-secret-key")
+;; => {:userid 1}
+----
+
+NOTE: it uses a Clojure serialization library link:https://github.com/ptaoussanis/nippy[Nippy]
+
+
+=== Using Digital Signature algorithms
+
+In order to use any of digital signature algorithms you must have a private/public key. If you
+don't have one, don't worry - it's very easy to generate it using *openssl*.
+
+.Example on how to generate one Elliptic Curve DSA keypair.
+[source, bash]
+----
+# Generating params file
+openssl ecparam -name prime256v1 -out ecparams.pem
+
+# Generate a private key from params file
+openssl ecparam -in ecparams.pem -genkey -noout -out ecprivkey.pem
+
+# Generate a public key from private key
+openssl ec -in ecprivkey.pem -pubout -out ecpubkey.pem
+----
+
+.Example on how to generate one RSA keypair.
+[source, bash]
+----
+# Generate aes256 encrypted private key
+openssl genrsa -aes256 -out privkey.pem 2048
+
+# Generate public key from previously created private key.
+openssl rsa -pubout -in privkey.pem -out pubkey.pem
+----
+
+==== Using Digital Signature Keys for signing
+
+Now, having generated a key pair, you can sign your messages using one
+of supported digital signature algorithms.
+
+.Example of signing a string using _es256_ (eliptic curve dsa) algorithm.
+[source, clojure]
+----
+(require '[buddy.sign.generic :refer [sign unsign]])
+
+;; Import namespace for managing/reading keys
+(require '[buddy.core.keys :as keys])
+
+;; Create keys instances
+(def ec-privkey (keys/private-key "ecprivkey.pem"))
+(def ec-pubkey (keys/public-key "ecpubkey.pem"))
+
+;; Use them like plain secret password with hmac algorithms for sign
+(def signed-data (sign "mystring" ec-privkey {:alg :es256}))
+
+;; And unsign
+(def unsigned-data (unsign signed-data ec-pubkey {:alg :es256}))
+----
+
+[[jws]]
+== Json Web Signature/Token
+
+[small]#New in version: 0.2#
+
+JSON Web Signature (JWS) represents content secured with digital
+signatures or Message Authentication Codes (MACs) using JavaScript
+Object Notation (JSON) as serialization format.
+
+List of rfcs related to this feature:
+
+- http://tools.ietf.org/html/draft-ietf-oauth-json-web-token-32
+- http://tools.ietf.org/html/draft-ietf-jose-json-web-algorithms-38
+- http://tools.ietf.org/html/draft-ietf-jose-json-web-signature-38
+
+
+.Supported Algorithms
+[options="header"]
+|=====================================================================================
+|Algorithm name     | Hash algorithms   | Keywords           | Priv/Pub Key?
+|Elliptic Curve DSA | sha256, sha512    | `:es256`, `:es512` | Yes
+|RSASSA PSS         | sha256, sha512    | `:ps256`, `:ps512` | Yes
+|RSASSA PKCS1 v1_5  | sha256, sha512    | `:rs256`, `:rs256` | Yes
+|HMAC               | sha256*, sha512   | `:hs256`, `:hs256` | No
+|=====================================================================================
+
+
+=== Signing and unsignin data
+
+Due to the nature of the storage format, the input is restricted mainly to json objects
+in the current version.
+
+.Example sign data using JWS
+[source, clojure]
+----
+(require '[buddy.sign.jws :as jws])
+
+;; Sign data using default `:hs256` algorithm that does not
+;; requres special priv/pub key.
+(def data (jws/sign {:userid 1} "secret"))
+
+;; data should contain string similar to:
+;; "eyJ0eXAiOiJKV1MiLCJhbGciOiJIUzI1NiJ9.eyJ1c2VyaWQiOjF9.zjenOuIAEG-..."
+
+(jws/unsign data "secret")
+;; => {:userid 1}
+----
