@@ -1,7 +1,7 @@
 # buddy
 
-[![Travis Badge](https://img.shields.io/travis/niwibe/buddy.svg?style=flat)](https://travis-ci.org/niwibe/buddy "Travis Badge")
-[![Dependencies Status](http://jarkeeper.com/niwibe/buddy/status.svg)](http://jarkeeper.com/niwibe/buddy)
+[![Travis Badge](https://img.shields.io/travis/funcool/buddy.svg?style=flat)](https://travis-ci.org/funcool/buddy "Travis Badge")
+[![Dependencies Status](http://jarkeeper.com/funcool/buddy/status.svg)](http://jarkeeper.com/funcool/buddy)
 
 **buddy** is a complete security library for clojure with support for:
 
@@ -15,8 +15,8 @@
 
 For more info:
 
-- **Stable version documentation:** https://niwibe.github.io/buddy/latest/
-- **Development version documentation:** https://niwibe.github.io/buddy/devel/
+- **Stable version documentation:** https://funcool.github.io/buddy/latest/
+- **Development version documentation:** https://funcool.github.io/buddy/devel/
 
 
 
