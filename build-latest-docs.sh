@@ -1,22 +1,16 @@
 #!/bin/sh
 VERSION="devel"
 
-lein doc
 (cd doc; make)
 
-rm -rf /tmp/index.html /tmp/api
-
-mv doc/index.html /tmp/index.html;
-mv doc/api /tmp/api
+rm -rf /tmp/buddy-doc/
+mkdir -p /tmp/buddy-doc/
+mv doc/*.html /tmp/buddy-doc/
 
 git checkout gh-pages;
 
 rm -rf ./$VERSION
-mkdir -p ./$VERSION/
+mv /tmp/buddy-doc/ ./$VERSION
 
-mv -fv /tmp/index.html ./$VERSION/
-mv -fv /tmp/api ./$VERSION/
-
-git add --all ./$VERSION/index.html
-git add --all ./$VERSION/api
+git add --all ./$VERSION
 git commit -a -m "Update ${VERSION} doc"
