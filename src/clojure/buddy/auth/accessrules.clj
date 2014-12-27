@@ -137,6 +137,8 @@
 
     [{:uri \"/foo\"
       :handler user-access}
+     {:uris [\"/bar\" \"/baz\"]
+      :handler admin-access}]
 
   The clout library (https://github.com/weavejester/clout)
   for matching the `:uri`.
@@ -173,6 +175,11 @@
                  (let [route (clout/route-compile (:uri accessrule))]
                    (fn [request]
                      (boolean (clout/route-matches route request))))
+
+                 (:uris accessrule)
+                 (let [routes (mapv clout/route-compile (:uris accessrule))]
+                   (fn [request]
+                     (boolean (some #(clout/route-matches % request) routes))))
 
                  :else (fn [request] true))]
     (assoc accessrule

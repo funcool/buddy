@@ -100,7 +100,7 @@
             :handler {:or [ok fail]}}
            {:uri "/path2"
             :handler ok}
-           {:uri "/path3"
+           {:uris ["/path3" "/path0"]
             :handler {:and [fail ok]}}]})
 
 (defn on-error

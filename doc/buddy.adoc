@@ -551,6 +551,13 @@ link:https://github.com/weavejester/clout[clout] url matching syntax o regular e
   :handler user-access}
 ----
 
+.This is an example of one access rule with more that one url matching using clout syntax.
+[source, clojure]
+----
+[{:uris ["/foo" "/bar"]
+  :handler user-access}
+----
+
 .The same example but using regular expressions.
 [source, clojure]
 ----
