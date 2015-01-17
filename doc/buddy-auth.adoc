@@ -12,6 +12,51 @@ Andrey Antukh, <niwi@niwi.be>
 Buddy *auth* module is dedicated for to provide authentication facilities for
 ring and ring based web applications.
 
+== Install
+
+This section covers the _buddy-auth_ library installing process and its requirements.
+
+
+=== Requirements
+
+_suricatta_ is tested with these platforms:
+
+- JDK7
+- JDK8
+
+
+=== Leiningen
+
+The simplest way to use _suricatta_ in a clojure project, is by including it in the dependency
+vector on your *_project.clj_* file:
+
+._on project.clj_
+[source,clojure]
+----
+[suricatta "0.3.0-SNAPSHOT"]
+----
+
+=== Gradle
+
+If you are using gradle, this is a dependency line for gradle dsl:
+
+[source,groovy]
+----
+compile "suricatta:suricatta:0.3.0-SNAPSHOT"
+----
+
+=== Get the Code
+
+_buddy-auth_ is open source and can be found on link:https://github.com/funcool/buddy-auth[github].
+
+You can clone the public repository with this command:
+
+[source,text]
+----
+git clone https://github.com/funcool/buddy-auth
+----
+
+
 == Authentication
 
 Buddy differs with other libraries because it takes very different approach for handling

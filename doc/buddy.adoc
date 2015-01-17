@@ -1,6 +1,5 @@
 = Buddy - Security library for clojure.
 Andrey Antukh, <niwi@niwi.be>
-0.3.0-SNAPSHOT
 :toc: left
 :numbered:
 :source-highlighter: pygments
@@ -13,12 +12,48 @@ _buddy_ is a complete security library for clojure.
 
 Since version 0.3.0, buddy is splitted in four modules for improve modularity
 of the application and allow to people include only wanted parts of buddy
-instead of one monolytic library.
+instead of one monolitic library.
 
 Each module has it own functionality and its own documentation. This document/page
 only serves as introduction to the library and the content of index.
 
 Below are the details and features of each module.
+
+
+== Install
+
+The recommended way is setup only modules that you need, and for concrete
+install instructions, see the module documentation.
+
+But if you want to emulate the previos behavior, you can include all them:
+
+[source,clojure]
+----
+[buddy/buddy-core "x.y.z"]
+[buddy/buddy-sign "x.y.z"]
+[buddy/buddy-hashers "x.y.z"]
+[buddy/buddy-auth "x.y.z"]
+----
+
+
+== Get the Source
+
+_buddy_ is open source and can be found on link:https://github.com/funcool[github]
+organization.
+
+You can clone the public repository with this command:
+
+[source,text]
+----
+git clone https://github.com/funcool/buddy
+git clone https://github.com/funcool/buddy-core
+git clone https://github.com/funcool/buddy-sign
+git clone https://github.com/funcool/buddy-hashers
+git clone https://github.com/funcool/buddy-auth
+----
+
+
+== Modules Summary
 
 === buddy-core
 
@@ -31,7 +66,8 @@ With that list of features:
 - encryption (block & stream ciphers)
 - key derivartion functions (kdf)
 
-link:core.html[Documentation]
+link:http://funcool.github.io/buddy-core/latest/[Documentation]
+
 
 === buddy-auth
 
@@ -45,7 +81,8 @@ With that list of features:
 - Authentication/Authorization backends (token, http-basic, session).
 - Access rules system.
 
-link:auth.html[Documentation]
+link:http://funcool.github.io/buddy-auth/latest/[Documentation]
+
 
 === buddy-hashers
 
@@ -55,7 +92,8 @@ With that list of features:
 
 - A collection of secure password hashers (bcrypt, scrypt, pbkdf2, ...)
 
-link:hashers.html[Documentation]
+link:http://funcool.github.io/buddy-hashers/latest/[Documentation]
+
 
 === buddy-sign
 
@@ -66,56 +104,9 @@ With that list of features:
 - Generic message signing (based on django's sign framework)
 - Json Web Signature/Token
 
-link:sign.html[Documentation]
+link:http://funcool.github.io/buddy-sign/latest/[Documentation]
 
 
-== Project Maturity
-
-Since _buddy_ is a young project there can be some API breakage.
-
-== Requirements
-
-_buddy_ has support for these jvm versions:
-
-- JDK7
-- JDK8
-
-
-== Install
-
-You have two ways for add buddy as dependency to your project: adding
-a buddy as dependency that will include all submodules, or specify
-manually which modules you want to use.
-
-.Include all submodules of buddy in one unique dependency entry:
-[source,clojure]
-----
-[buddy "0.3.0-SNAPSHOT"]
-----
-
-.Include all submodules of buddy one by one:
-[source,clojure]
-----
-[buddy/buddy-core "0.3.0-SNAPSHOT"]
-[buddy/buddy-sign "0.3.0-SNAPSHOT"]
-[buddy/buddy-hashers "0.3.0-SNAPSHOT"]
-[buddy/buddy-auth "0.3.0-SNAPSHOT"]
-----
-
-=== Get the Code
-
-_buddy_ is open source and can be found on link:https://github.com/funcool[github]
-organization.
-
-You can clone the public repository with this command:
-
-[source,text]
-----
-git clone https://github.com/funcool/buddy-core
-git clone https://github.com/funcool/buddy-sign
-git clone https://github.com/funcool/buddy-hashers
-git clone https://github.com/funcool/buddy-auth
-----
 
 == FAQ
 
