@@ -6,7 +6,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <meta name="generator" content="Asciidoctor 1.5.2">
 <meta name="author" content="Andrey Antukh, &lt;niwi@niwi.be&gt;">
-<title>Buddy - Security library for clojure.</title>
+<title>Buddy - Password Hashers</title>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Open+Sans:300,300italic,400,400italic,600,600italic%7CNoto+Serif:400,400italic,700,700italic%7CDroid+Sans+Mono:400">
 <style>
 /* Asciidoctor default stylesheet | MIT License | http://asciidoctor.org */
@@ -477,32 +477,16 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 </head>
 <body class="article toc2 toc-left">
 <div id="header">
-<h1>Buddy - Security library for clojure.</h1>
+<h1>Buddy - Password Hashers</h1>
 <div class="details">
 <span id="author" class="author">Andrey Antukh, &lt;niwi@niwi.be&gt;</span><br>
+<span id="revdate">0.3.0-SNAPSHOT</span>
 </div>
 <div id="toc" class="toc2">
 <div id="toctitle">Table of Contents</div>
 <ul class="sectlevel1">
 <li><a href="#_introduction">1. Introduction</a></li>
-<li><a href="#_install">2. Install</a></li>
-<li><a href="#_get_the_source">3. Get the Source</a></li>
-<li><a href="#_modules_summary">4. Modules Summary</a>
-<ul class="sectlevel2">
-<li><a href="#_buddy_core">4.1. buddy-core</a></li>
-<li><a href="#_buddy_auth">4.2. buddy-auth</a></li>
-<li><a href="#_buddy_hashers">4.3. buddy-hashers</a></li>
-<li><a href="#_buddy_sign">4.4. buddy-sign</a></li>
-</ul>
-</li>
-<li><a href="#_faq">5. FAQ</a></li>
-<li><a href="#_how_to_contribute">6. How to Contribute?</a>
-<ul class="sectlevel2">
-<li><a href="#_philosophy">6.1. Philosophy</a></li>
-<li><a href="#_procedure">6.2. Procedure</a></li>
-<li><a href="#_license">6.3. License</a></li>
-</ul>
-</li>
+<li><a href="#_bcrypt">2. BCrypt</a></li>
 </ul>
 </div>
 </div>
@@ -511,19 +495,71 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 <h2 id="_introduction"><a class="link" href="#_introduction">1. Introduction</a></h2>
 <div class="sectionbody">
 <div class="paragraph">
-<p><em>buddy</em> is a complete security library for clojure.</p>
+<p>Buddy <strong>hashers</strong> module is dedicated to provide a collection
+of password hashers functions.</p>
 </div>
+<table class="tableblock frame-all grid-all spread">
+<caption class="title">Table 1. Supported password hashers algorithms</caption>
+<colgroup>
+<col style="width: 33%;">
+<col style="width: 33%;">
+<col style="width: 33%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">Hash algorithm name</th>
+<th class="tableblock halign-left valign-top">Namespace</th>
+<th class="tableblock halign-left valign-top">Observations</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Bcrypt</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>buddy.hashers.bcrypt</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Recommended</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Pbkdf2</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>buddy.hashers.pbkdf2</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Recommended</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Scrypt</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>buddy.hashers.scrypt</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Recommended</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">sha256</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>buddy.hashers.sha256</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Not recommended</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">md5</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>buddy.hashers.md5</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Broken! Not Recommended</p></td>
+</tr>
+</tbody>
+</table>
 <div class="paragraph">
-<p>Since version 0.3.0, buddy is splitted in four modules for improve modularity
-of the application and allow to people include only wanted parts of buddy
-instead of one monolitic library.</p>
+<p>A hasher consists in two functions: <em>make-password</em> and <em>check-password</em>. The
+purpose of these functions is obvious: creating a new password, and verifying
+incoming plain text password with the previously created hash.</p>
 </div>
-<div class="paragraph">
-<p>Each module has it own functionality and its own documentation. This document/page
-only serves as introduction to the library and the content of index.</p>
 </div>
-<div class="paragraph">
-<p>Below are the details and features of each module.</p>
+</div>
+<div class="sect1">
+<h2 id="_bcrypt"><a class="link" href="#_bcrypt">2. BCrypt</a></h2>
+<div class="sectionbody">
+<div class="listingblock">
+<div class="title">Example of creating and verifying a new hash</div>
+<div class="content">
+<pre class="pygments highlight"><code data-lang="clojure"><span class="tok-p">(</span><span class="tok-nf">require</span> <span class="tok-o">&#39;</span><span class="tok-p">[</span><span class="tok-nv">buddy.hashers.bcrypt</span> <span class="tok-ss">:as</span> <span class="tok-nv">hs</span><span class="tok-p">])</span>
+
+<span class="tok-p">(</span><span class="tok-k">def </span><span class="tok-nv">myhash</span> <span class="tok-p">(</span><span class="tok-nf">hs/make-password</span> <span class="tok-s">&quot;secretpassword&quot;</span><span class="tok-p">))</span>
+<span class="tok-p">(</span><span class="tok-k">def </span><span class="tok-nv">ok</span> <span class="tok-p">(</span><span class="tok-nf">hs/check-password</span> <span class="tok-s">&quot;secretpassword&quot;</span> <span class="tok-nv">myhash</span><span class="tok-p">))</span>
+
+<span class="tok-c1">;; ok var reference should contain true</span></code></pre>
+</div>
 </div>
 <div class="admonitionblock note">
 <table>
@@ -532,301 +568,30 @@ only serves as introduction to the library and the content of index.</p>
 <div class="title">Note</div>
 </td>
 <td class="content">
-If you are using the <strong>0.2.x</strong> branch, you can see the proper documentation
-for that version <a href="http://funcool.github.io/buddy/0.2.x/">here</a>
+hasher functions, unlike cryptographic hash functions, expect strings instead
+of bytes.
+</td>
+</tr>
+</table>
+</div>
+<div class="admonitionblock note">
+<table>
+<tr>
+<td class="icon">
+<div class="title">Note</div>
+</td>
+<td class="content">
+<em>make-password</em> function options may vary depending of hasher algorithm is used.
 </td>
 </tr>
 </table>
 </div>
 </div>
 </div>
-<div class="sect1">
-<h2 id="_install"><a class="link" href="#_install">2. Install</a></h2>
-<div class="sectionbody">
-<div class="paragraph">
-<p>The recommended way is setup only modules that you need, and for concrete
-install instructions, see the module documentation.</p>
-</div>
-<div class="paragraph">
-<p>But if you want to emulate the previos behavior, you can include all them:</p>
-</div>
-<div class="listingblock">
-<div class="content">
-<pre class="pygments highlight"><code data-lang="clojure"><span class="tok-p">[</span><span class="tok-nv">buddy/buddy-core</span> <span class="tok-s">&quot;x.y.z&quot;</span><span class="tok-p">]</span>
-<span class="tok-p">[</span><span class="tok-nv">buddy/buddy-sign</span> <span class="tok-s">&quot;x.y.z&quot;</span><span class="tok-p">]</span>
-<span class="tok-p">[</span><span class="tok-nv">buddy/buddy-hashers</span> <span class="tok-s">&quot;x.y.z&quot;</span><span class="tok-p">]</span>
-<span class="tok-p">[</span><span class="tok-nv">buddy/buddy-auth</span> <span class="tok-s">&quot;x.y.z&quot;</span><span class="tok-p">]</span></code></pre>
-</div>
-</div>
-</div>
-</div>
-<div class="sect1">
-<h2 id="_get_the_source"><a class="link" href="#_get_the_source">3. Get the Source</a></h2>
-<div class="sectionbody">
-<div class="paragraph">
-<p><em>buddy</em> is open source and can be found on <a href="https://github.com/funcool">github</a>
-organization.</p>
-</div>
-<div class="paragraph">
-<p>You can clone the public repository with this command:</p>
-</div>
-<div class="listingblock">
-<div class="content">
-<pre class="pygments highlight"><code data-lang="text">git clone https://github.com/funcool/buddy-core
-git clone https://github.com/funcool/buddy-sign
-git clone https://github.com/funcool/buddy-hashers
-git clone https://github.com/funcool/buddy-auth</code></pre>
-</div>
-</div>
-</div>
-</div>
-<div class="sect1">
-<h2 id="_modules_summary"><a class="link" href="#_modules_summary">4. Modules Summary</a></h2>
-<div class="sectionbody">
-<div class="sect2">
-<h3 id="_buddy_core"><a class="link" href="#_buddy_core">4.1. buddy-core</a></h3>
-<div class="paragraph">
-<p>Cryptographyc api.</p>
-</div>
-<div class="paragraph">
-<p>With that list of features:</p>
-</div>
-<div class="ulist">
-<ul>
-<li>
-<p>secure hash functions (digest)</p>
-</li>
-<li>
-<p>signature &amp; authentication (mac &amp; digital signature)</p>
-</li>
-<li>
-<p>encryption (block &amp; stream ciphers)</p>
-</li>
-<li>
-<p>key derivartion functions (kdf)</p>
-</li>
-</ul>
-</div>
-<div class="paragraph">
-<p><a href="http://funcool.github.io/buddy-core/latest/">Documentation</a></p>
-</div>
-</div>
-<div class="sect2">
-<h3 id="_buddy_auth"><a class="link" href="#_buddy_auth">4.2. buddy-auth</a></h3>
-<div class="paragraph">
-<p>Authentication and Authorization for ring and ring-based
-web applications.</p>
-</div>
-<div class="paragraph">
-<p>With that list of features:</p>
-</div>
-<div class="ulist">
-<ul>
-<li>
-<p>Authentication middlewares for ring.</p>
-</li>
-<li>
-<p>Authorization middleware for ring.</p>
-</li>
-<li>
-<p>Authentication/Authorization backends (token, http-basic, session).</p>
-</li>
-<li>
-<p>Access rules system.</p>
-</li>
-</ul>
-</div>
-<div class="paragraph">
-<p><a href="http://funcool.github.io/buddy-auth/latest/">Documentation</a></p>
-</div>
-</div>
-<div class="sect2">
-<h3 id="_buddy_hashers"><a class="link" href="#_buddy_hashers">4.3. buddy-hashers</a></h3>
-<div class="paragraph">
-<p>Secure password hashers.</p>
-</div>
-<div class="paragraph">
-<p>With that list of features:</p>
-</div>
-<div class="ulist">
-<ul>
-<li>
-<p>A collection of secure password hashers (bcrypt, scrypt, pbkdf2, &#8230;&#8203;)</p>
-</li>
-</ul>
-</div>
-<div class="paragraph">
-<p><a href="http://funcool.github.io/buddy-hashers/latest/">Documentation</a></p>
-</div>
-</div>
-<div class="sect2">
-<h3 id="_buddy_sign"><a class="link" href="#_buddy_sign">4.4. buddy-sign</a></h3>
-<div class="paragraph">
-<p>High level message signing module.</p>
-</div>
-<div class="paragraph">
-<p>With that list of features:</p>
-</div>
-<div class="ulist">
-<ul>
-<li>
-<p>Generic message signing (based on django&#8217;s sign framework)</p>
-</li>
-<li>
-<p>Json Web Signature/Token</p>
-</li>
-</ul>
-</div>
-<div class="paragraph">
-<p><a href="http://funcool.github.io/buddy-sign/latest/">Documentation</a></p>
-</div>
-</div>
-</div>
-</div>
-<div class="sect1">
-<h2 id="_faq"><a class="link" href="#_faq">5. FAQ</a></h2>
-<div class="sectionbody">
-<div class="paragraph">
-<p><strong>Buddy is a security library/framework?</strong></p>
-</div>
-<div class="paragraph">
-<p>Yes and No. I don&#8217;t like call "security" library because security represents a very generic
-concepts and can contain a lot of things. Buddy targets cryptography, message signing
-and authentication/authorization extensions for ring compatible web applications. You can see
-the main target on the "Introduction" section of this documentation.</p>
-</div>
-<div class="paragraph">
-<p><strong>How can I use <em>buddy</em> with <a href="http://clojure-liberator.github.io/liberator/">liberator</a>?</strong></p>
-</div>
-<div class="paragraph">
-<p>By design, <em>buddy</em> has authorization and authentication well
-separated. This helps a lot if you want use only one part of it (ex:
-authentication only) without including the other.</p>
-</div>
-<div class="paragraph">
-<p>The best combination is to use <em>buddy</em>'s authentication middleware
-with liberator authorization endpoints.</p>
-</div>
-<div class="paragraph">
-<p><strong>Buddy has own cryptographic algorithms implementations?</strong></p>
-</div>
-<div class="paragraph">
-<p>Mainly no, I&#8217;m not cryptography expert and for this I rely on the to battle tested Bouncy Castle java
-library that&#8217;s dedicated to this purpose.</p>
-</div>
-<div class="paragraph">
-<p><strong>Buddy will support pgp?</strong></p>
-</div>
-<div class="paragraph">
-<p>Surely not! Because there already exists one good <a href="https://github.com/greglook/clj-pgp">library for that</a>.</p>
-</div>
-</div>
-</div>
-<div class="sect1">
-<h2 id="_how_to_contribute"><a class="link" href="#_how_to_contribute">6. How to Contribute?</a></h2>
-<div class="sectionbody">
-<div class="sect2">
-<h3 id="_philosophy"><a class="link" href="#_philosophy">6.1. Philosophy</a></h3>
-<div class="paragraph">
-<p>Five most important rules:</p>
-</div>
-<div class="ulist">
-<ul>
-<li>
-<p>Beautiful is better than ugly.</p>
-</li>
-<li>
-<p>Explicit is better than implicit.</p>
-</li>
-<li>
-<p>Simple is better than complex.</p>
-</li>
-<li>
-<p>Complex is better than complicated.</p>
-</li>
-<li>
-<p>Readability counts.</p>
-</li>
-</ul>
-</div>
-<div class="paragraph">
-<p>All contributions to <em>buddy</em> should keep these important rules in mind.</p>
-</div>
-</div>
-<div class="sect2">
-<h3 id="_procedure"><a class="link" href="#_procedure">6.2. Procedure</a></h3>
-<div class="paragraph">
-<p>Unlike Clojure and other Clojure contrib libs, <em>buddy</em> does not have many
-restrictions for contributions. Just follow the following steps depending on the
-situation:</p>
-</div>
-<div class="paragraph">
-<p><strong>Bugfix</strong>:</p>
-</div>
-<div class="ulist">
-<ul>
-<li>
-<p>Fork the GitHub repo.</p>
-</li>
-<li>
-<p>Fix a bug/typo on a new branch.</p>
-</li>
-<li>
-<p>Make a pull-request to master.</p>
-</li>
-</ul>
-</div>
-<div class="paragraph">
-<p><strong>New feature</strong>:</p>
-</div>
-<div class="ulist">
-<ul>
-<li>
-<p>Open new issues with the new feature proposal.</p>
-</li>
-<li>
-<p>If it is accepted, follow the same steps as "bugfix".</p>
-</li>
-</ul>
-</div>
-</div>
-<div class="sect2">
-<h3 id="_license"><a class="link" href="#_license">6.3. License</a></h3>
-<div class="listingblock">
-<div class="content">
-<pre class="pygments highlight"><code data-lang="text">Copyright (c) 2013-2015, Andrey Antukh
-
-All rights reserved.
-
-Redistribution and use in source and binary forms, with or without
-modification, are permitted provided that the following conditions are met:
-
-* Redistributions of source code must retain the above copyright notice, this
-  list of conditions and the following disclaimer.
-
-* Redistributions in binary form must reproduce the above copyright notice,
-  this list of conditions and the following disclaimer in the documentation
-  and/or other materials provided with the distribution.
-
-THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS &quot;AS IS&quot;
-AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
-IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
-DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE LIABLE
-FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL
-DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR
-SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER
-CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY,
-OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
-OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.</code></pre>
-</div>
-</div>
-</div>
-</div>
-</div>
 </div>
 <div id="footer">
 <div id="footer-text">
-Last updated 2015-01-18 18:04:32 CET
+Last updated 2015-01-18 18:02:34 CET
 </div>
 </div>
 </body>

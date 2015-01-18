@@ -480,27 +480,22 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 <h1>Buddy - Security library for clojure.</h1>
 <div class="details">
 <span id="author" class="author">Andrey Antukh, &lt;niwi@niwi.be&gt;</span><br>
+<span id="revdate">0.3.0-SNAPSHOT</span>
 </div>
 <div id="toc" class="toc2">
 <div id="toctitle">Table of Contents</div>
 <ul class="sectlevel1">
 <li><a href="#_introduction">1. Introduction</a></li>
-<li><a href="#_install">2. Install</a></li>
-<li><a href="#_get_the_source">3. Get the Source</a></li>
-<li><a href="#_modules_summary">4. Modules Summary</a>
+<li><a href="#_generic_message_signing">2. Generic Message Signing</a>
 <ul class="sectlevel2">
-<li><a href="#_buddy_core">4.1. buddy-core</a></li>
-<li><a href="#_buddy_auth">4.2. buddy-auth</a></li>
-<li><a href="#_buddy_hashers">4.3. buddy-hashers</a></li>
-<li><a href="#_buddy_sign">4.4. buddy-sign</a></li>
+<li><a href="#_using_low_level_api">2.1. Using low level api</a></li>
+<li><a href="#_protecting_complex_data_structures">2.2. Protecting complex data structures</a></li>
+<li><a href="#_using_digital_signature_algorithms">2.3. Using Digital Signature algorithms</a></li>
 </ul>
 </li>
-<li><a href="#_faq">5. FAQ</a></li>
-<li><a href="#_how_to_contribute">6. How to Contribute?</a>
+<li><a href="#jws">3. Json Web Signature/Token</a>
 <ul class="sectlevel2">
-<li><a href="#_philosophy">6.1. Philosophy</a></li>
-<li><a href="#_procedure">6.2. Procedure</a></li>
-<li><a href="#_license">6.3. License</a></li>
+<li><a href="#_signing_and_unsignin_data">3.1. Signing and unsignin data</a></li>
 </ul>
 </li>
 </ul>
@@ -511,19 +506,82 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 <h2 id="_introduction"><a class="link" href="#_introduction">1. Introduction</a></h2>
 <div class="sectionbody">
 <div class="paragraph">
-<p><em>buddy</em> is a complete security library for clojure.</p>
+<p>Buddy <strong>sign</strong> module is dedicated to provide a high level abstraction
+for web ready message signing.</p>
 </div>
 <div class="paragraph">
-<p>Since version 0.3.0, buddy is splitted in four modules for improve modularity
-of the application and allow to people include only wanted parts of buddy
-instead of one monolitic library.</p>
+<p>It can be used for several purposes:</p>
 </div>
-<div class="paragraph">
-<p>Each module has it own functionality and its own documentation. This document/page
-only serves as introduction to the library and the content of index.</p>
+<div class="ulist">
+<ul>
+<li>
+<p>Safely send/store signed or encrypted messages.</p>
+</li>
+<li>
+<p>Safely store session data in cookies instead of a database (this prevents others
+from changing session content)</p>
+</li>
+<li>
+<p>Self contained token generation for use with completely stateless token based authentication.</p>
+</li>
+</ul>
 </div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_generic_message_signing"><a class="link" href="#_generic_message_signing">2. Generic Message Signing</a></h2>
+<div class="sectionbody">
 <div class="paragraph">
-<p>Below are the details and features of each module.</p>
+<p>The generic singin is mainly based on django&#8217;s
+<a href="https://docs.djangoproject.com/en/1.6/topics/signing/">Cryptographic
+signing</a> library but extended with various signing algorithms and cryptography
+support.</p>
+</div>
+<table class="tableblock frame-all grid-all spread">
+<caption class="title">Table 1. Supported Algorithms</caption>
+<colgroup>
+<col style="width: 25%;">
+<col style="width: 25%;">
+<col style="width: 25%;">
+<col style="width: 25%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">Algorithm name</th>
+<th class="tableblock halign-left valign-top">Hash algorithms</th>
+<th class="tableblock halign-left valign-top">Keywords</th>
+<th class="tableblock halign-left valign-top">Priv/Pub Key?</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Elliptic Curve DSA</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">sha256, sha512</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>:es256</code>, <code>:es512</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Yes</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">RSASSA PSS</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">sha256, sha512</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>:ps256</code>, <code>:ps512</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Yes</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">RSASSA PKCS1 v1_5</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">sha256, sha512</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>:rs256</code>, <code>:rs256</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Yes</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">HMAC</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">sha256*, sha512</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>:hs256</code>, <code>:hs256</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">No</p></td>
+</tr>
+</tbody>
+</table>
+<div class="paragraph">
+<p>* indicates the default value.</p>
 </div>
 <div class="admonitionblock note">
 <table>
@@ -532,292 +590,235 @@ only serves as introduction to the library and the content of index.</p>
 <div class="title">Note</div>
 </td>
 <td class="content">
-If you are using the <strong>0.2.x</strong> branch, you can see the proper documentation
-for that version <a href="http://funcool.github.io/buddy/0.2.x/">here</a>
+<div class="paragraph">
+<p>Only HMAC based algorithms support plain text secret keys, If you want to use
+Digital Signature instead of hmac then you must have a key pair (public and private).</p>
+</div>
+</td>
+</tr>
+</table>
+</div>
+<div class="sect2">
+<h3 id="_using_low_level_api"><a class="link" href="#_using_low_level_api">2.1. Using low level api</a></h3>
+<div class="paragraph">
+<p>There are four signing functions in <em>buddy.sign.generic</em> namespace: <em>sign</em>,
+<em>unsign</em>, <em>loads</em> and <em>dumps</em>.</p>
+</div>
+<div class="paragraph">
+<p><em>sign</em> and <em>unsign</em> are low level and work primarily with strings.</p>
+</div>
+<div class="listingblock">
+<div class="title">Using low level api example.</div>
+<div class="content">
+<pre class="pygments highlight"><code data-lang="clojure"><span class="tok-p">(</span><span class="tok-nf">require</span> <span class="tok-o">&#39;</span><span class="tok-p">[</span><span class="tok-nv">buddy.sign.generic</span> <span class="tok-ss">:refer</span> <span class="tok-p">[</span><span class="tok-nv">sign</span> <span class="tok-nv">unsign</span><span class="tok-p">]])</span>
+
+<span class="tok-c1">;; Sign data</span>
+<span class="tok-p">(</span><span class="tok-k">def </span><span class="tok-nv">signed-data</span> <span class="tok-p">(</span><span class="tok-nf">sign</span> <span class="tok-s">&quot;mystring&quot;</span> <span class="tok-s">&quot;my-secret-key&quot;</span><span class="tok-p">))</span>
+
+<span class="tok-c1">;; signed-data should contain a string similar to:</span>
+<span class="tok-c1">;; &quot;mystring:f08dd937a438f43639d34a345910148cb933ea8ea0c2c306e8733e0255677e3d:MTM...&quot;</span>
+
+<span class="tok-c1">;; Unsign previosly signed data</span>
+<span class="tok-p">(</span><span class="tok-k">def </span><span class="tok-nv">unsigned-data</span> <span class="tok-p">(</span><span class="tok-nf">unsign</span> <span class="tok-nv">signed-data</span> <span class="tok-s">&quot;my-secret-key&quot;</span><span class="tok-p">))</span>
+
+<span class="tok-c1">;; unsigned-data should contain the original string: &quot;mystring&quot;</span></code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>Each signature has a timestamp attached (with millisecond of accuracy) so you can
+invalidate signed messages based on their age.</p>
+</div>
+<div class="listingblock">
+<div class="title">Unsign old signed data with <em>max-age</em> parameter.</div>
+<div class="content">
+<pre class="pygments highlight"><code data-lang="clojure"><span class="tok-p">(</span><span class="tok-nf">unsign</span> <span class="tok-nv">old-signed-data</span> <span class="tok-s">&quot;my-secret-key&quot;</span> <span class="tok-p">{</span><span class="tok-ss">:max-age</span> <span class="tok-p">(</span><span class="tok-nb">* </span><span class="tok-mi">15</span> <span class="tok-mi">60</span><span class="tok-p">)})</span>
+<span class="tok-c1">;; =&gt; nil</span></code></pre>
+</div>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_protecting_complex_data_structures"><a class="link" href="#_protecting_complex_data_structures">2.2. Protecting complex data structures</a></h3>
+<div class="paragraph">
+<p>If you wish to protect a native data structure (hash-map, hash-set, list, vector, etc&#8230;&#8203;)
+you can do so using the <em>dumps</em> and <em>loads</em> functions.</p>
+</div>
+<div class="listingblock">
+<div class="title">Using high-level api for sign and unsing complex data.</div>
+<div class="content">
+<pre class="pygments highlight"><code data-lang="clojure"><span class="tok-p">(</span><span class="tok-nf">require</span> <span class="tok-o">&#39;</span><span class="tok-p">[</span><span class="tok-nv">buddy.sign.generic</span> <span class="tok-ss">:refer</span> <span class="tok-p">[</span><span class="tok-nv">dumps</span> <span class="tok-nv">loads</span><span class="tok-p">]])</span>
+
+<span class="tok-c1">;; Sign data</span>
+<span class="tok-p">(</span><span class="tok-k">def </span><span class="tok-nv">signed-data</span> <span class="tok-p">(</span><span class="tok-nf">dumps</span> <span class="tok-p">{</span><span class="tok-ss">:userid</span> <span class="tok-mi">1</span><span class="tok-p">}</span> <span class="tok-s">&quot;my-secret-key&quot;</span><span class="tok-p">))</span>
+
+<span class="tok-c1">;; signed-data should contain a string similar to:</span>
+<span class="tok-c1">;; &quot;TlBZARlgGwAAAAIOAAAABnVzZXJpZCsAAAAAAAAAAQ:59d9e8063ad80f6abd3092b45857810b10f5...&quot;</span>
+
+<span class="tok-c1">;; Unsign previously signed data</span>
+<span class="tok-p">(</span><span class="tok-nf">loads</span> <span class="tok-nv">signed-data</span> <span class="tok-s">&quot;my-secret-key&quot;</span><span class="tok-p">)</span>
+<span class="tok-c1">;; =&gt; {:userid 1}</span></code></pre>
+</div>
+</div>
+<div class="admonitionblock note">
+<table>
+<tr>
+<td class="icon">
+<div class="title">Note</div>
+</td>
+<td class="content">
+it uses a Clojure serialization library <a href="https://github.com/ptaoussanis/nippy">Nippy</a>
 </td>
 </tr>
 </table>
 </div>
 </div>
-</div>
-<div class="sect1">
-<h2 id="_install"><a class="link" href="#_install">2. Install</a></h2>
-<div class="sectionbody">
+<div class="sect2">
+<h3 id="_using_digital_signature_algorithms"><a class="link" href="#_using_digital_signature_algorithms">2.3. Using Digital Signature algorithms</a></h3>
 <div class="paragraph">
-<p>The recommended way is setup only modules that you need, and for concrete
-install instructions, see the module documentation.</p>
-</div>
-<div class="paragraph">
-<p>But if you want to emulate the previos behavior, you can include all them:</p>
+<p>In order to use any of digital signature algorithms you must have a private/public key. If you
+don&#8217;t have one, don&#8217;t worry - it&#8217;s very easy to generate it using <strong>openssl</strong>.</p>
 </div>
 <div class="listingblock">
+<div class="title">Example on how to generate one Elliptic Curve DSA keypair.</div>
 <div class="content">
-<pre class="pygments highlight"><code data-lang="clojure"><span class="tok-p">[</span><span class="tok-nv">buddy/buddy-core</span> <span class="tok-s">&quot;x.y.z&quot;</span><span class="tok-p">]</span>
-<span class="tok-p">[</span><span class="tok-nv">buddy/buddy-sign</span> <span class="tok-s">&quot;x.y.z&quot;</span><span class="tok-p">]</span>
-<span class="tok-p">[</span><span class="tok-nv">buddy/buddy-hashers</span> <span class="tok-s">&quot;x.y.z&quot;</span><span class="tok-p">]</span>
-<span class="tok-p">[</span><span class="tok-nv">buddy/buddy-auth</span> <span class="tok-s">&quot;x.y.z&quot;</span><span class="tok-p">]</span></code></pre>
+<pre class="pygments highlight"><code data-lang="bash"><span class="tok-c"># Generating params file</span>
+openssl ecparam -name prime256v1 -out ecparams.pem
+
+<span class="tok-c"># Generate a private key from params file</span>
+openssl ecparam -in ecparams.pem -genkey -noout -out ecprivkey.pem
+
+<span class="tok-c"># Generate a public key from private key</span>
+openssl ec -in ecprivkey.pem -pubout -out ecpubkey.pem</code></pre>
 </div>
-</div>
-</div>
-</div>
-<div class="sect1">
-<h2 id="_get_the_source"><a class="link" href="#_get_the_source">3. Get the Source</a></h2>
-<div class="sectionbody">
-<div class="paragraph">
-<p><em>buddy</em> is open source and can be found on <a href="https://github.com/funcool">github</a>
-organization.</p>
-</div>
-<div class="paragraph">
-<p>You can clone the public repository with this command:</p>
 </div>
 <div class="listingblock">
+<div class="title">Example on how to generate one RSA keypair.</div>
 <div class="content">
-<pre class="pygments highlight"><code data-lang="text">git clone https://github.com/funcool/buddy-core
-git clone https://github.com/funcool/buddy-sign
-git clone https://github.com/funcool/buddy-hashers
-git clone https://github.com/funcool/buddy-auth</code></pre>
+<pre class="pygments highlight"><code data-lang="bash"><span class="tok-c"># Generate aes256 encrypted private key</span>
+openssl genrsa -aes256 -out privkey.pem 2048
+
+<span class="tok-c"># Generate public key from previously created private key.</span>
+openssl rsa -pubout -in privkey.pem -out pubkey.pem</code></pre>
 </div>
 </div>
-</div>
-</div>
-<div class="sect1">
-<h2 id="_modules_summary"><a class="link" href="#_modules_summary">4. Modules Summary</a></h2>
-<div class="sectionbody">
-<div class="sect2">
-<h3 id="_buddy_core"><a class="link" href="#_buddy_core">4.1. buddy-core</a></h3>
+<div class="sect3">
+<h4 id="_using_digital_signature_keys_for_signing"><a class="link" href="#_using_digital_signature_keys_for_signing">2.3.1. Using Digital Signature Keys for signing</a></h4>
 <div class="paragraph">
-<p>Cryptographyc api.</p>
+<p>Now, having generated a key pair, you can sign your messages using one
+of supported digital signature algorithms.</p>
 </div>
-<div class="paragraph">
-<p>With that list of features:</p>
-</div>
-<div class="ulist">
-<ul>
-<li>
-<p>secure hash functions (digest)</p>
-</li>
-<li>
-<p>signature &amp; authentication (mac &amp; digital signature)</p>
-</li>
-<li>
-<p>encryption (block &amp; stream ciphers)</p>
-</li>
-<li>
-<p>key derivartion functions (kdf)</p>
-</li>
-</ul>
-</div>
-<div class="paragraph">
-<p><a href="http://funcool.github.io/buddy-core/latest/">Documentation</a></p>
-</div>
-</div>
-<div class="sect2">
-<h3 id="_buddy_auth"><a class="link" href="#_buddy_auth">4.2. buddy-auth</a></h3>
-<div class="paragraph">
-<p>Authentication and Authorization for ring and ring-based
-web applications.</p>
-</div>
-<div class="paragraph">
-<p>With that list of features:</p>
-</div>
-<div class="ulist">
-<ul>
-<li>
-<p>Authentication middlewares for ring.</p>
-</li>
-<li>
-<p>Authorization middleware for ring.</p>
-</li>
-<li>
-<p>Authentication/Authorization backends (token, http-basic, session).</p>
-</li>
-<li>
-<p>Access rules system.</p>
-</li>
-</ul>
-</div>
-<div class="paragraph">
-<p><a href="http://funcool.github.io/buddy-auth/latest/">Documentation</a></p>
-</div>
-</div>
-<div class="sect2">
-<h3 id="_buddy_hashers"><a class="link" href="#_buddy_hashers">4.3. buddy-hashers</a></h3>
-<div class="paragraph">
-<p>Secure password hashers.</p>
-</div>
-<div class="paragraph">
-<p>With that list of features:</p>
-</div>
-<div class="ulist">
-<ul>
-<li>
-<p>A collection of secure password hashers (bcrypt, scrypt, pbkdf2, &#8230;&#8203;)</p>
-</li>
-</ul>
-</div>
-<div class="paragraph">
-<p><a href="http://funcool.github.io/buddy-hashers/latest/">Documentation</a></p>
-</div>
-</div>
-<div class="sect2">
-<h3 id="_buddy_sign"><a class="link" href="#_buddy_sign">4.4. buddy-sign</a></h3>
-<div class="paragraph">
-<p>High level message signing module.</p>
-</div>
-<div class="paragraph">
-<p>With that list of features:</p>
-</div>
-<div class="ulist">
-<ul>
-<li>
-<p>Generic message signing (based on django&#8217;s sign framework)</p>
-</li>
-<li>
-<p>Json Web Signature/Token</p>
-</li>
-</ul>
-</div>
-<div class="paragraph">
-<p><a href="http://funcool.github.io/buddy-sign/latest/">Documentation</a></p>
-</div>
-</div>
-</div>
-</div>
-<div class="sect1">
-<h2 id="_faq"><a class="link" href="#_faq">5. FAQ</a></h2>
-<div class="sectionbody">
-<div class="paragraph">
-<p><strong>Buddy is a security library/framework?</strong></p>
-</div>
-<div class="paragraph">
-<p>Yes and No. I don&#8217;t like call "security" library because security represents a very generic
-concepts and can contain a lot of things. Buddy targets cryptography, message signing
-and authentication/authorization extensions for ring compatible web applications. You can see
-the main target on the "Introduction" section of this documentation.</p>
-</div>
-<div class="paragraph">
-<p><strong>How can I use <em>buddy</em> with <a href="http://clojure-liberator.github.io/liberator/">liberator</a>?</strong></p>
-</div>
-<div class="paragraph">
-<p>By design, <em>buddy</em> has authorization and authentication well
-separated. This helps a lot if you want use only one part of it (ex:
-authentication only) without including the other.</p>
-</div>
-<div class="paragraph">
-<p>The best combination is to use <em>buddy</em>'s authentication middleware
-with liberator authorization endpoints.</p>
-</div>
-<div class="paragraph">
-<p><strong>Buddy has own cryptographic algorithms implementations?</strong></p>
-</div>
-<div class="paragraph">
-<p>Mainly no, I&#8217;m not cryptography expert and for this I rely on the to battle tested Bouncy Castle java
-library that&#8217;s dedicated to this purpose.</p>
-</div>
-<div class="paragraph">
-<p><strong>Buddy will support pgp?</strong></p>
-</div>
-<div class="paragraph">
-<p>Surely not! Because there already exists one good <a href="https://github.com/greglook/clj-pgp">library for that</a>.</p>
-</div>
-</div>
-</div>
-<div class="sect1">
-<h2 id="_how_to_contribute"><a class="link" href="#_how_to_contribute">6. How to Contribute?</a></h2>
-<div class="sectionbody">
-<div class="sect2">
-<h3 id="_philosophy"><a class="link" href="#_philosophy">6.1. Philosophy</a></h3>
-<div class="paragraph">
-<p>Five most important rules:</p>
-</div>
-<div class="ulist">
-<ul>
-<li>
-<p>Beautiful is better than ugly.</p>
-</li>
-<li>
-<p>Explicit is better than implicit.</p>
-</li>
-<li>
-<p>Simple is better than complex.</p>
-</li>
-<li>
-<p>Complex is better than complicated.</p>
-</li>
-<li>
-<p>Readability counts.</p>
-</li>
-</ul>
-</div>
-<div class="paragraph">
-<p>All contributions to <em>buddy</em> should keep these important rules in mind.</p>
-</div>
-</div>
-<div class="sect2">
-<h3 id="_procedure"><a class="link" href="#_procedure">6.2. Procedure</a></h3>
-<div class="paragraph">
-<p>Unlike Clojure and other Clojure contrib libs, <em>buddy</em> does not have many
-restrictions for contributions. Just follow the following steps depending on the
-situation:</p>
-</div>
-<div class="paragraph">
-<p><strong>Bugfix</strong>:</p>
-</div>
-<div class="ulist">
-<ul>
-<li>
-<p>Fork the GitHub repo.</p>
-</li>
-<li>
-<p>Fix a bug/typo on a new branch.</p>
-</li>
-<li>
-<p>Make a pull-request to master.</p>
-</li>
-</ul>
-</div>
-<div class="paragraph">
-<p><strong>New feature</strong>:</p>
-</div>
-<div class="ulist">
-<ul>
-<li>
-<p>Open new issues with the new feature proposal.</p>
-</li>
-<li>
-<p>If it is accepted, follow the same steps as "bugfix".</p>
-</li>
-</ul>
-</div>
-</div>
-<div class="sect2">
-<h3 id="_license"><a class="link" href="#_license">6.3. License</a></h3>
 <div class="listingblock">
+<div class="title">Example of signing a string using <em>es256</em> (eliptic curve dsa) algorithm.</div>
 <div class="content">
-<pre class="pygments highlight"><code data-lang="text">Copyright (c) 2013-2015, Andrey Antukh
+<pre class="pygments highlight"><code data-lang="clojure"><span class="tok-p">(</span><span class="tok-nf">require</span> <span class="tok-o">&#39;</span><span class="tok-p">[</span><span class="tok-nv">buddy.sign.generic</span> <span class="tok-ss">:refer</span> <span class="tok-p">[</span><span class="tok-nv">sign</span> <span class="tok-nv">unsign</span><span class="tok-p">]])</span>
 
-All rights reserved.
+<span class="tok-c1">;; Import namespace for managing/reading keys</span>
+<span class="tok-p">(</span><span class="tok-nf">require</span> <span class="tok-o">&#39;</span><span class="tok-p">[</span><span class="tok-nv">buddy.core.keys</span> <span class="tok-ss">:as</span> <span class="tok-nv">keys</span><span class="tok-p">])</span>
 
-Redistribution and use in source and binary forms, with or without
-modification, are permitted provided that the following conditions are met:
+<span class="tok-c1">;; Create keys instances</span>
+<span class="tok-p">(</span><span class="tok-k">def </span><span class="tok-nv">ec-privkey</span> <span class="tok-p">(</span><span class="tok-nf">keys/private-key</span> <span class="tok-s">&quot;ecprivkey.pem&quot;</span><span class="tok-p">))</span>
+<span class="tok-p">(</span><span class="tok-k">def </span><span class="tok-nv">ec-pubkey</span> <span class="tok-p">(</span><span class="tok-nf">keys/public-key</span> <span class="tok-s">&quot;ecpubkey.pem&quot;</span><span class="tok-p">))</span>
 
-* Redistributions of source code must retain the above copyright notice, this
-  list of conditions and the following disclaimer.
+<span class="tok-c1">;; Use them like plain secret password with hmac algorithms for sign</span>
+<span class="tok-p">(</span><span class="tok-k">def </span><span class="tok-nv">signed-data</span> <span class="tok-p">(</span><span class="tok-nf">sign</span> <span class="tok-s">&quot;mystring&quot;</span> <span class="tok-nv">ec-privkey</span> <span class="tok-p">{</span><span class="tok-ss">:alg</span> <span class="tok-ss">:es256</span><span class="tok-p">}))</span>
 
-* Redistributions in binary form must reproduce the above copyright notice,
-  this list of conditions and the following disclaimer in the documentation
-  and/or other materials provided with the distribution.
+<span class="tok-c1">;; And unsign</span>
+<span class="tok-p">(</span><span class="tok-k">def </span><span class="tok-nv">unsigned-data</span> <span class="tok-p">(</span><span class="tok-nf">unsign</span> <span class="tok-nv">signed-data</span> <span class="tok-nv">ec-pubkey</span> <span class="tok-p">{</span><span class="tok-ss">:alg</span> <span class="tok-ss">:es256</span><span class="tok-p">}))</span></code></pre>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="jws"><a class="link" href="#jws">3. Json Web Signature/Token</a></h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p><span class="small">New in version: 0.2</span></p>
+</div>
+<div class="paragraph">
+<p>JSON Web Signature (JWS) represents content secured with digital
+signatures or Message Authentication Codes (MACs) using JavaScript
+Object Notation (JSON) as serialization format.</p>
+</div>
+<div class="paragraph">
+<p>List of rfcs related to this feature:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p><a href="http://tools.ietf.org/html/draft-ietf-oauth-json-web-token-32" class="bare">http://tools.ietf.org/html/draft-ietf-oauth-json-web-token-32</a></p>
+</li>
+<li>
+<p><a href="http://tools.ietf.org/html/draft-ietf-jose-json-web-algorithms-38" class="bare">http://tools.ietf.org/html/draft-ietf-jose-json-web-algorithms-38</a></p>
+</li>
+<li>
+<p><a href="http://tools.ietf.org/html/draft-ietf-jose-json-web-signature-38" class="bare">http://tools.ietf.org/html/draft-ietf-jose-json-web-signature-38</a></p>
+</li>
+</ul>
+</div>
+<table class="tableblock frame-all grid-all spread">
+<caption class="title">Table 2. Supported Algorithms</caption>
+<colgroup>
+<col style="width: 25%;">
+<col style="width: 25%;">
+<col style="width: 25%;">
+<col style="width: 25%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">Algorithm name</th>
+<th class="tableblock halign-left valign-top">Hash algorithms</th>
+<th class="tableblock halign-left valign-top">Keywords</th>
+<th class="tableblock halign-left valign-top">Priv/Pub Key?</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Elliptic Curve DSA</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">sha256, sha512</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>:es256</code>, <code>:es512</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Yes</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">RSASSA PSS</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">sha256, sha512</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>:ps256</code>, <code>:ps512</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Yes</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">RSASSA PKCS1 v1_5</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">sha256, sha512</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>:rs256</code>, <code>:rs256</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Yes</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">HMAC</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">sha256*, sha512</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>:hs256</code>, <code>:hs256</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">No</p></td>
+</tr>
+</tbody>
+</table>
+<div class="sect2">
+<h3 id="_signing_and_unsignin_data"><a class="link" href="#_signing_and_unsignin_data">3.1. Signing and unsignin data</a></h3>
+<div class="paragraph">
+<p>Due to the nature of the storage format, the input is restricted mainly to json objects
+in the current version.</p>
+</div>
+<div class="listingblock">
+<div class="title">Example sign data using JWS</div>
+<div class="content">
+<pre class="pygments highlight"><code data-lang="clojure"><span class="tok-p">(</span><span class="tok-nf">require</span> <span class="tok-o">&#39;</span><span class="tok-p">[</span><span class="tok-nv">buddy.sign.jws</span> <span class="tok-ss">:as</span> <span class="tok-nv">jws</span><span class="tok-p">])</span>
 
-THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS &quot;AS IS&quot;
-AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
-IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
-DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE LIABLE
-FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL
-DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR
-SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER
-CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY,
-OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
-OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.</code></pre>
+<span class="tok-c1">;; Sign data using default `:hs256` algorithm that does not</span>
+<span class="tok-c1">;; requres special priv/pub key.</span>
+<span class="tok-p">(</span><span class="tok-k">def </span><span class="tok-nv">data</span> <span class="tok-p">(</span><span class="tok-nf">jws/sign</span> <span class="tok-p">{</span><span class="tok-ss">:userid</span> <span class="tok-mi">1</span><span class="tok-p">}</span> <span class="tok-s">&quot;secret&quot;</span><span class="tok-p">))</span>
+
+<span class="tok-c1">;; data should contain string similar to:</span>
+<span class="tok-c1">;; &quot;eyJ0eXAiOiJKV1MiLCJhbGciOiJIUzI1NiJ9.eyJ1c2VyaWQiOjF9.zjenOuIAEG-...&quot;</span>
+
+<span class="tok-p">(</span><span class="tok-nf">jws/unsign</span> <span class="tok-nv">data</span> <span class="tok-s">&quot;secret&quot;</span><span class="tok-p">)</span>
+<span class="tok-c1">;; =&gt; {:userid 1}</span></code></pre>
 </div>
 </div>
 </div>
@@ -826,7 +827,7 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.</code></pre
 </div>
 <div id="footer">
 <div id="footer-text">
-Last updated 2015-01-18 18:04:32 CET
+Last updated 2015-01-18 18:02:34 CET
 </div>
 </div>
 </body>
