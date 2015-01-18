@@ -19,6 +19,9 @@ only serves as introduction to the library and the content of index.
 
 Below are the details and features of each module.
 
+NOTE: If you are using the *0.2.x* branch, you can see the proper documentation
+for that version link:http://funcool.github.io/buddy/0.2.x/[here]
+
 
 == Install
 
