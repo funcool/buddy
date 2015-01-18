@@ -23,12 +23,10 @@ NOTE: If you are using the *0.2.x* branch, you can see the proper documentation
 for that version link:http://funcool.github.io/buddy/0.2.x/[here]
 
 
-== Install
+== Backward compatibility
 
-The recommended way is setup only modules that you need, and for concrete
-install instructions, see the module documentation.
-
-But if you want to emulate the previos behavior, you can include all them:
+If you are happy with the monolitic version of buddy, you can emulate them including
+all buddy submodules packages like this:
 
 [source,clojure]
 ----
@@ -37,6 +35,9 @@ But if you want to emulate the previos behavior, you can include all them:
 [buddy/buddy-hashers "x.y.z"]
 [buddy/buddy-auth "x.y.z"]
 ----
+
+See the concrete instalation instructions and version number on specific
+module documentation.
 
 
 == Get the Source
