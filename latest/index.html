@@ -485,22 +485,21 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 <div id="toctitle">Table of Contents</div>
 <ul class="sectlevel1">
 <li><a href="#_introduction">1. Introduction</a></li>
-<li><a href="#_backward_compatibility">2. Backward compatibility</a></li>
-<li><a href="#_get_the_source">3. Get the Source</a></li>
-<li><a href="#_modules_summary">4. Modules Summary</a>
+<li><a href="#_backward_compatibility">2. Backward compatibility.</a></li>
+<li><a href="#_modules_summary">3. Modules Summary</a>
 <ul class="sectlevel2">
-<li><a href="#_buddy_core">4.1. buddy-core</a></li>
-<li><a href="#_buddy_auth">4.2. buddy-auth</a></li>
-<li><a href="#_buddy_hashers">4.3. buddy-hashers</a></li>
-<li><a href="#_buddy_sign">4.4. buddy-sign</a></li>
+<li><a href="#_buddy_core">3.1. buddy-core</a></li>
+<li><a href="#_buddy_auth">3.2. buddy-auth</a></li>
+<li><a href="#_buddy_hashers">3.3. buddy-hashers</a></li>
+<li><a href="#_buddy_sign">3.4. buddy-sign</a></li>
 </ul>
 </li>
-<li><a href="#_faq">5. FAQ</a></li>
-<li><a href="#_how_to_contribute">6. How to Contribute?</a>
+<li><a href="#_faq">4. FAQ</a></li>
+<li><a href="#_how_to_contribute">5. How to Contribute?</a>
 <ul class="sectlevel2">
-<li><a href="#_philosophy">6.1. Philosophy</a></li>
-<li><a href="#_procedure">6.2. Procedure</a></li>
-<li><a href="#_license">6.3. License</a></li>
+<li><a href="#_philosophy">5.1. Philosophy</a></li>
+<li><a href="#_procedure">5.2. Procedure</a></li>
+<li><a href="#_license">5.3. License</a></li>
 </ul>
 </li>
 </ul>
@@ -513,6 +512,11 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 <div class="paragraph">
 <p><em>buddy</em> is a complete security library for clojure.</p>
 </div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_backward_compatibility"><a class="link" href="#_backward_compatibility">2. Backward compatibility.</a></h2>
+<div class="sectionbody">
 <div class="paragraph">
 <p>Since version 0.3.0, buddy is splitted in four modules for improve modularity
 of the application and allow to people include only wanted parts of buddy
@@ -523,7 +527,20 @@ instead of one monolitic library.</p>
 only serves as introduction to the library and the content of index.</p>
 </div>
 <div class="paragraph">
-<p>Below are the details and features of each module.</p>
+<p>If you are happy with the monolitic version of buddy, you can emulate them including
+all buddy submodules packages like this:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="pygments highlight"><code data-lang="clojure"><span class="tok-p">[</span><span class="tok-nv">buddy/buddy-core</span> <span class="tok-s">&quot;x.y.z&quot;</span><span class="tok-p">]</span>
+<span class="tok-p">[</span><span class="tok-nv">buddy/buddy-sign</span> <span class="tok-s">&quot;x.y.z&quot;</span><span class="tok-p">]</span>
+<span class="tok-p">[</span><span class="tok-nv">buddy/buddy-hashers</span> <span class="tok-s">&quot;x.y.z&quot;</span><span class="tok-p">]</span>
+<span class="tok-p">[</span><span class="tok-nv">buddy/buddy-auth</span> <span class="tok-s">&quot;x.y.z&quot;</span><span class="tok-p">]</span></code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>See the concrete instalation instructions and version number on specific
+module documentation.</p>
 </div>
 <div class="admonitionblock note">
 <table>
@@ -541,51 +558,10 @@ for that version <a href="http://funcool.github.io/buddy/0.2.x/">here</a>
 </div>
 </div>
 <div class="sect1">
-<h2 id="_backward_compatibility"><a class="link" href="#_backward_compatibility">2. Backward compatibility</a></h2>
-<div class="sectionbody">
-<div class="paragraph">
-<p>If you are happy with the monolitic version of buddy, you can emulate them including
-all buddy submodules packages like this:</p>
-</div>
-<div class="listingblock">
-<div class="content">
-<pre class="pygments highlight"><code data-lang="clojure"><span class="tok-p">[</span><span class="tok-nv">buddy/buddy-core</span> <span class="tok-s">&quot;x.y.z&quot;</span><span class="tok-p">]</span>
-<span class="tok-p">[</span><span class="tok-nv">buddy/buddy-sign</span> <span class="tok-s">&quot;x.y.z&quot;</span><span class="tok-p">]</span>
-<span class="tok-p">[</span><span class="tok-nv">buddy/buddy-hashers</span> <span class="tok-s">&quot;x.y.z&quot;</span><span class="tok-p">]</span>
-<span class="tok-p">[</span><span class="tok-nv">buddy/buddy-auth</span> <span class="tok-s">&quot;x.y.z&quot;</span><span class="tok-p">]</span></code></pre>
-</div>
-</div>
-<div class="paragraph">
-<p>See the concrete instalation instructions and version number on specific
-module documentation.</p>
-</div>
-</div>
-</div>
-<div class="sect1">
-<h2 id="_get_the_source"><a class="link" href="#_get_the_source">3. Get the Source</a></h2>
-<div class="sectionbody">
-<div class="paragraph">
-<p><em>buddy</em> is open source and can be found on <a href="https://github.com/funcool">github</a>
-organization.</p>
-</div>
-<div class="paragraph">
-<p>You can clone the public repository with this command:</p>
-</div>
-<div class="listingblock">
-<div class="content">
-<pre class="pygments highlight"><code data-lang="text">git clone https://github.com/funcool/buddy-core
-git clone https://github.com/funcool/buddy-sign
-git clone https://github.com/funcool/buddy-hashers
-git clone https://github.com/funcool/buddy-auth</code></pre>
-</div>
-</div>
-</div>
-</div>
-<div class="sect1">
-<h2 id="_modules_summary"><a class="link" href="#_modules_summary">4. Modules Summary</a></h2>
+<h2 id="_modules_summary"><a class="link" href="#_modules_summary">3. Modules Summary</a></h2>
 <div class="sectionbody">
 <div class="sect2">
-<h3 id="_buddy_core"><a class="link" href="#_buddy_core">4.1. buddy-core</a></h3>
+<h3 id="_buddy_core"><a class="link" href="#_buddy_core">3.1. buddy-core</a></h3>
 <div class="paragraph">
 <p>Cryptographyc api.</p>
 </div>
@@ -613,7 +589,7 @@ git clone https://github.com/funcool/buddy-auth</code></pre>
 </div>
 </div>
 <div class="sect2">
-<h3 id="_buddy_auth"><a class="link" href="#_buddy_auth">4.2. buddy-auth</a></h3>
+<h3 id="_buddy_auth"><a class="link" href="#_buddy_auth">3.2. buddy-auth</a></h3>
 <div class="paragraph">
 <p>Authentication and Authorization for ring and ring-based
 web applications.</p>
@@ -642,7 +618,7 @@ web applications.</p>
 </div>
 </div>
 <div class="sect2">
-<h3 id="_buddy_hashers"><a class="link" href="#_buddy_hashers">4.3. buddy-hashers</a></h3>
+<h3 id="_buddy_hashers"><a class="link" href="#_buddy_hashers">3.3. buddy-hashers</a></h3>
 <div class="paragraph">
 <p>Secure password hashers.</p>
 </div>
@@ -661,7 +637,7 @@ web applications.</p>
 </div>
 </div>
 <div class="sect2">
-<h3 id="_buddy_sign"><a class="link" href="#_buddy_sign">4.4. buddy-sign</a></h3>
+<h3 id="_buddy_sign"><a class="link" href="#_buddy_sign">3.4. buddy-sign</a></h3>
 <div class="paragraph">
 <p>High level message signing module.</p>
 </div>
@@ -685,7 +661,7 @@ web applications.</p>
 </div>
 </div>
 <div class="sect1">
-<h2 id="_faq"><a class="link" href="#_faq">5. FAQ</a></h2>
+<h2 id="_faq"><a class="link" href="#_faq">4. FAQ</a></h2>
 <div class="sectionbody">
 <div class="paragraph">
 <p><strong>Buddy is a security library/framework?</strong></p>
@@ -724,10 +700,10 @@ library that&#8217;s dedicated to this purpose.</p>
 </div>
 </div>
 <div class="sect1">
-<h2 id="_how_to_contribute"><a class="link" href="#_how_to_contribute">6. How to Contribute?</a></h2>
+<h2 id="_how_to_contribute"><a class="link" href="#_how_to_contribute">5. How to Contribute?</a></h2>
 <div class="sectionbody">
 <div class="sect2">
-<h3 id="_philosophy"><a class="link" href="#_philosophy">6.1. Philosophy</a></h3>
+<h3 id="_philosophy"><a class="link" href="#_philosophy">5.1. Philosophy</a></h3>
 <div class="paragraph">
 <p>Five most important rules:</p>
 </div>
@@ -755,7 +731,7 @@ library that&#8217;s dedicated to this purpose.</p>
 </div>
 </div>
 <div class="sect2">
-<h3 id="_procedure"><a class="link" href="#_procedure">6.2. Procedure</a></h3>
+<h3 id="_procedure"><a class="link" href="#_procedure">5.2. Procedure</a></h3>
 <div class="paragraph">
 <p>Unlike Clojure and other Clojure contrib libs, <em>buddy</em> does not have many
 restrictions for contributions. Just follow the following steps depending on the
@@ -792,7 +768,7 @@ situation:</p>
 </div>
 </div>
 <div class="sect2">
-<h3 id="_license"><a class="link" href="#_license">6.3. License</a></h3>
+<h3 id="_license"><a class="link" href="#_license">5.3. License</a></h3>
 <div class="listingblock">
 <div class="content">
 <pre class="pygments highlight"><code data-lang="text">Copyright (c) 2013-2015, Andrey Antukh
@@ -827,7 +803,7 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.</code></pre
 </div>
 <div id="footer">
 <div id="footer-text">
-Last updated 2015-01-18 18:23:06 CET
+Last updated 2015-01-18 18:25:33 CET
 </div>
 </div>
 </body>
