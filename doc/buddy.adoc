@@ -120,40 +120,8 @@ library that's dedicated to this purpose.
 
 Surely not! Because there already exists one good link:https://github.com/greglook/clj-pgp[library for that].
 
-== How to Contribute?
 
-=== Philosophy
-
-Five most important rules:
-
-- Beautiful is better than ugly.
-- Explicit is better than implicit.
-- Simple is better than complex.
-- Complex is better than complicated.
-- Readability counts.
-
-All contributions to _buddy_ should keep these important rules in mind.
-
-
-=== Procedure
-
-Unlike Clojure and other Clojure contrib libs, _buddy_ does not have many
-restrictions for contributions. Just follow the following steps depending on the
-situation:
-
-**Bugfix**:
-
-- Fork the GitHub repo.
-- Fix a bug/typo on a new branch.
-- Make a pull-request to master.
-
-**New feature**:
-
-- Open new issues with the new feature proposal.
-- If it is accepted, follow the same steps as "bugfix".
-
-
-=== License
+== License
 
 [source,text]
 ----
