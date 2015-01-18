@@ -10,20 +10,15 @@ Andrey Antukh, <niwi@niwi.be>
 
 _buddy_ is a complete security library for clojure.
 
+
+== Backward compatibility.
+
 Since version 0.3.0, buddy is splitted in four modules for improve modularity
 of the application and allow to people include only wanted parts of buddy
 instead of one monolitic library.
 
 Each module has it own functionality and its own documentation. This document/page
 only serves as introduction to the library and the content of index.
-
-Below are the details and features of each module.
-
-NOTE: If you are using the *0.2.x* branch, you can see the proper documentation
-for that version link:http://funcool.github.io/buddy/0.2.x/[here]
-
-
-== Backward compatibility
 
 If you are happy with the monolitic version of buddy, you can emulate them including
 all buddy submodules packages like this:
@@ -39,21 +34,8 @@ all buddy submodules packages like this:
 See the concrete instalation instructions and version number on specific
 module documentation.
 
-
-== Get the Source
-
-_buddy_ is open source and can be found on link:https://github.com/funcool[github]
-organization.
-
-You can clone the public repository with this command:
-
-[source,text]
-----
-git clone https://github.com/funcool/buddy-core
-git clone https://github.com/funcool/buddy-sign
-git clone https://github.com/funcool/buddy-hashers
-git clone https://github.com/funcool/buddy-auth
-----
+NOTE: If you are using the *0.2.x* branch, you can see the proper documentation
+for that version link:http://funcool.github.io/buddy/0.2.x/[here]
 
 
 == Modules Summary
