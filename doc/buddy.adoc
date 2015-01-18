@@ -45,7 +45,6 @@ You can clone the public repository with this command:
 
 [source,text]
 ----
-git clone https://github.com/funcool/buddy
 git clone https://github.com/funcool/buddy-core
 git clone https://github.com/funcool/buddy-sign
 git clone https://github.com/funcool/buddy-hashers
