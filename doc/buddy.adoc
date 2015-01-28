@@ -98,6 +98,9 @@ With that list of features:
 
 link:http://funcool.github.io/buddy-sign/latest/[Documentation]
 
+== External resources
+
+- link:http://rundis.github.io/blog/2015/buddy_auth_part1.html[Securing Clojure Microservices using buddy - Part 1: Creating Auth Tokens]
 
 
 == FAQ
