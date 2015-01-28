@@ -494,8 +494,9 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 <li><a href="#_buddy_sign">3.4. buddy-sign</a></li>
 </ul>
 </li>
-<li><a href="#_faq">4. FAQ</a></li>
-<li><a href="#_license">5. License</a></li>
+<li><a href="#_external_resources">4. External resources</a></li>
+<li><a href="#_faq">5. FAQ</a></li>
+<li><a href="#_license">6. License</a></li>
 </ul>
 </div>
 </div>
@@ -663,16 +664,27 @@ web applications.</p>
 </div>
 </div>
 <div class="sect1">
-<h2 id="_faq"><a class="link" href="#_faq">4. FAQ</a></h2>
+<h2 id="_external_resources"><a class="link" href="#_external_resources">4. External resources</a></h2>
+<div class="sectionbody">
+<div class="ulist">
+<ul>
+<li>
+<p><a href="http://rundis.github.io/blog/2015/buddy_auth_part1.html">Securing Clojure Microservices using buddy - Part 1: Creating Auth Tokens</a></p>
+</li>
+</ul>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_faq"><a class="link" href="#_faq">5. FAQ</a></h2>
 <div class="sectionbody">
 <div class="paragraph">
 <p><strong>Buddy is a security library/framework?</strong></p>
 </div>
 <div class="paragraph">
-<p>Yes and No. I don&#8217;t like call "security" library because security represents a very generic
-concepts and can contain a lot of things. Buddy targets cryptography, message signing
-and authentication/authorization extensions for ring compatible web applications. You can see
-the main target on the "Introduction" section of this documentation.</p>
+<p>Yes and No. The security concept is very generic and can contain a lot of things.
+Buddy targets cryptography, message signing and authentication/authorization extensions
+for ring compatible web applications.</p>
 </div>
 <div class="paragraph">
 <p><strong>How can I use <em>buddy</em> with <a href="http://clojure-liberator.github.io/liberator/">liberator</a>?</strong></p>
@@ -699,10 +711,18 @@ library that&#8217;s dedicated to this purpose.</p>
 <div class="paragraph">
 <p>Surely not! Because there already exists one good <a href="https://github.com/greglook/clj-pgp">library for that</a>.</p>
 </div>
+<div class="paragraph">
+<p><strong>What is the difference with Friend</strong></p>
+</div>
+<div class="paragraph">
+<p>Buddy authorization/authentication facilities are more low level and less opinionated
+that friend and allow build over them easy other high level abstractions.
+Technically, friend abstraction can be build on top of buddy</p>
+</div>
 </div>
 </div>
 <div class="sect1">
-<h2 id="_license"><a class="link" href="#_license">5. License</a></h2>
+<h2 id="_license"><a class="link" href="#_license">6. License</a></h2>
 <div class="sectionbody">
 <div class="listingblock">
 <div class="content">
@@ -737,7 +757,7 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.</code></pre
 </div>
 <div id="footer">
 <div id="footer-text">
-Last updated 2015-01-28 10:54:39 CET
+Last updated 2015-01-28 11:13:33 CET
 </div>
 </div>
 </body>
