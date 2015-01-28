@@ -2,15 +2,12 @@
 
 == Version 0.3.0
 
-Date: unreleased
+Date: 2015-01-28
 
 - Splitted in modules: buddy-core, buddy-auth, buddy-hashers and buddy-sign (now
   you should see the concrete changes on respectivelly changes file on each
   repository).
-- Minor reorganization on java code (maybe backward incompatible changes
-  on private java api).
-- Update dependencies.
-
+- Now this is a metapackage and only track version changes from it children.
 
 == Version 0.2.3
 
