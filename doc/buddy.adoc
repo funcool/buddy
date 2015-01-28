@@ -107,10 +107,9 @@ link:http://funcool.github.io/buddy-sign/latest/[Documentation]
 
 *Buddy is a security library/framework?*
 
-Yes and No. I don't like call "security" library because security represents a very generic
-concepts and can contain a lot of things. Buddy targets cryptography, message signing
-and authentication/authorization extensions for ring compatible web applications. You can see
-the main target on the "Introduction" section of this documentation.
+Yes and No. The security concept is very generic and can contain a lot of things.
+Buddy targets cryptography, message signing and authentication/authorization extensions
+for ring compatible web applications.
 
 *How can I use _buddy_ with link:http://clojure-liberator.github.io/liberator/[liberator]?*
 
