@@ -129,6 +129,12 @@ library that's dedicated to this purpose.
 
 Surely not! Because there already exists one good link:https://github.com/greglook/clj-pgp[library for that].
 
+*What is the difference with Friend*
+
+Buddy authorization/authentication facilities are more low level and less opinionated
+that friend and allow build over them easy other high level abstractions.
+Technically, friend abstraction can be build on top of buddy
+
 
 == License
 
