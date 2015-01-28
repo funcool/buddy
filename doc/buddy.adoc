@@ -34,6 +34,13 @@ all buddy submodules packages like this:
 See the concrete instalation instructions and version number on specific
 module documentation.
 
+An other option is including a meta package (that includes all them in one):
+
+[source, clojure]
+----
+[buddy "0.3.0"]
+----
+
 NOTE: If you are using the *0.2.x* branch, you can see the proper documentation
 for that version link:http://funcool.github.io/buddy/0.2.x/[here]
 
