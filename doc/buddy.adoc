@@ -46,7 +46,7 @@ An other option is including a meta package (that includes all them in one):
 
 [source, clojure]
 ----
-[buddy "0.3.0"]
+[buddy "0.4.0"]
 ----
 
 NOTE: If you are using the *0.2.x* branch, you can see the proper documentation
@@ -61,10 +61,14 @@ Cryptographyc api.
 
 With that list of features:
 
-- secure hash functions (digest)
-- signature & authentication (mac & digital signature)
-- encryption (block & stream ciphers)
-- key derivartion functions (kdf)
+- cryptographic hash algorithms (digest)
+- key derivation algorithms (kdf)
+- digital signatures
+- message authentication (mac)
+- block ciphers
+- stream ciphers
+- padding schemes
+- nonces and stalts
 
 link:http://funcool.github.io/buddy-core/latest/[Documentation]
 
@@ -101,10 +105,11 @@ High level message signing module.
 
 With that list of features:
 
-- Generic message signing (based on django's sign framework)
 - Json Web Signature/Token
+- Compact message signing
 
 link:http://funcool.github.io/buddy-sign/latest/[Documentation]
+
 
 == External resources
 
@@ -112,12 +117,6 @@ link:http://funcool.github.io/buddy-sign/latest/[Documentation]
 
 
 == FAQ
-
-*Buddy is a security library/framework?*
-
-Yes and No. The security concept is very generic and can contain a lot of things.
-Buddy targets cryptography, message signing and authentication/authorization extensions
-for ring compatible web applications.
 
 *How can I use _buddy_ with link:http://clojure-liberator.github.io/liberator/[liberator]?*
 
@@ -141,7 +140,7 @@ Surely not! Because there already exists one good link:https://github.com/greglo
 
 Buddy authorization/authentication facilities are more low level and less opinionated
 that friend and allow build over them easy other high level abstractions.
-Technically, friend abstraction can be build on top of buddy
+Technically, friend abstraction can be build on top of buddy.
 
 
 == License
