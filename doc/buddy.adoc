@@ -116,33 +116,6 @@ link:http://funcool.github.io/buddy-sign/latest/[Documentation]
 - link:http://rundis.github.io/blog/2015/buddy_auth_part1.html[Securing Clojure Microservices using buddy - Part 1: Creating Auth Tokens]
 
 
-== FAQ
-
-*How can I use _buddy_ with link:http://clojure-liberator.github.io/liberator/[liberator]?*
-
-By design, _buddy_ has authorization and authentication well
-separated. This helps a lot if you want use only one part of it (ex:
-authentication only) without including the other.
-
-The best combination is to use _buddy_'s authentication middleware
-with liberator authorization endpoints.
-
-*Buddy has own cryptographic algorithms implementations?*
-
-Mainly no, I'm not cryptography expert and for this I rely on the to battle tested Bouncy Castle java
-library that's dedicated to this purpose.
-
-*Buddy will support pgp?*
-
-Surely not! Because there already exists one good link:https://github.com/greglook/clj-pgp[library for that].
-
-*What is the difference with Friend?*
-
-Buddy authorization/authentication facilities are more low level and less opinionated
-that friend and allow build over them easy other high level abstractions.
-Technically, friend abstraction can be build on top of buddy.
-
-
 == License
 
 [source,text]
