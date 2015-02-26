@@ -495,8 +495,7 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 </ul>
 </li>
 <li><a href="#_external_resources">4. External resources</a></li>
-<li><a href="#_faq">5. FAQ</a></li>
-<li><a href="#_license">6. License</a></li>
+<li><a href="#_license">5. License</a></li>
 </ul>
 </div>
 </div>
@@ -567,7 +566,7 @@ module documentation.</p>
 </div>
 <div class="listingblock">
 <div class="content">
-<pre class="pygments highlight"><code data-lang="clojure"><span class="tok-p">[</span><span class="tok-nv">buddy</span> <span class="tok-s">&quot;0.4.0&quot;</span><span class="tok-p">]</span></code></pre>
+<pre class="pygments highlight"><code data-lang="clojure"><span class="tok-p">[</span><span class="tok-nv">buddy</span> <span class="tok-s">&quot;0.4.1&quot;</span><span class="tok-p">]</span></code></pre>
 </div>
 </div>
 <div class="admonitionblock note">
@@ -713,45 +712,7 @@ web applications.</p>
 </div>
 </div>
 <div class="sect1">
-<h2 id="_faq"><a class="link" href="#_faq">5. FAQ</a></h2>
-<div class="sectionbody">
-<div class="paragraph">
-<p><strong>How can I use <em>buddy</em> with <a href="http://clojure-liberator.github.io/liberator/">liberator</a>?</strong></p>
-</div>
-<div class="paragraph">
-<p>By design, <em>buddy</em> has authorization and authentication well
-separated. This helps a lot if you want use only one part of it (ex:
-authentication only) without including the other.</p>
-</div>
-<div class="paragraph">
-<p>The best combination is to use <em>buddy</em>'s authentication middleware
-with liberator authorization endpoints.</p>
-</div>
-<div class="paragraph">
-<p><strong>Buddy has own cryptographic algorithms implementations?</strong></p>
-</div>
-<div class="paragraph">
-<p>Mainly no, I&#8217;m not cryptography expert and for this I rely on the to battle tested Bouncy Castle java
-library that&#8217;s dedicated to this purpose.</p>
-</div>
-<div class="paragraph">
-<p><strong>Buddy will support pgp?</strong></p>
-</div>
-<div class="paragraph">
-<p>Surely not! Because there already exists one good <a href="https://github.com/greglook/clj-pgp">library for that</a>.</p>
-</div>
-<div class="paragraph">
-<p><strong>What is the difference with Friend?</strong></p>
-</div>
-<div class="paragraph">
-<p>Buddy authorization/authentication facilities are more low level and less opinionated
-that friend and allow build over them easy other high level abstractions.
-Technically, friend abstraction can be build on top of buddy.</p>
-</div>
-</div>
-</div>
-<div class="sect1">
-<h2 id="_license"><a class="link" href="#_license">6. License</a></h2>
+<h2 id="_license"><a class="link" href="#_license">5. License</a></h2>
 <div class="sectionbody">
 <div class="listingblock">
 <div class="content">
@@ -786,7 +747,7 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.</code></pre
 </div>
 <div id="footer">
 <div id="footer-text">
-Last updated 2015-02-22 12:21:57 CET
+Last updated 2015-02-26 23:26:53 CET
 </div>
 </div>
 </body>
