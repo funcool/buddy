@@ -46,7 +46,7 @@ An other option is including a meta package (that includes all them in one):
 
 [source, clojure]
 ----
-[buddy "0.4.0"]
+[buddy "0.4.1"]
 ----
 
 NOTE: If you are using the *0.2.x* branch, you can see the proper documentation
