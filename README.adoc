@@ -1,10 +1,7 @@
 = Buddy - Security library for clojure.
 Andrey Antukh, <niwi@niwi.be>
-:toc: left
-:numbered:
 :source-highlighter: pygments
 :pygments-style: friendly
-:sectlinks:
 
 == Introduction
 
