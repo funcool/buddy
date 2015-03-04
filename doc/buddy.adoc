@@ -39,7 +39,7 @@ all buddy submodules packages like this:
 [buddy/buddy-auth "x.y.z"]
 ----
 
-See the concrete instalation instructions and version number on specific
+See the concrete installation instructions and version number on specific
 module documentation.
 
 An other option is including a meta package (that includes all them in one):
