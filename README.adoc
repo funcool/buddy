@@ -1,0 +1,151 @@
+= Buddy - Security library for clojure.
+Andrey Antukh, <niwi@niwi.be>
+:toc: left
+:numbered:
+:source-highlighter: pygments
+:pygments-style: friendly
+:sectlinks:
+
+== Introduction
+
+_buddy_ is a complete security library for clojure. With support for:
+
+- authentication, authorization & access rules (ring/compojure extensions)
+- secure hash functions (digest)
+- password hashing algorithms (bcrypt, pbkdf2, scrypt)
+- message/text signing (high level interface)
+- signature & authentication (mac & digital signature)
+- encryption (block, stream ciphers, nonces, salts)
+- key derivation functions (kdf)
+
+
+== Backward compatibility.
+
+Since version 0.3.0, buddy is split into four modules for improved modularity
+of the application and to allow people to include only wanted parts of buddy
+instead of one monolithic library.
+
+Each module has its own functionality and its own documentation. This document/page
+only serves as an introduction to the library and the content of index.
+
+If you are happy with the monolithic version of buddy, you can emulate it by including
+all buddy submodules packages like this:
+
+[source,clojure]
+----
+[buddy/buddy-core "x.y.z"]
+[buddy/buddy-sign "x.y.z"]
+[buddy/buddy-hashers "x.y.z"]
+[buddy/buddy-auth "x.y.z"]
+----
+
+See the concrete installation instructions and version number on specific
+module documentation.
+
+Another option is including a meta package (that includes all them in one):
+
+[source, clojure]
+----
+[buddy "0.4.1"]
+----
+
+NOTE: If you are using the *0.2.x* branch, you can see the proper documentation
+for that version link:http://funcool.github.io/buddy/0.2.x/[here]
+
+
+== Modules Summary
+
+=== buddy-core
+
+Cryptographyc API.
+
+With that list of features:
+
+- cryptographic hash algorithms (digest)
+- key derivation algorithms (kdf)
+- digital signatures
+- message authentication (mac)
+- block ciphers
+- stream ciphers
+- padding schemes
+- nonces and stalts
+- secure hash functions (digest)
+- signature & authentication (mac & digital signature)
+- encryption (block & stream ciphers)
+- key derivation functions (kdf)
+
+link:http://funcool.github.io/buddy-core/latest/[Documentation]
+
+
+=== buddy-auth
+
+Authentication and Authorization for ring and ring-based
+web applications.
+
+With that list of features:
+
+- Authentication middlewares for ring.
+- Authorization middleware for ring.
+- Authentication/Authorization backends (token, http-basic, session).
+- Access rules system.
+
+link:http://funcool.github.io/buddy-auth/latest/[Documentation]
+
+
+=== buddy-hashers
+
+Secure password hashers.
+
+With that list of features:
+
+- A collection of secure password hashers (bcrypt, scrypt, pbkdf2, ...)
+
+link:http://funcool.github.io/buddy-hashers/latest/[Documentation]
+
+
+=== buddy-sign
+
+High level message signing module.
+
+With that list of features:
+
+- Json Web Signature/Token
+- Compact message signing
+
+link:http://funcool.github.io/buddy-sign/latest/[Documentation]
+
+
+== External resources
+
+- link:http://rundis.github.io/blog/2015/buddy_auth_part1.html[Securing Clojure Microservices using buddy - Part 1: Creating Auth Tokens]
+
+
+== License
+
+[source,text]
+----
+Copyright (c) 2013-2015, Andrey Antukh
+
+All rights reserved.
+
+Redistribution and use in source and binary forms, with or without
+modification, are permitted provided that the following conditions are met:
+
+* Redistributions of source code must retain the above copyright notice, this
+  list of conditions and the following disclaimer.
+
+* Redistributions in binary form must reproduce the above copyright notice,
+  this list of conditions and the following disclaimer in the documentation
+  and/or other materials provided with the distribution.
+
+THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
+AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
+IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
+DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE LIABLE
+FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL
+DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR
+SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER
+CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY,
+OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
+OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+----
