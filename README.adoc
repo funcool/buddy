@@ -65,7 +65,7 @@ With that list of features:
 - block ciphers
 - stream ciphers
 - padding schemes
-- nonces and stalts
+- nonces and salts
 - secure hash functions (digest)
 - signature & authentication (mac & digital signature)
 - encryption (block & stream ciphers)
