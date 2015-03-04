@@ -21,14 +21,14 @@ _buddy_ is a complete security library for clojure. With support for:
 
 == Backward compatibility.
 
-Since version 0.3.0, buddy is splitted in four modules for improve modularity
-of the application and allow to people include only wanted parts of buddy
-instead of one monolitic library.
+Since version 0.3.0, buddy is split into four modules for improved modularity
+of the application and to allow people to include only wanted parts of buddy
+instead of one monolithic library.
 
-Each module has it own functionality and its own documentation. This document/page
-only serves as introduction to the library and the content of index.
+Each module has its own functionality and its own documentation. This document/page
+only serves as an introduction to the library and the content of index.
 
-If you are happy with the monolitic version of buddy, you can emulate them including
+If you are happy with the monolithic version of buddy, you can emulate it by including
 all buddy submodules packages like this:
 
 [source,clojure]
@@ -42,7 +42,7 @@ all buddy submodules packages like this:
 See the concrete installation instructions and version number on specific
 module documentation.
 
-An other option is including a meta package (that includes all them in one):
+Another option is including a meta package (that includes all them in one):
 
 [source, clojure]
 ----
@@ -57,7 +57,7 @@ for that version link:http://funcool.github.io/buddy/0.2.x/[here]
 
 === buddy-core
 
-Cryptographyc api.
+Cryptographyc API.
 
 With that list of features:
 
@@ -69,6 +69,10 @@ With that list of features:
 - stream ciphers
 - padding schemes
 - nonces and stalts
+- secure hash functions (digest)
+- signature & authentication (mac & digital signature)
+- encryption (block & stream ciphers)
+- key derivation functions (kdf)
 
 link:http://funcool.github.io/buddy-core/latest/[Documentation]
 
