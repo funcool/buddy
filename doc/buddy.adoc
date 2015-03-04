@@ -16,7 +16,7 @@ _buddy_ is a complete security library for clojure. With support for:
 - message/text signing (high level interface)
 - signature & authentication (mac & digital signature)
 - encryption (block & stream ciphers)
-- key derivartion functions (kdf)
+- key derivation functions (kdf)
 
 
 == Backward compatibility.
