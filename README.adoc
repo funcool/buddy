@@ -3,6 +3,11 @@ Andrey Antukh, <niwi@niwi.be>
 :source-highlighter: pygments
 :pygments-style: friendly
 
+image:http://jarkeeper.com/funcool/buddy/status.png["Dependencies Status", link="http://jarkeeper.com/funcool/buddy"]
+
+image:http://clojars.org/buddy/latest-version.svg["Clojars Project", link="http://clojars.org/buddy"]
+
+
 == Introduction
 
 _buddy_ is a complete security library for clojure. With support for:
@@ -43,7 +48,7 @@ Another option is including a meta package (that includes all them in one):
 
 [source, clojure]
 ----
-[buddy "0.4.1"]
+[buddy "0.4.2"]
 ----
 
 NOTE: If you are using the *0.2.x* branch, you can see the proper documentation
