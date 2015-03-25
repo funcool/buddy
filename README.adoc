@@ -119,8 +119,12 @@ link:http://funcool.github.io/buddy-sign/latest/[Documentation]
 
 == External resources
 
-- link:http://rundis.github.io/blog/2015/buddy_auth_part1.html[Securing Clojure Microservices using buddy - Part 1: Creating Auth Tokens]
-
+* Securing Clojure Microservices using buddy
+** http://rundis.github.io/blog/2015/buddy_auth_part1.html[Part 1: Creating Auth Tokens]
+** http://rundis.github.io/blog/2015/buddy_auth_part2.html[Part 2: WebApp authentication and authorization]
+** http://rundis.github.io/blog/2015/buddy_auth_part3.html[Part 3: Token revocation]
+** http://rundis.github.io/blog/2015/buddy_auth_part4.html[Part 4: Secure and liberate a service app]
+* http://kendru.github.io/restful-clojure/2015/03/13/securing-service-restful-clojure-part-4/[Securing the service | RESTful Clojure, Part 4]
 
 == License
 
