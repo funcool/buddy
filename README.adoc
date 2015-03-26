@@ -21,8 +21,6 @@ _buddy_ is a complete security library for clojure. With support for:
 - key derivation functions (kdf)
 
 
-== Backward compatibility.
-
 Since version 0.3.0, buddy is split into four modules for improved modularity
 of the application and to allow people to include only wanted parts of buddy
 instead of one monolithic library.
@@ -30,29 +28,15 @@ instead of one monolithic library.
 Each module has its own functionality and its own documentation. This document/page
 only serves as an introduction to the library and the content of index.
 
-If you are happy with the monolithic version of buddy, you can emulate it by including
-all buddy submodules packages like this:
-
-[source,clojure]
-----
-[buddy/buddy-core "x.y.z"]
-[buddy/buddy-sign "x.y.z"]
-[buddy/buddy-hashers "x.y.z"]
-[buddy/buddy-auth "x.y.z"]
-----
-
-See the concrete installation instructions and version number on specific
-module documentation.
-
-Another option is including a meta package (that includes all them in one):
+If you are happy with the monolithic version of buddy, you may want include the
+"buddy" meta-package:
 
 [source, clojure]
 ----
 [buddy "0.4.2"]
 ----
 
-NOTE: If you are using the *0.2.x* branch, you can see the proper documentation
-for that version link:http://funcool.github.io/buddy/0.2.x/[here]
+In case contrary see, see the concretete module or modules introductions.
 
 
 == Modules Summary
@@ -61,7 +45,7 @@ for that version link:http://funcool.github.io/buddy/0.2.x/[here]
 
 Cryptographyc API.
 
-With that list of features:
+With that maybe incomple list of features:
 
 - cryptographic hash algorithms (digest)
 - key derivation algorithms (kdf)
@@ -76,7 +60,10 @@ With that list of features:
 - encryption (block & stream ciphers)
 - key derivation functions (kdf)
 
-link:http://funcool.github.io/buddy-core/latest/[Documentation]
+
+Github: https://github.com/funcool/buddy-core
+
+Documentation: http://funcool.github.io/buddy-core/latest/
 
 
 === buddy-auth
@@ -91,18 +78,19 @@ With that list of features:
 - Authentication/Authorization backends (token, http-basic, session).
 - Access rules system.
 
-link:http://funcool.github.io/buddy-auth/latest/[Documentation]
+Github: https://github.com/funcool/buddy-auth
+
+Documentation: http://funcool.github.io/buddy-auth/latest/
 
 
 === buddy-hashers
 
-Secure password hashers.
+The collection of secure password hashers.
 
-With that list of features:
 
-- A collection of secure password hashers (bcrypt, scrypt, pbkdf2, ...)
+Github: https://github.com/funcool/buddy-hashers
 
-link:http://funcool.github.io/buddy-hashers/latest/[Documentation]
+Documentation: http://funcool.github.io/buddy-hashers/latest/
 
 
 === buddy-sign
@@ -114,7 +102,9 @@ With that list of features:
 - Json Web Signature/Token
 - Compact message signing
 
-link:http://funcool.github.io/buddy-sign/latest/[Documentation]
+Github: https://github.com/funcool/buddy-sign
+
+Documentation: http://funcool.github.io/buddy-sign/latest/
 
 
 == External resources
