@@ -1,5 +1,12 @@
 = Changelog
 
+== Version 0.4.3
+
+Date: 2015-03-29
+
+- Update buddy-sign to 0.4.2
+
+
 == Version 0.4.2
 
 Date: 2015-03-14
