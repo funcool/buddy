@@ -1,8 +1,8 @@
 (defproject buddy "0.4.4"
   :description "Security library for Clojure"
   :url "https://github.com/funcool/buddy"
-  :license {:name "BSD (2-Clause)"
-            :url "http://opensource.org/licenses/BSD-2-Clause"}
+  :license {:name "Apache 2.0"
+            :url "http://www.apache.org/licenses/LICENSE-2.0"}
   :dependencies [[buddy/buddy-core "0.5.0"]
                  [buddy/buddy-sign "0.5.0"]
                  [buddy/buddy-auth "0.5.0"]
