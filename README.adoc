@@ -33,7 +33,7 @@ If you are happy with the monolithic version of buddy, you may want include the
 
 [source, clojure]
 ----
-[buddy "0.4.3"]
+[buddy "0.5.0"]
 ----
 
 In other case, see the concrete instalation instructions of the module that you need.
@@ -99,7 +99,8 @@ High level message signing module.
 
 With that list of features:
 
-- Json Web Signature/Token
+- Json Web Signature
+- Json Web Encryption
 - Compact message signing
 
 Github: https://github.com/funcool/buddy-sign
@@ -115,33 +116,3 @@ Documentation: http://funcool.github.io/buddy-sign/latest/
 ** http://rundis.github.io/blog/2015/buddy_auth_part3.html[Part 3: Token revocation]
 ** http://rundis.github.io/blog/2015/buddy_auth_part4.html[Part 4: Secure and liberate a service app]
 * http://kendru.github.io/restful-clojure/2015/03/13/securing-service-restful-clojure-part-4/[Securing the service | RESTful Clojure, Part 4]
-
-== License
-
-[source,text]
-----
-Copyright (c) 2013-2015, Andrey Antukh
-
-All rights reserved.
-
-Redistribution and use in source and binary forms, with or without
-modification, are permitted provided that the following conditions are met:
-
-* Redistributions of source code must retain the above copyright notice, this
-  list of conditions and the following disclaimer.
-
-* Redistributions in binary form must reproduce the above copyright notice,
-  this list of conditions and the following disclaimer in the documentation
-  and/or other materials provided with the distribution.
-
-THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
-AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
-IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
-DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE LIABLE
-FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL
-DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR
-SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER
-CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY,
-OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
-OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
-----
