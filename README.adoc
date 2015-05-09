@@ -33,7 +33,7 @@ If you are happy with the monolithic version of buddy, you may want include the
 
 [source, clojure]
 ----
-[buddy "0.5.2"]
+[buddy "0.5.3"]
 ----
 
 In other case, see the concrete instalation instructions of the module that you need.
@@ -45,7 +45,7 @@ In other case, see the concrete instalation instructions of the module that you 
 
 Cryptographyc API.
 
-With that maybe incomple list of features:
+With that (maybe incomple) list of features:
 
 - cryptographic hash algorithms (digest)
 - key derivation algorithms (kdf)
@@ -55,7 +55,6 @@ With that maybe incomple list of features:
 - stream ciphers
 - padding schemes
 - nonces and salts
-- secure hash functions (digest)
 - signature & authentication (mac & digital signature)
 - encryption (block & stream ciphers)
 - key derivation functions (kdf)
