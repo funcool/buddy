@@ -3,8 +3,6 @@ Andrey Antukh, <niwi@niwi.be>
 :source-highlighter: pygments
 :pygments-style: friendly
 
-image:http://jarkeeper.com/funcool/buddy/status.png["Dependencies Status", link="http://jarkeeper.com/funcool/buddy"]
-
 image:http://clojars.org/buddy/latest-version.svg["Clojars Project", link="http://clojars.org/buddy"]
 
 
