@@ -1,5 +1,5 @@
 = Buddy - Security library for clojure.
-Andrey Antukh, <niwi@niwi.be>
+Andrey Antukh, <niwi@niwi.nz>
 :source-highlighter: pygments
 :pygments-style: friendly
 
@@ -31,7 +31,7 @@ If you are happy with the monolithic version of buddy, you may want include the
 
 [source, clojure]
 ----
-[buddy "0.5.5"]
+[buddy "0.6.0"]
 ----
 
 In other case, see the concrete instalation instructions of the module that you need.
