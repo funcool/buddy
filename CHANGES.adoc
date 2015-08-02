@@ -1,5 +1,13 @@
 = Changelog
 
+== Version 0.6.1
+
+Date: 2015-08-02
+
+- Update buddy-sign to 0.6.1
+- Update buddy-auth to 0.6.1
+
+
 == Version 0.6.0
 
 Date: 2015-06-28
