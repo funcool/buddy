@@ -1,5 +1,15 @@
 = Changelog
 
+== Version 0.8.0
+
+Date: 2015-11-15
+
+- Update buddy-core to 0.8.1
+- Update buddy-sign to 0.8.0
+- Update buddy-auth to 0.8.0
+- Update buddy-hashers to 0.9.0
+
+
 == Version 0.7.2
 
 Date: 2015-10-03
