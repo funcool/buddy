@@ -1,5 +1,12 @@
 = Changelog
 
+== Version 0.8.2
+
+Date: 2015-11-28
+
+- Update buddy-hashers to 0.9.1
+
+
 == Version 0.8.1
 
 Date: 2015-11-17
