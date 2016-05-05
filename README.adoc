@@ -34,7 +34,7 @@ If you are happy with the monolithic version of buddy, you may want include the
 [buddy "0.13.0"]
 ----
 
-In other case, see the concrete instalation instructions of the module that you need.
+In other case, see the concrete installation instructions of the module that you need.
 
 
 == Modules Summary
