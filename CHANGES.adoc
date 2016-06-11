@@ -1,5 +1,14 @@
 = Changelog
 
+== Version 1.0.0
+
+Date: 2016-06-11
+
+- Update buddy-core to 0.13.0
+- Update buddy-sign to 1.1.0
+- Update buddy-auth to 1.1.0
+
+
 == Version 0.13.0
 
 Date: 2016-04-23
