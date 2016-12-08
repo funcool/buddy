@@ -56,7 +56,6 @@ With that (maybe incomple) list of features:
 - nonces and salts
 - signature & authentication (mac & digital signature)
 - encryption (block & stream ciphers)
-- key derivation functions (kdf)
 
 
 Github: https://github.com/funcool/buddy-core
