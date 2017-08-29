@@ -1,6 +1,6 @@
-= Changelog
+# Changelog
 
-== Version 1.3.0
+## Version 1.3.0
 
 Date: 2017-01-24
 
@@ -10,7 +10,7 @@ Date: 2017-01-24
 - Update buddy-hashers to 1.2.0
 
 
-== Version 1.2.0
+## Version 1.2.0
 
 Date: 2016-11-15
 
@@ -20,7 +20,7 @@ Date: 2016-11-15
 - Update buddy-hashers to 1.1.0
 
 
-== Version 1.1.0
+## Version 1.1.0
 
 Date: 2016-09-01
 
@@ -30,7 +30,7 @@ Date: 2016-09-01
 - Update buddy-hashers to 1.0.0
 
 
-== Version 1.0.0
+## Version 1.0.0
 
 Date: 2016-06-11
 
@@ -39,7 +39,7 @@ Date: 2016-06-11
 - Update buddy-auth to 1.1.0
 
 
-== Version 0.13.0
+## Version 0.13.0
 
 Date: 2016-04-23
 
@@ -47,7 +47,7 @@ Date: 2016-04-23
 - Update buddy-auth to 0.13.0
 
 
-== Version 0.12.0
+## Version 0.12.0
 
 Date: 2016-04-09
 
@@ -57,7 +57,7 @@ Date: 2016-04-09
 - Update buddy-hashers to 0.14.0
 
 
-== Version 0.11.0
+## Version 0.11.0
 
 Date: 2016-03-27
 
@@ -67,14 +67,14 @@ Date: 2016-03-27
 - Update buddy-hashers to 0.13.0
 
 
-== Version 0.10.0
+## Version 0.10.0
 
 Date: 2016-01-23
 
 - Update buddy-hashers to 0.11.0
 
 
-== Version 0.9.0
+## Version 0.9.0
 
 Date: 2016-01-06
 
@@ -84,21 +84,21 @@ Date: 2016-01-06
 - Update buddy-hashers to 0.10.0
 
 
-== Version 0.8.3
+## Version 0.8.3
 
 Date: 2015-12-08
 
 - Update buddy-auth to 0.8.2
 
 
-== Version 0.8.2
+## Version 0.8.2
 
 Date: 2015-11-28
 
 - Update buddy-hashers to 0.9.1
 
 
-== Version 0.8.1
+## Version 0.8.1
 
 Date: 2015-11-17
 
@@ -106,7 +106,7 @@ Date: 2015-11-17
 - Update buddy-auth to 0.8.1
 
 
-== Version 0.8.0
+## Version 0.8.0
 
 Date: 2015-11-15
 
@@ -116,21 +116,21 @@ Date: 2015-11-15
 - Update buddy-hashers to 0.9.0
 
 
-== Version 0.7.2
+## Version 0.7.2
 
 Date: 2015-10-03
 
 - Update buddy-auth to 0.7.1
 
 
-== Version 0.7.1
+## Version 0.7.1
 
 Date: 2015-09-23
 
 - Update buddy-sign to 0.7.1
 
 
-== Version 0.7.0
+## Version 0.7.0
 
 Date: 2015-09-19
 
@@ -140,14 +140,14 @@ Date: 2015-09-19
 - Update buddy-hashers to 0.7.0
 
 
-== Version 0.6.2
+## Version 0.6.2
 
 Date: 2015-08-26
 
 - Update buddy-auth to 0.6.2
 
 
-== Version 0.6.1
+## Version 0.6.1
 
 Date: 2015-08-02
 
@@ -155,7 +155,7 @@ Date: 2015-08-02
 - Update buddy-auth to 0.6.1
 
 
-== Version 0.6.0
+## Version 0.6.0
 
 Date: 2015-06-28
 
@@ -165,21 +165,21 @@ Date: 2015-06-28
 - Update buddy-hashers to 0.6.0
 
 
-== Version 0.5.5
+## Version 0.5.5
 
 Date: 2015-06-15
 
 - Update buddy-hashers to 0.5.0
 
 
-== Version 0.5.4
+## Version 0.5.4
 
 Date: 2015-05-16
 
 - Update buddy-auth to 0.5.3
 
 
-== Version 0.5.3
+## Version 0.5.3
 
 Date: 2015-05-09
 
@@ -187,21 +187,21 @@ Date: 2015-05-09
 - Update buddy-sign to 0.5.1
 
 
-== Version 0.5.2
+## Version 0.5.2
 
 Date: 2015-04-28
 
 - Update buddy-auth to 0.5.1
 
 
-== Version 0.5.1
+## Version 0.5.1
 
 Date: 2015-04-03
 
 - Update buddy-hashers to 0.4.2
 
 
-== Version 0.5.0
+## Version 0.5.0
 
 Date: 2015-04-03
 
@@ -210,21 +210,21 @@ Date: 2015-04-03
 - Update buddy-auth to 0.5.0
 
 
-== Version 0.4.4
+## Version 0.4.4
 
 Date: 2015-03-29
 
 - Update buddy-auth to 0.4.2
 
 
-== Version 0.4.3
+## Version 0.4.3
 
 Date: 2015-03-29
 
 - Update buddy-sign to 0.4.2
 
 
-== Version 0.4.2
+## Version 0.4.2
 
 Date: 2015-03-14
 
@@ -234,14 +234,14 @@ Date: 2015-03-14
 - Update buddy-auth to 0.4.1
 
 
-== Version 0.4.1
+## Version 0.4.1
 
 Date: 2015-02-26
 
 - Update buddy-core to 0.4.1
 
 
-== Version 0.4.0
+## Version 0.4.0
 
 Date: 2015-02-22
 
@@ -251,7 +251,7 @@ Date: 2015-02-22
 - Updated buddy-hashers to 0.4.0
 
 
-== Version 0.3.0
+## Version 0.3.0
 
 Date: 2015-01-28
 
@@ -260,7 +260,7 @@ Date: 2015-01-28
   repository).
 - Now this is a metapackage and only track version changes from it children.
 
-== Version 0.2.3
+## Version 0.2.3
 
 Date: 2014-11-19
 
@@ -269,30 +269,30 @@ Date: 2014-11-19
 - Upgrade bouncycastle version to 1.51 (from 1.50)
 
 
-== Version 0.2.2
+## Version 0.2.2
 
 - Incomplete uploaded caused by clojars bug.
 
 
-== Version 0.2.1
+## Version 0.2.1
 
 - Incomplete uploaded caused by clojars bug.
 
 
-== Version 0.2.0
+## Version 0.2.0
 
 Date: 2014-10-21
 
 - Documentation improvements
 
-== Version 0.2.0b2
+## Version 0.2.0b2
 
 Date: 2014-08-16
 
 - Remove inconsistences in parameters to authentication backends.
 - Remove inconsistences in parameters on wrap-access-rules middleware.
 
-== Version 0.2.0b1
+## Version 0.2.0b1
 
 Date: 2014-06-06
 
@@ -308,7 +308,7 @@ Date: 2014-06-06
 - Add initial crypto support with: twofish (block cipher), chacha (stream cipher) and cfb, ctr and cbc block cipher
   modes of operation.
 
-== Version 0.1.1
+## Version 0.1.1
 
 Data: 2014-04-11
 
@@ -319,7 +319,7 @@ Data: 2014-04-11
 - Add SHA3 digest function utilities on buddy.core.hash namespace.
 - Unify buddy.core.{hash,sign,hmac} api.
 
-== Version 0.1.0-beta4
+## Version 0.1.0-beta4
 
 Date: 2014-02-25
 
@@ -329,7 +329,7 @@ Date: 2014-02-25
   now works like any other token authenticacion implementation: parses a token and
   executes simple function for authenticate it.
 
-== Version 0.1.0-beta3
+## Version 0.1.0-beta3
 
 Date: 2014-02-08
 
@@ -339,7 +339,7 @@ Date: 2014-02-08
 - Minor bug fixes on hashers.
 
 
-== Version 0.1.0-beta2
+## Version 0.1.0-beta2
 
 Date: 2014-02-03
 
@@ -347,7 +347,7 @@ Date: 2014-02-03
 - Documentation improvements.
 
 
-== Version 0.1.0-beta1
+## Version 0.1.0-beta1
 
 Date: 2014-01-20
 
