@@ -31,7 +31,7 @@ If you are happy with the monolithic version of buddy, you may want include the
 
 [source, clojure]
 ----
-[buddy "1.3.0"]
+[buddy "2.0.0"]
 ----
 
 In other case, see the concrete installation instructions of the module that you

@@ -1,5 +1,15 @@
 # Changelog
 
+## Version 2.0.0
+
+Date: 2017-08-29
+
+- Update buddy-core to 1.4.0
+- Update buddy-sign to 2.2.0
+- Update buddy-auth to 2.1.0
+- Update buddy-hashers to 1.3.0
+
+
 ## Version 1.3.0
 
 Date: 2017-01-24
