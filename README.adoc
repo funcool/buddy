@@ -5,6 +5,10 @@ Andrey Antukh, <niwi@niwi.nz>
 
 image:http://clojars.org/buddy/latest-version.svg["Clojars Project", link="http://clojars.org/buddy"]
 
+NOTE: **this project is deprecated** and not going to be updated;
+**plase use the individual modules: buddy-core, buddy-auth, buddy-sign
+and buddy-hashers.
+
 
 == Introduction
 
