@@ -48,7 +48,7 @@ need.
 
 Cryptographyc API.
 
-With that (maybe incomple) list of features:
+With that (maybe incomplete) list of features:
 
 - cryptographic hash algorithms (digest)
 - key derivation algorithms (kdf)
