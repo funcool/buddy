@@ -6,8 +6,8 @@ Andrey Antukh, <niwi@niwi.nz>
 image:http://clojars.org/buddy/latest-version.svg["Clojars Project", link="http://clojars.org/buddy"]
 
 NOTE: **this project is deprecated** and not going to be updated;
-**plase use the individual modules**: buddy-core, buddy-auth, buddy-sign
-and buddy-hashers.
+**plase use the individual modules**: https://github.com/funcool/buddy-core[buddy-core], https://github.com/funcool/buddy-auth[buddy-auth], https://github.com/funcool/buddy-sign[buddy-sign]
+and https://github.com/funcool/buddy-hashers[buddy-hashers].
 
 
 == Introduction
